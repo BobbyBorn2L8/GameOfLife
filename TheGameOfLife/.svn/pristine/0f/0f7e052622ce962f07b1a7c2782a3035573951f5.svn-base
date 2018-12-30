@@ -1,0 +1,247 @@
+package gameOfLife;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class GameSpinner extends GameEntity{
+	
+	private Random rand;
+	private GameLogic gameLogic;
+	private Timer timer;
+	private int spinnerTime, degrees;
+	private BufferedImage originalImage;
+	private int result;
+	private boolean spinning;
+	
+	public GameSpinner(int xCoord, int yCoord, GameLogic gameLogic)
+	{
+		super(xCoord, yCoord, "spinner_Image.png");
+		this.gameLogic = gameLogic;
+		this.rand = new Random();
+		this.originalImage = getEntityImage();
+		this.timer = new Timer();
+		this.spinnerTime = 10;
+		this.degrees = 0;
+		this.result = 0;
+	}
+	
+	@Override
+	public void drawEntity(Graphics2D graphicsPanel)
+	{
+		super.drawEntity(graphicsPanel);
+		
+		if(!spinning)
+		{
+			graphicsPanel.setFont(new Font("Arial", Font.BOLD, 100));
+			graphicsPanel.setColor(Color.white);
+			int nameWidth = graphicsPanel.getFontMetrics().stringWidth(Integer.toString(result));
+			int nameHeight = graphicsPanel.getFontMetrics().getHeight();
+			
+			graphicsPanel.drawString(Integer.toString(result), getxCoord() + (getEntityImage().getWidth() / 2) - (nameWidth / 2), 
+					getyCoord() + (getEntityImage().getHeight() / 2) + (nameHeight / 4));
+		}
+	}
+	
+	public void rotateSpinner(Graphics2D graphicsPanel)
+	{
+		spinning = true;
+		
+		timer.schedule(new TimerTask() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				setEntityImage(originalImage);
+				degrees += 18;
+				animateSpinnerRotation(gameLogic.getBoard().getGameCanvas().getG2(), degrees);
+				spinnerTime += 5;
+				gameLogic.getBoard().updateGameBoard();
+				
+				if(degrees == 720)
+				{
+					// this.cancel();
+					spinnerTime = 10;
+					degrees = 0;
+					result = spinGameSpinner(false);
+					spinning = false;
+					gameLogic.getBoard().updateGameBoard();
+					if (gameLogic.getCurrentPlayer().isStuck())
+					{
+						if (result >= 5)
+						{
+							if (gameLogic.getCurrentPlayer().getMovesRemaining() == 0)
+							{
+								gameLogic.getCurrentPlayer().setMovesRemaining(result);
+							}
+							
+							gameLogic.getCurrentPlayer().setCanSpin(false);
+							gameLogic.getCurrentPlayer().movePlayerXTiles(gameLogic.getCurrentPlayer().getMovesRemaining(), gameLogic.getBoard());
+							gameLogic.getCurrentPlayer().setStuck(false);
+
+							gameLogic.getCurrentPlayer().setMovesRemaining(0);
+						}
+						else
+						{
+							gameLogic.getCurrentPlayer().setCanSpin(false);
+							gameLogic.getCurrentPlayer().setMovesRemaining(0);
+						}
+					}
+					else
+					{
+						gameLogic.getCurrentPlayer().setCanSpin(false);
+						gameLogic.getCurrentPlayer().movePlayerXTiles(result, gameLogic.getBoard());
+						
+					}
+				}
+				else
+				{
+					rotateSpinner(graphicsPanel);
+				}
+			}
+		}, spinnerTime);
+	}
+
+	public void animateSpinnerRotation(Graphics2D graphicsPanel, int degrees)
+	{
+		AffineTransform at = new AffineTransform();
+		at.rotate(Math.toRadians(degrees), 100, 100);
+		AffineTransformOp op = new AffineTransformOp(at, AffineTransformOp.TYPE_BICUBIC );
+		this.setEntityImage(op.filter(this.getEntityImage(), null));
+	}
+	
+	public int spinGameSpinner(boolean playerMoving)
+	{
+		int spinResult = rand.nextInt(10) + 1;
+		
+		if (playerMoving)
+		{	
+			if(spinResult == 10)
+			{
+				gameLogic.getCurrentPlayer().setPlayerAge(gameLogic.getCurrentPlayer().getPlayerAge() + 10);
+				gameLogic.checkPlayerAge(gameLogic.getCurrentPlayer());
+			}
+			else if(spinResult == 1)
+			{
+				randomiseStockMarketMultiplier();
+				randomiseHousingMarketMultiplier();
+			}
+		}
+		
+		return spinResult;
+	}
+	
+	public void randomiseStockMarketMultiplier()
+	{
+		gameLogic.setCurrentStockMarketMultiplier(rand.nextDouble() + 0.5);
+	}
+	
+	/**
+	 * @author Rachael Coulter
+	 * Method to generate a new value to be used as the Market Multiplier
+	 * Market Multiplier is a value between 0.5 and 1.5 used to affect house sales prices.
+	 * @return a double value between 0.5 and 1.5, used to generate house prices
+	 */
+	public void randomiseHousingMarketMultiplier(){
+		/*
+		Random rand = new Random();
+		double min = 0.5;
+		double max = 1.5;
+		
+		double marketMultiplier = min + Math.random() * ((max-min) + 1);
+		gameAssetHouse.setMarketMultiplier(marketMultiplier);
+		*/
+		
+		gameLogic.setCurrentHousingMarketMultiplier(rand.nextDouble() + 0.5);
+		gameLogic.applyHousingMarketMultiplierToHouses();
+		//return gameAssetHouse.getMarketMultiplier();
+	}
+	
+	/**
+	 * @author Rachael Coulter
+	 * @param housePrice = The price of the house before taking into account market. Gained by exampleHouse.getHouseBasePrice();
+	 * @param marketMultiplier = The multiplier used to generate current value of the house. Gained by using the getMarketMultiplier(); method
+	 * @return an integer representing the current house price
+	 */
+	
+	/*
+	public Integer generateNewHousePriceUsingMarket(int housePrice, double marketMultiplier){
+		
+		housePrice = (int) (housePrice * marketMultiplier);
+		
+		return housePrice;
+		
+	}
+	*/
+
+	public Random getRand() {
+		return rand;
+	}
+
+	public void setRand(Random rand) {
+		this.rand = rand;
+	}
+
+	public GameLogic getGameLogic() {
+		return gameLogic;
+	}
+
+	public void setGameLogic(GameLogic gameLogic) {
+		this.gameLogic = gameLogic;
+	}
+
+	public Timer getTimer() {
+		return timer;
+	}
+
+	public void setTimer(Timer timer) {
+		this.timer = timer;
+	}
+
+	public int getSpinnerTime() {
+		return spinnerTime;
+	}
+
+	public void setSpinnerTime(int spinnerTime) {
+		this.spinnerTime = spinnerTime;
+	}
+
+	public int getDegrees() {
+		return degrees;
+	}
+
+	public void setDegrees(int degrees) {
+		this.degrees = degrees;
+	}
+
+	public BufferedImage getOriginalImage() {
+		return originalImage;
+	}
+
+	public void setOriginalImage(BufferedImage originalImage) {
+		this.originalImage = originalImage;
+	}
+
+	public int getResult() {
+		return result;
+	}
+
+	public void setResult(int result) {
+		this.result = result;
+	}
+
+	public boolean isSpinning() {
+		return spinning;
+	}
+
+	public void setSpinning(boolean spinning) {
+		this.spinning = spinning;
+	}
+	
+}

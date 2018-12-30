@@ -1,0 +1,89 @@
+package gameOfLife;
+
+import java.awt.Graphics2D;
+import java.io.Serializable;
+
+public abstract class Tile extends GameEntity implements Serializable{
+	
+	private GamePlayer playerOnTile;
+	private int multiplier;
+	private TileEffects effect1;
+	private String tileText;
+	private boolean tileActivated;
+	
+	public Tile(int xCoord, int yCoord, String imageName, int multiplier, String tileText, TileEffects effect1)
+	{
+		super(xCoord, yCoord, imageName);
+		this.playerOnTile = null;
+		this.multiplier = multiplier;
+		this.tileText = tileText;
+		this.effect1 = effect1;
+		tileActivated = false;
+	}
+
+	public abstract void onLand(GamePlayer player, GameBoard board, Graphics2D panel);
+	
+	public void movePlayerCoordsToTile(GamePlayer playerOnTile)
+	{
+		playerOnTile.getPlayerCar().setxCoord(this.getxCoord());
+		playerOnTile.getPlayerCar().setyCoord(this.getyCoord() + 5);
+		playerOnTile.setxCoord(playerOnTile.getPlayerCar().getxCoord() + 33);
+		playerOnTile.setyCoord(playerOnTile.getPlayerCar().getyCoord() + 1);
+	}
+	
+	public int getMultiplier()
+	{
+		return multiplier;
+	}
+
+	public void setMultiplier(int multiplier)
+	{
+		this.multiplier = multiplier;
+	}
+
+	public String getTileText()
+	{
+		return tileText;
+	}
+
+	public void setTileText(String tileText)
+	{
+		this.tileText = tileText;
+	}
+
+	public boolean isTileActivated()
+	{
+		return tileActivated;
+	}
+
+	public void setTileActivated(boolean tileActivated)
+	{
+		this.tileActivated = tileActivated;
+	}
+
+	public GamePlayer getPlayerOnTile() {
+		return playerOnTile;
+	}
+
+	public void setPlayerOnTile(GamePlayer playerOnTile) {
+		this.playerOnTile = playerOnTile;
+
+		/*
+		if(playerOnTile != null)
+		{
+			movePlayerCoordsToTile(playerOnTile);
+		}
+		*/
+	}
+
+	public TileEffects getEffect1()
+	{
+		return effect1;
+	}
+
+	public void setEffect1(TileEffects effect1)
+	{
+		this.effect1 = effect1;
+	}
+	
+}

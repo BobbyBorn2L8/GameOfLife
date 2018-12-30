@@ -1,0 +1,35 @@
+package gameOfLife;
+
+import java.util.ArrayList;
+
+public class GameLogic {
+	
+	private GamePlayer currentPlayer;
+	private ArrayList<GamePlayer> players;
+	private int currentIndex;
+	private int retirementAge;
+	private int currentStockMarketValue;
+	private final int INITIAL_STOCK_MARKET_VALUE = 0;
+
+	public GameLogic(ArrayList<GamePlayer> players)
+	{
+		this.players = players;
+		this.currentIndex = 0;
+	}
+	
+	public void moveTurnToNextPlayer()
+	{
+		if(currentIndex == players.size() - 1)
+		{
+			currentIndex = 0;
+		}
+		
+		currentPlayer = players.get(currentIndex);
+		currentIndex++;
+	}
+	
+	public void adjustStockMarketValue(Double stockMarketMultiplier)
+	{
+		this.currentStockMarketValue = (int)(currentStockMarketValue * stockMarketMultiplier);
+	}
+}

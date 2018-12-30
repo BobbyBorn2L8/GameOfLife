@@ -1,0 +1,171 @@
+package gameOfLife;
+
+import javax.swing.JOptionPane;
+
+public class BlueTile extends Tile
+{
+	private int area;
+	private String option1, option2;
+	private BlueTileEffects effect2, effect3;
+	
+	public BlueTile(int xCoord, int yCoord, String imageName, int multiplier, int area, String option1, String option2, BlueTileEffects effect1, BlueTileEffects effect2)
+	{
+		super(xCoord, yCoord, imageName, multiplier, option1 + " or " + option2, TileEffects.NOTHING);
+		this.area = area;
+		this.option1 = option1;
+		this.option2 = option2;
+		effect2 = effect1;
+		effect3 = effect2;
+	}
+	
+	@Override
+	public void onLand(GamePlayer player, GameBoard board)
+	{
+		Object[] options = {option1, option2};
+		int n = JOptionPane.showOptionDialog(null, "Please select an option",
+				"DECISION TIME!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+		if (n == 0)
+		{
+			effectActivated(effect2, player, board);
+		}
+		if (n == 1)
+		{
+			effectActivated(effect3, player, board);
+		}
+	}
+	
+	public void effectActivated(BlueTileEffects effect, GamePlayer player, GameBoard board)
+	{
+		switch(effect)
+		{
+		case ATTRACTION:
+			player.subtractFromPlayerBankBalance(getMultiplier());
+			GameAssetAttraction attraction;
+			if (getArea() == 0 && board.getFallsAttractions().getDeck().size() > 0)
+			{
+				player.getPlayerAssets().add(board.getFallsAttractions().getRandomCard());
+			}
+			else if (getArea() == 1 && board.getUniAttractions().getDeck().size() > 0)
+			{
+				player.getPlayerAssets().add(board.getUniAttractions().getRandomCard());
+			}
+			else if (getArea() == 2 && board.getCathedralAttractions().getDeck().size() > 0)
+			{
+				player.getPlayerAssets().add(board.getCathedralAttractions().getRandomCard());
+			}
+			else if (getArea() == 3 && board.getTitanicAttractions().getDeck().size() > 0)
+			{
+				attraction = board.getTitanicAttractions().getRandomCard();
+				player.getPlayerAssets().add(attraction);
+			}
+			else
+			{
+				JOptionPane.showConfirmDialog(null, "There are no more attractions in this area");
+			}
+			break;
+		case CARUPGRADE:
+			if (player.getPlayerCar().getPlayerCar() != CarTypes.TIER4)
+			{
+				player.upgradeCar();
+			}
+			else
+			{
+				JOptionPane.showConfirmDialog(null, "Your car is already fully upgraded");
+			}
+			break;
+		case NEWCAREER:
+			player.changeCareer(board);
+			break;
+		case NEWHOUSE:
+			GameAssetHouse house;
+			if (getArea() == 0 && board.getFallsHouses().getDeck().size() > 0)
+			{
+				house = board.getFallsHouses().drawThreeForDecision();
+				if (house != null)
+				{
+					player.buyNewHouse(house, board);
+				}
+			}
+			else if (getArea() == 1 && board.getUniHouses().getDeck().size() > 0)
+			{
+				house = board.getUniHouses().drawThreeForDecision();
+				if (house != null)
+				{
+					player.buyNewHouse(house, board);
+				}
+			}
+			else if (getArea() == 2 && board.getCathedralHouses().getDeck().size() > 0)
+			{
+				house = board.getCathedralHouses().drawThreeForDecision();
+				if (house != null)
+				{
+					player.buyNewHouse(house, board);
+				}
+			}
+			else if (getArea() == 3 && board.getTitanicHouses().getDeck().size() > 0)
+			{
+				house = board.getTitanicHouses().drawThreeForDecision();
+				if (house != null)
+				{
+					player.buyNewHouse(house, board);
+				}
+			}
+			else
+			{
+				JOptionPane.showConfirmDialog(null, "There are no more houses in this area");
+			}
+			break;
+		default:
+			JOptionPane.showConfirmDialog(null, "You do nothing");
+			break;
+		}
+	}
+
+	public int getArea()
+	{
+		return area;
+	}
+
+	public void setarea(int area)
+	{
+		this.area = area;
+	}
+
+	public String getOption1()
+	{
+		return option1;
+	}
+
+	public void setOption1(String option1)
+	{
+		this.option1 = option1;
+	}
+
+	public String getOption2()
+	{
+		return option2;
+	}
+
+	public void setOption2(String option2)
+	{
+		this.option2 = option2;
+	}
+
+	public BlueTileEffects getEffect2()
+	{
+		return effect2;
+	}
+
+	public BlueTileEffects getEffect3() {
+		return effect3;
+	}
+
+	public void setEffect3(BlueTileEffects effect3) {
+		this.effect3 = effect3;
+	}
+
+	public void setEffect2(BlueTileEffects effect2) {
+		this.effect2 = effect2;
+	}
+	
+}

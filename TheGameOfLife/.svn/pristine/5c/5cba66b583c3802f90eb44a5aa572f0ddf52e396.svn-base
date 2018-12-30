@@ -1,0 +1,41 @@
+package gameOfLife;
+
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+public class SpousePeg extends FamilyPegs
+{
+	private boolean gender;
+	public SpousePeg(int xCoord, int yCoord, boolean gender) 
+	{
+		super(xCoord, yCoord, "");
+		String imageName;
+		if (gender)
+		{
+			imageName = "resizedimages/token_Male.png";
+		}
+		else
+		{
+			imageName = "resizedimages/token_Female.png";
+		}
+
+		setEntityImageByName(imageName);
+
+	}
+
+	@Override
+	public void movePegToPlayer(GamePlayer player, int position) 
+	{
+		this.setxCoord(player.getxCoord());
+		this.setyCoord(player.getyCoord() + player.getEntityImage().getHeight() - getEntityImage().getHeight() + 2);
+	}
+
+	public boolean isGender() {
+		return gender;
+	}
+
+	public void setGender(boolean gender) {
+		this.gender = gender;
+	}
+}

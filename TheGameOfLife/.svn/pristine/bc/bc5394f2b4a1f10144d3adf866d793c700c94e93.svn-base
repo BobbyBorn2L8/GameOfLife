@@ -1,0 +1,96 @@
+package gameOfLife;
+
+import java.awt.*;
+
+import javax.swing.*;
+
+public class GameRulesScreen extends CommonScreenAttributes{
+	
+	private JFrame rulesScreenFrame;
+	private JPanel pane = new JPanel(new GridBagLayout());
+	private JScrollPane scroll = new JScrollPane(pane);
+	private JTextArea mainText, bossesText, statsText, itemsText;
+	private GridBagConstraints gbc = new GridBagConstraints();
+	private JLabel mainRulesTitle, bossesTitle, statsTitle, itemsTitle;
+	
+	/*
+	 * The GuideScreen changes colour scheme based on the character parameter, so no empty constructor is included, this screen is very basic and only serves to outline the basics of 
+	 * playing the game
+	 */
+	
+	public GameRulesScreen()
+	{
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		gbc.insets = new Insets(10, 10, 10, 20);
+		
+		scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		
+		mainRulesTitle = new JLabel("Main Rules:");
+		// mainRulesTitle.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+		mainRulesTitle.setHorizontalAlignment(SwingConstants.CENTER);
+		mainRulesTitle.setFont(new Font("Arial", Font.BOLD, 24));
+		
+		mainText = new JTextArea("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean quis lacus sed leo eleifend aliquet ut non turpis. Maecenas pharetra tellus et odio scelerisque maximus. Curabitur luctus vitae nunc sed efficitur. Praesent vestibulum vitae nulla a molestie. Aliquam facilisis at arcu sit amet eleifend. Cras cursus id turpis et efficitur. Suspendisse commodo dapibus ligula, viverra eleifend tortor dignissim nec. Sed fringilla efficitur diam vitae porta. Vivamus ornare, risus quis tristique pretium, nisl elit efficitur magna, sed ultrices sapien lectus id elit. Donec egestas, tellus eu aliquam faucibus, turpis quam accumsan neque, sit amet aliquam dui metus id diam. Suspendisse mollis.");
+		mainText.setFont(new Font("Arial", Font.BOLD, 18));
+		mainText.setLineWrap(true);
+		mainText.setEditable(false);
+
+		addComponent(pane, mainRulesTitle, gbc, 0, 0, 1, 1);
+		addComponent(pane, mainText, gbc, 0, 1, 1, 4);
+		
+		/*
+		
+		statsTitle = new JLabel("Stats:");
+		statsTitle.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+		statsTitle.setHorizontalAlignment(SwingConstants.CENTER);
+		statsTitle.setFont(new Font("Arial", Font.BOLD, 24));
+		
+		statsText = new JTextArea("- Luck determines how likely you are to be able to dodge an attack from a boss character!"
+				+ "\n\n- Speed determines how quickly you can attack an boss character!"
+				+ "\n\n- Strength causes your attacks to do more damage to any boss character!");
+		statsText.setLineWrap(true);
+		statsText.setEditable(false);
+		
+		addComponent(pane, statsTitle, gbc, 0, 5, 1, 1);
+		addComponent(pane, statsText, gbc, 0, 6, 1, 4);
+		
+		bossesTitle = new JLabel("Bosses:");
+		bossesTitle.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+		bossesTitle.setHorizontalAlignment(SwingConstants.CENTER);
+		bossesTitle.setFont(new Font("Arial", Font.BOLD, 24));
+		
+		bossesText = new JTextArea("At the end of every level will be a boss you must defeat to continue your current game. You will be able to attack the boss, then you will have to wait until your"
+				+ " character is able to attack again.\n\nMeanwhile the boss can attack you before he/she then needs to recharge.\n\nYour stats will be vital in the fights to give you an advantage and with"
+				+ " every level you gain the boss will get harder, so you will need items to help you defeat them! Good Luck!");
+		bossesText.setLineWrap(true);
+		bossesText.setEditable(false);
+		
+		addComponent(pane, bossesTitle, gbc, 0, 10, 1, 1);
+		addComponent(pane, bossesText, gbc, 0, 11, 1, 4);
+		
+		itemsTitle = new JLabel("Items & Potions:");
+		itemsTitle.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+		itemsTitle.setHorizontalAlignment(SwingConstants.CENTER);
+		itemsTitle.setFont(new Font("Arial", Font.BOLD, 24));
+		
+		itemsText = new JTextArea("- Items are purchased and then automatically placed in your inventory, these will also be saved so you dont need to buy them again upon loading a save file! These items give you permanent"
+				+ " buffs to your individual stats depending on the item itself.\n\n- Potions offer a boost to your XP, action points of energy, these help you complete the levels faster but will cost you some cash, these"
+				+ " are used immediately upon purchase and will NOT show up in your inventory!");
+		itemsText.setLineWrap(true);
+		itemsText.setEditable(false);
+
+		addComponent(pane, itemsTitle, gbc, 0, 15, 1, 1);
+		addComponent(pane, itemsText, gbc, 0, 16, 1, 4);
+		*/
+	
+		
+		rulesScreenFrame = new JFrame("Game Guide");
+		rulesScreenFrame.setDefaultCloseOperation(rulesScreenFrame.DISPOSE_ON_CLOSE);
+		rulesScreenFrame.add(scroll);
+		rulesScreenFrame.setSize(430, 450);
+		rulesScreenFrame.setVisible(true);
+	}
+
+}

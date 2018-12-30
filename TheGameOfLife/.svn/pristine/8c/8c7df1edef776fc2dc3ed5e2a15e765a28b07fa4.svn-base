@@ -1,0 +1,25 @@
+package gameOfLife;
+
+public class CareerTester 
+{
+
+	public static void main(String[] args)
+	{
+		//Generate a deck of cards to test drawing three cards//
+		CareerDecks decks = new CareerDecks(240, 100, "orange_03.png", null);
+		Careers card = new Careers(0, 0, "orange_01.png", null, 0);
+		Careers card1 = new Careers(0, 0, "orange_02.png", null, 0);
+		Careers card2 = new Careers(0, 0, "orange_03.png", null, 0);
+		Careers card3 = new Careers(0, 0, "orange_04.png", null, 0);
+		Careers card4 = new Careers(0, 0, "orange_05.png", null, 0);
+		Careers card5 = new Careers(0, 0, "orange_06.png", null, 0);
+		decks.addCard(card);
+		decks.addCard(card1);
+		decks.addCard(card2);
+		decks.addCard(card3);
+		decks.addCard(card4);
+		decks.addCard(card5);
+		//Three random cards are selected and player can choose one of the cards//
+		decks.drawThreeForDecision();
+	}
+}

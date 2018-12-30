@@ -1,0 +1,107 @@
+package gameOfLife;
+
+import javax.swing.JOptionPane;
+
+public enum TileEffects 
+{
+	FINE, REWARD, HAVE_SON, HAVE_DAUGHTER, HAVE_TWINS, GET_CAT, GET_DOG, CHOOSE_CAREER, PROMOTION, NOTHING;
+	
+	public void effectActivated(GamePlayer player, int multiplier, TileEffects effect, GameBoard board)
+	{
+		switch(effect)
+		{
+			case FINE:
+				player.subtractFromPlayerBankBalance(multiplier);
+				JOptionPane.showMessageDialog(null, player.getPlayerName() + " pays out £" + multiplier);
+				break;
+			case GET_CAT:
+				if (player.getPlayerFamily().size() < 5)
+				{
+					player.getPet(false);
+					JOptionPane.showMessageDialog(null, player.getPlayerName() + " gets a cat");
+				}	
+				break;
+			case GET_DOG:
+					if (player.getPlayerFamily().size() < 5)
+					{
+						player.getPet(true);
+						JOptionPane.showMessageDialog(null, player.getPlayerName() + " gets a dog");
+					}
+					break;
+			case HAVE_DAUGHTER:
+				if (player.getPlayerFamily().size() < 5)
+				{
+					player.haveChild(false);
+					JOptionPane.showMessageDialog(null, player.getPlayerName() + " has a beautiful little girl");
+				}
+				break;
+			case HAVE_SON:
+				if (player.getPlayerFamily().size() < 5)
+				{
+					player.haveChild(true);
+					JOptionPane.showMessageDialog(null, player.getPlayerName() + " has a gorgeous little boy");
+				}
+				break;
+			case HAVE_TWINS:
+				if (player.getPlayerFamily().size() < 5)
+				{
+					String message;
+					int randomNumber = (int)(Math.random() * 2);
+					if (randomNumber == 0)
+					{
+						player.haveChild(true);
+						message = player.getPlayerName() + " had twins:\nA gorgeous little boy";
+					}
+					else
+					{
+						player.haveChild(false);
+						message = player.getPlayerName() + " had twins:\nA beautiful little girl";
+					}
+					randomNumber = (int)(Math.random() * 2);
+					if (randomNumber == 0)
+					{
+						player.haveChild(true);
+						message.concat(message + " and a gorgeous little boy");
+					}
+					else
+					{
+						player.haveChild(false);
+						message.concat(message + " and a beautiful little girl");
+					}
+					JOptionPane.showMessageDialog(null, message);
+				}
+				break;
+			case REWARD:
+				player.addToPlayerBankBalance(multiplier);
+				JOptionPane.showMessageDialog(null, player.getPlayerName() + " is paid £" + multiplier);
+				break;
+			case CHOOSE_CAREER:
+				Careers career;
+				do
+				{
+					if (!player.isUniversityImmediately())
+					{
+						career = board.getCareers().drawThreeForDecision();
+					}
+					else
+					{
+						career = board.getUniCareers().drawThreeForDecision();
+					}
+				} while(career != null);
+				if (!player.isUniversityImmediately())
+				{
+					board.getCareers().addCard(player.getPlayerCareer());
+				}
+				else
+				{
+					board.getUniCareers().addCard(player.getPlayerCareer());
+				}
+				player.setPlayerCareer(career);
+				break;
+			case PROMOTION:
+				player.promoted(multiplier);
+			default:
+				break;
+		}
+	}
+}

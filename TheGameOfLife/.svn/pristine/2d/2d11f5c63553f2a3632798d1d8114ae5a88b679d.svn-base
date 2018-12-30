@@ -1,0 +1,102 @@
+package gameOfLife;
+
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+
+public class Decks<E> extends GameEntity
+{
+	private ArrayList<E> deck = new ArrayList<E>();
+	int value = -1;
+	
+	public Decks(int xCoord, int yCoord, String imageName) 
+	{
+		super(xCoord, yCoord, imageName);
+		// TODO Auto-generated constructor stub
+	}
+
+	
+	public void addCard(E card)
+	{
+		deck.add(card);
+	}
+	
+	public void removeCard(E card)
+	{
+		deck.remove(card);
+	}
+	
+	public E getCardByID(int index)
+	{
+		if (index >= 0 && index < deck.size())
+		{
+			return deck.get(index);
+		}
+		return null;
+	}
+	
+	public E getRandomCard()
+	{
+		int randomNumber = (int)(Math.random() * deck.size());
+		return getCardByID(randomNumber);
+	}
+	
+	public E drawCard()
+	{
+		E card = getRandomCard();
+		return card;
+	}
+	
+	public E drawThreeForDecision()
+	{
+		ArrayList<E> c = new ArrayList<E>();
+		Component[] options = new Component[3];
+		int noToDraw = 3;
+		if (deck.size() < 3)
+		{
+			noToDraw = deck.size();
+		}
+		for (int iii = 0; iii < noToDraw; iii++)
+		{
+			final int loopNo = iii;
+			c.add((E) drawCard());
+			JButton button = new JButton(new ImageIcon(((GameEntity) c.get(iii)).getEntityImage()));
+			button.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent arg0) 
+				{
+					value = loopNo;
+					JOptionPane.getRootFrame().dispose();
+				}
+			});
+			options[iii] = button;
+		}
+		
+		JOptionPane.showOptionDialog(null, "Please select a card", "",  JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+		
+		System.out.println(value);
+		if (value >= 0)
+		{
+			deck.remove(c.get(value));
+			return (E) c.get(value);
+		}
+		else 
+		{
+			return null;
+		}
+	}
+	
+	public ArrayList<E> getDeck() {
+		return deck;
+	}
+	public void setDeck(ArrayList<E> deck) {
+		this.deck = deck;
+	}
+}

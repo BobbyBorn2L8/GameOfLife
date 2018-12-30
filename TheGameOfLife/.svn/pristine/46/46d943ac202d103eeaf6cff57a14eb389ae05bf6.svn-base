@@ -1,0 +1,91 @@
+package gameOfLife;
+
+/**
+ * 
+ * @author Josh & Daniel & Alex (Heavy Edits)
+ * 
+ * A game asset is any object that can be liquefied and
+ * valued at the end of the game
+ *
+ */
+
+public abstract class GameAsset extends GameEntity implements Comparable<GameAsset>{
+	
+	// INSTANCE VARIABLES
+	/**
+	 * The value of this asset
+	 */
+	private int currentAssetValue;
+	private String assetName;
+	
+	
+	// CONSTRUCTORS
+	public GameAsset(int currentAssetValue, String assetName, String assetImageName)
+	{
+		super(0, 0, assetImageName);
+		this.currentAssetValue = currentAssetValue;
+		this.assetName = assetName;
+	}
+	
+	public GameAsset(int currentAssetValue, int xCoord, int yCoord, String assetName, String assetImageName)
+	{
+		super(xCoord, yCoord, assetImageName);
+		this.currentAssetValue = currentAssetValue;
+		this.assetName = assetName;
+	}
+
+	// METHODS
+	public void sellAsset(GamePlayer assetOwner)
+	{
+		assetOwner.addToPlayerBankBalance(this.currentAssetValue);
+	}
+	
+	public void buyAsset(GamePlayer assetBuyer)
+	{
+		assetBuyer.subtractFromPlayerBankBalance(this.currentAssetValue);
+	}
+	
+	@Override
+	public int compareTo(GameAsset assetComparedTo)
+	{
+		if(this.currentAssetValue > assetComparedTo.currentAssetValue)
+		{
+			return 1;
+		}
+		else if(this.currentAssetValue == assetComparedTo.currentAssetValue)
+		{
+			return -1;
+		}
+		else if(this.assetName.compareToIgnoreCase(assetComparedTo.getAssetName()) > 0)
+		{
+			return 1;
+		}
+		else if(this.assetName.compareToIgnoreCase(assetComparedTo.getAssetName()) < 0)
+		{
+			return -1;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
+	// GETTERS AND SETTERS
+
+	public int getCurrentAssetValue() {
+		return currentAssetValue;
+	}
+
+	public void setCurrentAssetValue(int currentAssetValue) {
+		this.currentAssetValue = currentAssetValue;
+	}
+
+	public String getAssetName() {
+		return assetName;
+	}
+
+	public void setAssetName(String assetName) {
+		this.assetName = assetName;
+	}
+
+}

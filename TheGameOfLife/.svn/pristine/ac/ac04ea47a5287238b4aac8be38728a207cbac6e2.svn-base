@@ -1,0 +1,56 @@
+package gameOfLife;
+
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
+public class GameEventsLog {
+
+	private ArrayList<String> eventLog;
+	private Date currentTime;
+
+	public GameEventsLog() {
+		eventLog = new ArrayList<String>();
+	}
+
+	public void addLog(String logToAdd) {
+		eventLog.add(getCurrentTime() + " -> " + logToAdd);
+	}
+
+	public String getCurrentTime()
+	{
+		currentTime = new Date();
+		return DateFormat.getTimeInstance().format(currentTime);
+	}
+	
+	public void removeLogAtIndex(int index)
+	{
+		eventLog.remove(index);
+	}
+	
+	public void clearAllEventLogs()
+	{
+		eventLog.clear();
+	}
+	
+	public boolean printAllLogsTesting()
+	{
+		int i = 1;
+		
+		for (String currentEvent : eventLog) 
+		{
+			System.out.println(currentEvent);
+			i++;
+		}
+		
+		if(i == eventLog.size())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+}

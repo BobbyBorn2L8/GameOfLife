@@ -1,0 +1,133 @@
+package gameOfLife;
+
+import java.awt.Graphics2D;
+
+import javax.swing.JOptionPane;
+
+/**
+ * 
+ * @author Robert Kordula 40131366 
+ * Extends Tile, its purpose is to allow the player to have a choice on any blue tile that they land on
+ */
+
+public class BlueTile extends Tile {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -675823304667466696L;
+	private BlueTileEffects blueEffect;
+
+	public BlueTile(String imageName, int multiplier, String tileText, BlueTileEffects effect) {
+		super(0, 0, imageName, multiplier, tileText, TileEffects.NOTHING);
+		this.blueEffect = effect;
+	}
+
+	@Override
+	/**
+	 * @param player
+	 * @param board
+	 * @param panel
+	 * This method asks the user if they want to performt the action of the blue tile they have landed on, if the player selects
+	 * that they wish to perform the action effectActivated is called and determines what the player can do, if the player selects
+	 * to do nothing, nothing happens
+	 */
+	public void onLand(GamePlayer player, GameBoard board, Graphics2D panel) {
+		GameLogic.gameLog.addLog(getTileText());
+		Object[] options = { getTileText(), "Do nothing" };
+		int n = JOptionPane.showOptionDialog(null, "Please select an option", "DECISION TIME!",
+				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+		if (n == 0) {
+			effectActivated(blueEffect, player, board);
+		}
+		if (n == 1) {
+			JOptionPane.showConfirmDialog(null, "You do nothing");
+		}
+	}
+
+	/**
+	 * @param effect
+	 * @param player
+	 * @param board
+	 * 
+	 * This method determines what action must be performed based on the tile that the player has landed on.  Individual methods
+	 * deal with their appropriate actions
+	 */
+	public void effectActivated(BlueTileEffects effect, GamePlayer player, GameBoard board) {
+		switch (effect) {
+		case ATTRACTION:
+			visitAttraction(player, board);
+			break;
+		case CARUPGRADE:
+			upgradeCar(player);
+			break;
+		case NEWHOUSE:
+			getNewHouse(player, board);
+			break;
+		default:
+			JOptionPane.showConfirmDialog(null, "You do nothing");
+			break;
+		}
+	}
+
+	/**
+	 * @param player
+	 * @param board
+	 * 
+	 * Takes away the price of the current attraction from the players balance and adds the appropriate Attraction asset to
+	 * their inventory
+	 */
+	public void visitAttraction(GamePlayer player, GameBoard board) {
+		//GameSound.cashSound.play();
+		player.subtractFromPlayerBankBalance(board.getAttractions().get(getMultiplier()).getCurrentEntryPrice());
+		player.getPlayerAssets().add(board.getAttractions().get(getMultiplier()));
+		JOptionPane.showConfirmDialog(null,
+				board.getAttractions().get(getMultiplier()).getAssetName() + " is added to your inventory");
+	}
+
+	/**
+	 * @param player
+	 * If the player's car isn't already at max level will deduct 1000 from the player's current balance and upgrade their
+	 * car to the next tier, if at max level it lets the user know this and does nothing
+	 */
+	public void upgradeCar(GamePlayer player) {
+		if (player.getPlayerCar().getPlayerCar() != CarTypes.TIER4) {
+			player.upgradeCar();
+		} else {
+			JOptionPane.showConfirmDialog(null, "Your car is already fully upgraded");
+		}
+	}
+
+	/**
+	 * @param player
+	 * @param board
+	 * Checks firstly if the area the player has landed in has houses left to buy, if no houses are available the player is told this
+	 * and nothing happens, if there are houses available the player will be shown up to 3 and get to choose a house which is then deducted from 
+	 * their balance and added to their inventory
+	 */
+	public void getNewHouse(GamePlayer player, GameBoard board) {
+		GameAssetHouse house;
+		if (getMultiplier() == 0 && board.getFallsHouses().getDeck().size() > 0) {
+			house = board.getFallsHouses().drawThreeForDecision();
+			if (house != null) {
+				player.buyNewHouse(house, board);
+			}
+		} else if (getMultiplier() == 1 && board.getUniHouses().getDeck().size() > 0) {
+			house = board.getUniHouses().drawThreeForDecision();
+			if (house != null) {
+				player.buyNewHouse(house, board);
+			}
+		} else if (getMultiplier() == 2 && board.getCathedralHouses().getDeck().size() > 0) {
+			house = board.getCathedralHouses().drawThreeForDecision();
+			if (house != null) {
+				player.buyNewHouse(house, board);
+			}
+		} else if (getMultiplier() == 3 && board.getTitanicHouses().getDeck().size() > 0) {
+			house = board.getTitanicHouses().drawThreeForDecision();
+			if (house != null) {
+				player.buyNewHouse(house, board);
+			}
+		} else {
+			JOptionPane.showConfirmDialog(null, "There are no more houses in this area");
+		}
+	}
+}

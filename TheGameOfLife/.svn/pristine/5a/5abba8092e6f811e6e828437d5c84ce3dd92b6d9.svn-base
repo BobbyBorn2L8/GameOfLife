@@ -1,0 +1,113 @@
+package gameOfLife;
+
+import java.awt.Graphics2D;
+
+public class GameBoardTileList {
+	
+	private TileNode headTileNode;
+	private int listSize;
+	private final int TILE_SPACING_PX = 10;
+	
+	public GameBoardTileList()
+	{
+		this.listSize = 0;
+	}
+	
+	public void addNode(TileNode tileNodeToAdd, char direction)	{
+		if(listSize == 0)
+		{
+			this.headTileNode = tileNodeToAdd;
+		}
+		else
+		{
+			TileNode currentNode = this.headTileNode;
+			
+			while(currentNode.getNextTileNode() != null)
+			{
+				currentNode = currentNode.getNextTileNode();
+			}
+			
+			if(direction == 'u' || direction == 'U')
+			{
+				tileNodeToAdd.getTile().setxCoord(currentNode.getTile().getxCoord());
+				tileNodeToAdd.getTile().setyCoord(currentNode.getTile().getyCoord() - currentNode.getTile().getEntityImage().getHeight() - TILE_SPACING_PX);
+			}
+			else if(direction == 'd' || direction == 'D')
+			{
+				tileNodeToAdd.getTile().setxCoord(currentNode.getTile().getxCoord());
+				tileNodeToAdd.getTile().setyCoord(currentNode.getTile().getyCoord() + currentNode.getTile().getEntityImage().getHeight() + TILE_SPACING_PX);
+			}
+			else if(direction == 'r' || direction == 'R')
+			{
+				tileNodeToAdd.getTile().setxCoord(currentNode.getTile().getxCoord() + currentNode.getTile().getEntityImage().getWidth() + TILE_SPACING_PX);
+				tileNodeToAdd.getTile().setyCoord(currentNode.getTile().getyCoord());
+			}
+			else if(direction == 'l' || direction == 'L')
+			{
+				tileNodeToAdd.getTile().setxCoord(currentNode.getTile().getxCoord() - currentNode.getTile().getEntityImage().getWidth() - TILE_SPACING_PX);
+				tileNodeToAdd.getTile().setyCoord(currentNode.getTile().getyCoord());
+			}
+			
+			currentNode.setNextTileNode(tileNodeToAdd);
+		}
+		
+		listSize++;
+	}
+	
+	public void drawList(Graphics2D graphicsPanel)
+	{
+		if(listSize == 0)
+		{
+			return;
+		}
+		else
+		{
+			TileNode currentNode = this.headTileNode;
+			
+			while(currentNode.getNextTileNode() != null)
+			{
+				currentNode.getTile().drawEntity(graphicsPanel);
+				currentNode = currentNode.getNextTileNode();
+			}
+			
+			currentNode.getTile().drawEntity(graphicsPanel);
+		}
+	}
+}
+
+class TileNode{
+	
+	private Tile tile;
+	private TileNode nextTileNode;
+	private TileNode sideListHeadNode;
+	
+	public TileNode(Tile tile, TileNode sideListHeadNode)
+	{
+		this.tile = tile;
+		this.sideListHeadNode = sideListHeadNode;
+	}
+
+	public Tile getTile() {
+		return tile;
+	}
+
+	public void setTile(Tile tile) {
+		this.tile = tile;
+	}
+
+	public TileNode getNextTileNode() {
+		return nextTileNode;
+	}
+
+	public void setNextTileNode(TileNode nextTileNode) {
+		this.nextTileNode = nextTileNode;
+	}
+
+	public TileNode getSideListHeadNode() {
+		return sideListHeadNode;
+	}
+
+	public void setSideListHeadNode(TileNode sideListHeadNode) {
+		this.sideListHeadNode = sideListHeadNode;
+	}
+}

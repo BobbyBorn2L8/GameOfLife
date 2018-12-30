@@ -1,0 +1,141 @@
+package gameOfLife;
+
+import java.awt.Graphics2D;
+
+import javax.swing.JOptionPane;
+
+/**
+ * @author Robert Kordula 40131366
+ * Extends Tile, its purpose is to stop the player on the current tile, whether they will land on it 
+ * or not and perform the action it says on the tile
+ */
+public class RedTile extends Tile 
+{
+	RedTileAction action;
+	public RedTile(String imageName, String tileText, RedTileAction action) 
+	{
+		super(0, 0, imageName, 0, tileText, TileEffects.NOTHING);
+		this.action = action;
+	}
+
+	@Override
+	/**
+	 * RedTile needs to return a boolean to report if the action was successful so onLand can't be used
+	 * so remains empty
+	 */
+	public void onLand(GamePlayer player, GameBoard board, Graphics2D panel)
+	{
+		
+	}
+	
+	/**
+	 * @param player
+	 * @param board
+	 * @param movesRemaining
+	 * @param panel
+	 * @return
+	 * Replaces onLand for RedTiles only.  This method will determine what methods to run based off the RedTileAction enum
+	 * Returns true if the player can continue moving or false if the player must stay
+	 */
+	public boolean performAction (GamePlayer player, GameBoard board, int movesRemaining, Graphics2D panel)
+	{
+		GameLogic.gameLog.addLog(getTileText());
+		switch (action)
+		{
+			case BUY_HOUSE:
+				return buyHouse(player, board);
+			case GET_MARRIED:
+				return getMarried(player, board, panel);
+			case SPIN:
+				return spinWheel(player, movesRemaining);
+			case LEAVE_UNIVERSITY:
+				return leaveUni(player, movesRemaining);
+		default:
+			break;
+		}
+		return false;
+	}
+	
+	/**
+	 * @param player
+	 * @param board
+	 * @return
+	 * If the player doesn't have a house already, this tile will force them to buy a house. 
+	 * If the player has a house, the player must pay out house Maintenance
+	 * Always returns true
+	 */
+	public boolean buyHouse(GamePlayer player, GameBoard board)
+	{
+		//GameSound.doorBellSound.play();
+		if (player.getCurrentHouse() == null)
+		{
+			JOptionPane.showMessageDialog(null, "Your parents have kicked you out of your house you must find a new house in the Falls");
+			do
+			{
+				player.buyNewHouse(board.getFallsHouses().drawThreeForDecision(), board);
+			} while(player.getCurrentHouse() == null);
+			return true;
+		}
+		JOptionPane.showMessageDialog(null, "Assorted bills please pay £" + 2000);
+		player.subtractFromPlayerBankBalance(2000);
+		return true;
+	}
+	
+	/**
+	 * @param player
+	 * @param board
+	 * @param panel
+	 * @return
+	 * If the player isn't married yet, will add a SpousePeg to the player
+	 * If player is already married will give the player £1000
+	 * Always returns true
+	 */
+	public boolean getMarried(GamePlayer player, GameBoard board, Graphics2D panel)
+	{
+		if (player.isPlayerMarried())
+		{
+			JOptionPane.showMessageDialog(null, "HAPPY ANNIVERSARY: Receive £1000");
+			player.addToPlayerBankBalance(1000);
+		}
+		else
+		{
+			JOptionPane.showMessageDialog(null, "Meet the love of your life: Get married");
+			player.getMarried(panel);
+		}
+		return true;
+	}
+	
+	/**
+	 * @param player
+	 * @param movesRemaining
+	 * @return
+	 * This method will allow the player to spin again, but will stop the player from moving til they 
+	 * spin the right value
+	 */
+	public boolean spinWheel(GamePlayer player, int movesRemaining)
+	{
+		player.setCanSpin(true);
+		JOptionPane.showMessageDialog(null, "Please spin at least five to continue");
+		player.setMovesRemaining(movesRemaining);
+		player.setStuck(true);
+		return false;
+	}
+	
+	/**
+	 * @param player
+	 * @param movesRemaining
+	 * @return
+	 * This method will allow the player to spin again, but will stop the player from moving til they 
+	 * spin the right value and will set examSeason to true, when the right value is reached on the
+	 * spinner this will trigger to player to search for a career
+	 */
+	private boolean leaveUni(GamePlayer player, int movesRemaining)
+	{
+		player.setCanSpin(true);
+		player.setExamSeason(true);
+		JOptionPane.showMessageDialog(null, "EXAM TIME: Please spin at least five to continue");
+		player.setMovesRemaining(movesRemaining);
+		player.setStuck(true);
+		return false;
+	}
+}

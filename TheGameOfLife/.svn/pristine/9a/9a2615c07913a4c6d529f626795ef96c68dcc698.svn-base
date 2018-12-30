@@ -1,0 +1,11 @@
+package gameOfLife;
+
+public enum TileEffects 
+{
+	PAY_ANOTHER, FINE, REWARD, HAVE_SON, HAVE_DAUGHTER, HAVE_TWINS, GET_PET, LIFE_TILE;
+	
+	public void effectActivated(GamePlayer player, int multiplier, TileEffects effect)
+	{
+		
+	}
+}

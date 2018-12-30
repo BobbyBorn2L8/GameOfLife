@@ -1,0 +1,77 @@
+package gameOfLife;
+
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+public abstract class GameEntity {
+	
+	private int xCoord, yCoord;
+	private BufferedImage entityImage;
+	
+	public GameEntity(int xCoord, int yCoord, String imageName)
+	{
+		this.xCoord = xCoord;
+		this.yCoord = yCoord;
+		this.entityImage = null;
+		
+	    try
+	    {
+	    	this.entityImage = ImageIO.read(getClass().getResource(imageName));
+	    }
+	    catch (IOException e) 
+	    {
+	        System.out.println(e.toString());
+	    }
+	}
+	
+	public void drawEntity(Graphics2D graphicsPanel)
+	{
+		graphicsPanel.drawImage(entityImage, xCoord, yCoord, null);
+	}
+	
+	public boolean entityTouched(int xCoord, int yCoord)
+	{
+		if(xCoord >= this.xCoord && xCoord <= (this.xCoord + entityImage.getWidth()) 
+				&& yCoord >= this.yCoord && yCoord <= (this.yCoord + entityImage.getHeight()))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	public int getxCoord() {
+		return xCoord;
+	}
+
+	public void setxCoord(int xCoord) {
+		this.xCoord = xCoord;
+	}
+
+	public int getyCoord() {
+		return yCoord;
+	}
+
+	public void setyCoord(int yCoord) {
+		this.yCoord = yCoord;
+	}
+
+	public BufferedImage getEntityImage() {
+		return entityImage;
+	}
+
+	public void setEntityImage(BufferedImage entityImage) {
+		this.entityImage = entityImage;
+	}
+
+
+	
+	
+}

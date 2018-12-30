@@ -1,0 +1,19 @@
+package gameOfLife;
+
+public class RedTile extends Tile 
+{
+
+	public RedTile(int xCoord, int yCoord, String imageName, int multiplier, String tileText, TileEffects effect) 
+	{
+		super(xCoord, yCoord, imageName, multiplier, tileText, effect);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void onLand(GamePlayer player)
+	{
+		// TODO Auto-generated method stub
+		getEffect1().effectActivated(player, getMultiplier(), getEffect1());
+	}
+
+}

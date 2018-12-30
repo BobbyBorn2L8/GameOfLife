@@ -1,0 +1,62 @@
+package gameOfLife;
+
+/**
+ * 
+ * @author Rachael Coulter
+ * @version 1.0
+ * @since 06/04/16
+ *
+ * The player can buy a house whenever they land on a buy a house tile from that district
+ * Different areas are different prices
+ * Within that area you can choose between three randomly selected houses
+ * Their prices will be affected by a multiplier which is based on the housing market
+ * You may only have one house at any time
+ * 
+ * The player only sells the house when they buy a new house
+ * The selling price is determined by the selling price multiplied by the housing market multiplier
+ * 
+ * 
+ */
+
+public class GameAssetHouse extends GameAsset {
+	
+	private District district;
+	
+	/** Constructor
+	 * 
+	 * @param houseName - This is the name of the house, used for descriptive purposes
+	 * @param houseBasePrice - This is the price of the house, before market multipliers are applied
+	 * @param houseDistrict - This is the district that the house is found in
+	 * @param houseNoOfBedrooms - The number of bedrooms the house has, which will impact how many people can live in the house
+	 * 
+	 */
+	
+	public GameAssetHouse(String houseName, District district, int originalHousePrice, String houseImageName) 
+	{
+		super(originalHousePrice, houseName, houseImageName);
+		this.district = district;		
+	}
+	
+	@Override
+	public void sellAsset(GamePlayer assetOwner)
+	{
+		super.sellAsset(assetOwner);
+		assetOwner.setCurrentHouse(null);
+	}
+	
+	@Override
+	public void buyAsset(GamePlayer assetBuyer)
+	{
+		super.buyAsset(assetBuyer);
+		assetBuyer.setCurrentHouse(this);
+	}
+	
+	// Getters and Setters
+	public District getDistrict() {
+		return district;
+	}
+
+	public void setDistrict(District district) {
+		this.district = district;
+	}
+}

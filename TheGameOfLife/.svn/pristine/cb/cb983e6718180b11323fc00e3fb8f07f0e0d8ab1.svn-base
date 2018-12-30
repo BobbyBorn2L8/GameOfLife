@@ -1,0 +1,33 @@
+package gameOfLife;
+
+import javax.swing.JOptionPane;
+
+public class GameBoardEndTurnButton extends GameEntity {
+	
+	private GameLogic gameLogic;
+
+	public GameBoardEndTurnButton(int xCoord, int yCoord, String imageName, GameLogic gameLogic) {
+		super(xCoord, yCoord, "btn_EndTurn.png");
+		// TODO Auto-generated constructor stub
+		this.gameLogic = gameLogic;
+	}
+	
+	public void buttonPressedEffect()
+	{
+		Object[] options = { "End Turn", "Cancel" };
+		int choice = JOptionPane.showOptionDialog(gameLogic.getBoard().getMainFrame(), "Are you sure you wish to end your turn?", "Exit Turn?",
+		             JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+		             null, options, options[0]);
+		
+		if(choice == 0)
+		{
+			this.gameLogic.moveTurnToNextPlayer();
+			this.gameLogic.getBoard().updateGameBoard();
+		}
+		else if(choice != 1)
+		{
+			buttonPressedEffect();
+		}
+	}
+
+}

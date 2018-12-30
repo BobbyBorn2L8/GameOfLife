@@ -1,0 +1,19 @@
+package gameOfLife;
+
+import java.awt.Graphics2D;
+
+public class GreenTile extends Tile {
+
+	public GreenTile() {
+		super(0, 0, "resizedimages/green_01.png", 0, "", null);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void onLand(GamePlayer player, GameBoard board, Graphics2D panel)
+	{
+		// TODO Auto-generated method stub
+		player.getPaid();
+	}
+
+}

@@ -1,0 +1,237 @@
+package gameOfLife;
+
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import javax.swing.JOptionPane;
+
+public class GameLogic {
+	
+	private GamePlayer currentPlayer;
+	private GameBoard board;
+	private ArrayList<GamePlayer> players;
+	private ArrayList<GamePlayer> playersRanked;
+	private ArrayList<GameAssetHouse> housesInMarket; 
+	private ArrayList<GameAssetStock> stocksInMarket;
+	private int currentIndex;
+	private int retirementAge;
+	private double currentStockMarketMultiplier;
+	private double currentHousingMarketMultiplier;
+	private GameEventsLog gameLog;
+
+	public GameLogic(ArrayList<GamePlayer> players, GameBoard board, ArrayList<GameAssetHouse> housesInMarket)
+	{
+		this.board = board;
+		this.players = players;
+		this.playersRanked = players;
+		this.currentIndex = 0;
+		this.currentPlayer = players.get(0);
+		this.currentHousingMarketMultiplier = 1.0;
+		this.currentStockMarketMultiplier = 1.0;
+		this.housesInMarket = housesInMarket;
+		this.gameLog = new GameEventsLog();
+		setRanks();
+	}
+	
+	public void mouseClickedLogic(int xCoord, int yCoord, GameBoard board)
+	{
+		if(board.spinner.entityTouched(xCoord, yCoord))
+		{
+			board.spinner.rotateSpinner(board.getGameCanvas().getG2());
+			return;
+		}
+		/*
+		else if(board.player.entityTouched(xCoord, yCoord))
+		{
+			new GamePlayerWallet(board.player);
+		}
+		*/
+	}
+	
+	public void playerChoiceWorkVSQueens(GamePlayer player)
+	{
+		Object[] options = { "Go To Work", "Go To Queens" };
+		int choice = JOptionPane.showOptionDialog(null, "Please select your initial choice!", "Please Make A Choice",
+		             JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+		             null, options, options[0]);
+		
+		if(choice == 0)
+		{
+			player.setWorkImmediately(true);
+			player.setUniversityImmediately(false);
+		}
+		else
+		{
+			player.setWorkImmediately(false);
+			player.setUniversityImmediately(true);
+		}
+		
+		player.setFirstTurn(false);
+	}
+	
+	public boolean playerMustRetire(GamePlayer player)
+	{
+		return player.getPlayerAge() >= retirementAge;
+	}
+	
+	public void checkPlayerAge(GamePlayer player)
+	{
+		if(playerMustRetire(player))
+		{
+			player.setInGame(false);
+		}
+	}
+	
+	public void moveTurnToNextPlayer()
+	{
+		if(currentIndex == players.size() - 1)
+		{
+			currentIndex = 0;
+		}
+		
+		currentPlayer = players.get(currentIndex);
+		currentIndex++;
+	}
+	
+	public void sortRankedPlayers() // sort descending
+	{
+		for(int i = 0; i < playersRanked.size() - 1; i++)
+		{				
+			if(playersRanked.get(i).compareTo(playersRanked.get(i+1)) < 0) // i.e the player is 'lesser' than the player after it
+			{
+				swapElements(i);
+			}
+		}
+		
+		setRanks();
+	}
+	
+	private void setRanks()
+	{
+		for (int i  = 0; i < playersRanked.size(); i++)
+		{
+			playersRanked.get(i).setCurrentRanking(i + 1);
+		}
+	}
+	
+	public void printRankedPlayers()
+	{
+		for (GamePlayer gamePlayer : players) 
+		{
+			System.out.println(gamePlayer.getCurrentRanking() + " | " + gamePlayer.getPlayerName() );
+		}
+		
+		System.out.println();
+	}
+	
+	private void swapElements(int lowerIndex)
+	{
+		GamePlayer intermediateObject = playersRanked.get(lowerIndex);
+		playersRanked.set(lowerIndex, playersRanked.get(lowerIndex + 1));
+		playersRanked.set(lowerIndex + 1, intermediateObject);
+	}
+	
+	// To help Rachael with testing the sorted array
+	public boolean testRankedPlayersIsSortedDescending()
+	{
+		for(int i = 0; i < playersRanked.size() - 2; i++)
+		{
+			if(playersRanked.get(i).compareTo(playersRanked.get(i+1)) < 0) // i.e the player is 'lesser' than the player after it
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public void applyHousingMarketMultiplierToHouses()
+	{
+		for (GameAssetHouse gameAssetHouse : housesInMarket) 
+		{
+			gameAssetHouse.generateNewHousePriceUsingMarket(currentHousingMarketMultiplier);
+		}
+	}
+	
+	public GamePlayer getCurrentPlayer() {
+		return currentPlayer;
+	}
+
+	public void setCurrentPlayer(GamePlayer currentPlayer) {
+		this.currentPlayer = currentPlayer;
+	}
+
+	public ArrayList<GamePlayer> getPlayers() {
+		return players;
+	}
+
+	public void setPlayers(ArrayList<GamePlayer> players) {
+		this.players = players;
+	}
+
+	public int getCurrentIndex() {
+		return currentIndex;
+	}
+
+	public void setCurrentIndex(int currentIndex) {
+		this.currentIndex = currentIndex;
+	}
+
+	public int getRetirementAge() {
+		return retirementAge;
+	}
+
+	public void setRetirementAge(int retirementAge) {
+		this.retirementAge = retirementAge;
+	}
+
+	public GameBoard getBoard() {
+		return board;
+	}
+
+	public void setBoard(GameBoard board) {
+		this.board = board;
+	}
+
+	public double getCurrentStockMarketMultiplier() {
+		return currentStockMarketMultiplier;
+	}
+
+	public void setCurrentStockMarketMultiplier(double currentStockMarketMultiplier) {
+		this.currentStockMarketMultiplier = currentStockMarketMultiplier;
+	}
+
+	public double getCurrentHousingMarketMultiplier() {
+		return currentHousingMarketMultiplier;
+	}
+
+	public void setCurrentHousingMarketMultiplier(double currentHousingMarketMultiplier) {
+		this.currentHousingMarketMultiplier = currentHousingMarketMultiplier;
+	}
+
+	public ArrayList<GamePlayer> getPlayersRanked() {
+		return playersRanked;
+	}
+
+	public void setPlayersRanked(ArrayList<GamePlayer> playersRanked) {
+		this.playersRanked = playersRanked;
+	}
+
+	public ArrayList<GameAssetHouse> getHousesInMarket() {
+		return housesInMarket;
+	}
+
+	public void setHousesInMarket(ArrayList<GameAssetHouse> housesInMarket) {
+		this.housesInMarket = housesInMarket;
+	}
+
+	public ArrayList<GameAssetStock> getStocksInMarket() {
+		return stocksInMarket;
+	}
+
+	public void setStocksInMarket(ArrayList<GameAssetStock> stocksInMarket) {
+		this.stocksInMarket = stocksInMarket;
+	}
+	
+	
+}

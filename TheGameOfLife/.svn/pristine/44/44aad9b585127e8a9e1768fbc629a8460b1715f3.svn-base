@@ -1,0 +1,6 @@
+package gameOfLife;
+
+public enum BlueTileEffects 
+{
+	ATTRACTION, CARUPGRADE, NEWHOUSE, NEWCAREER, NOTHING
+}

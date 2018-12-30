@@ -1,0 +1,77 @@
+package gameOfLife;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+
+public class CareerDecks extends GameEntity
+{
+	private ArrayList<Careers> deck = new ArrayList<Careers>();
+	
+	public CareerDecks(int xCoord, int yCoord, String imageName, String deckName)
+	{
+		super(xCoord, yCoord, imageName);
+		// TODO Auto-generated constructor stub
+	}
+	
+	public void addCard(Careers card)
+	{
+		deck.add(card);
+	}
+	
+	public void removeCard(Careers card)
+	{
+		deck.remove(card);
+	}
+	
+	public Careers getCardByID(int index)
+	{
+		if (index >= 0 && index < deck.size())
+		{
+			return deck.get(index);
+		}
+		return null;
+	}
+	
+	public Careers getRandomCard()
+	{
+		int randomNumber = (int)(Math.random() * deck.size());
+		return getCardByID(randomNumber);
+	}
+	
+	public Careers drawCard()
+	{
+		Careers card = getRandomCard();
+		removeCard(card);
+		return card;
+	}
+	
+	public void drawThreeForDecision()
+	{
+		ArrayList<Careers> c = new ArrayList<Careers>();
+		final JButton[] options = new JButton[3];
+		for (int iii = 0; iii < 3; iii++)
+		{
+			final int loop = iii;
+			c.add(drawCard());
+			options[iii] = new JButton();
+			options[iii].addActionListener(new ActionListener() 
+			{
+			    @Override
+			    public void actionPerformed(ActionEvent e) 
+			    {
+			    	System.out.println("Card no. " + loop + " was selected");
+			    }
+			});
+			options[iii].setIcon(new ImageIcon(c.get(iii).getEntityImage()));
+		}
+		int n = JOptionPane.showOptionDialog(null, "Please select an option",
+				"DECISION TIME!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+		System.out.println(n);
+	}
+}

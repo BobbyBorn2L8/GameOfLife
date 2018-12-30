@@ -1,0 +1,70 @@
+package gameOfLife;
+
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+public class ChildPeg extends FamilyPegs
+{
+	//True is male, false is female//
+	private boolean gender;
+	public ChildPeg(int xCoord, int yCoord, boolean gender) 
+	{
+		super(xCoord, yCoord, "");
+		this.setGender(gender);
+		String imageName;
+		if (gender)
+		{
+			imageName = "tempBoy.png";
+		}
+		else
+		{
+			imageName = "tempGirl.png";
+		}
+		try
+	    {
+	    	setEntityImage(ImageIO.read(getClass().getResource(imageName)));
+	    }
+	    catch (IOException e) 
+	    {
+	        System.out.println(e.toString());
+	    }
+	}
+	@Override
+	public void movePegToPlayer(GamePlayer player, int position) 
+	{
+		int XDifference;
+		int YDifference;
+		switch(position)
+		{
+			case 1:
+				XDifference = 0;
+				YDifference = 50;
+				break;
+			case 2:
+				XDifference = 50;
+				YDifference = 0;
+				break;
+			case 3:
+				XDifference = 50;
+				YDifference = 50;
+				break;
+			case 4:
+				XDifference = 100;
+				YDifference = 0;
+				break;
+			default:
+				XDifference = 100;
+				YDifference = 50;
+				break;
+		}
+		this.setxCoord(player.getxCoord() + (player.getEntityImage().getWidth() / 2) - (this.getEntityImage().getWidth() / 2) - XDifference);
+		this.setyCoord(player.getyCoord() - (this.getEntityImage().getHeight() / 2) + YDifference);
+	}
+	public boolean isGender() {
+		return gender;
+	}
+	public void setGender(boolean gender) {
+		this.gender = gender;
+	}
+}

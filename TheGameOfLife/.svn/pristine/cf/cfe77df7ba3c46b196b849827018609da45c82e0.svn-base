@@ -1,0 +1,62 @@
+package gameOfLife;
+
+import javax.swing.JOptionPane;
+
+public class RedTile extends Tile 
+{
+	RedTileAction action;
+	public RedTile(int xCoord, int yCoord, String imageName, String tileText, RedTileAction action) 
+	{
+		super(xCoord, yCoord, imageName, 0, tileText, TileEffects.NOTHING);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void onLand(GamePlayer player, GameBoard board)
+	{
+		
+	}
+	
+	public boolean performAction (GamePlayer player, GameBoard board)
+	{
+		//All test code atm, until functionality is added later//
+		switch (action)
+		{
+			case BUY_HOUSE:
+				if (player.getCurrentHouse() == null)
+				{
+					JOptionPane.showMessageDialog(null, "Your parents have kicked you out of your house you must find a new house in Cathedral Quarter");
+					do
+					{
+						player.buyNewHouse(board.getCathedralHouses().drawThreeForDecision(), board);
+					} while(player.getCurrentHouse() == null);
+					return true;
+				}
+				JOptionPane.showMessageDialog(null, "Assorted bills please pay £" + player.getCurrentHouse().getHouseMaintenance());
+				player.payHouseMaintenance();
+				return true;
+			case GET_MARRIED:
+				if (player.isPlayerMarried())
+				{
+					JOptionPane.showMessageDialog(null, "HAPPY ANNIVERSARY");
+					player.addToPlayerBankBalance(500);
+				}
+				else
+				{
+					player.getMarried();
+				}
+				return true;
+			case SPIN:
+				player.setCanSpin(true);
+				JOptionPane.showMessageDialog(null, "Please spin at least five to continue");
+				player.setStuck(true);
+				return false;
+			case LEAVE_UNIVERSITY:
+				player.setCanSpin(true);
+				JOptionPane.showMessageDialog(null, "EXAM TIME: Please spin at least five to continue");
+				player.setStuck(true);
+				return false;
+		}
+		return false;
+	}
+}

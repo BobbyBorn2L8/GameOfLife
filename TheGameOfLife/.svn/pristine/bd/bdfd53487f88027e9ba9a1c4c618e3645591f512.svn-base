@@ -1,0 +1,40 @@
+package gameOfLife;
+
+public class RedTile extends Tile 
+{
+	RedTileAction action;
+	public RedTile(int xCoord, int yCoord, String imageName, int multiplier, String tileText, RedTileAction action) 
+	{
+		super(xCoord, yCoord, imageName, multiplier, tileText, TileEffects.NOTHING);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void onLand(GamePlayer player)
+	{
+		
+	}
+	
+	public boolean performAction (GamePlayer player)
+	{
+		//All test code atm, until functionality is added later//
+		switch (action)
+		{
+			case BUY_HOUSE:
+				System.out.println("BUY HOUSE");
+				break;
+			case CHOOSE_CAREER:
+				System.out.println("CHOOSE CAREER");
+				break;
+			case GET_MARRIED:
+				System.out.println("Get married");
+				break;
+			case SPIN:
+				System.out.println("Spin the spinner");
+				break;
+			default:
+				break;
+		}
+		return false;
+	}
+}

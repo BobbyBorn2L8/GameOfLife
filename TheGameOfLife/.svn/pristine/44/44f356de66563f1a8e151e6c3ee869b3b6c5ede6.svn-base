@@ -1,0 +1,157 @@
+package gameOfLife;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Iterator;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+
+/**
+ * @author Robert Kordula 40131366
+ * This class creates a screen to allow the player to view their assets and sell them as required
+ */
+public class GamePlayerAssetScreen extends CommonScreenAttributes {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JFrame mainFrame;
+	private JPanel pane = new JPanel();
+	private JScrollPane scroll;
+	private Font font = new Font("Serif", Font.PLAIN, 25);
+	
+	public GamePlayerAssetScreen(GamePlayer player)
+	{	
+		pane.setLayout(new BoxLayout(pane, BoxLayout.X_AXIS));
+		pane.setBackground(new Color(239, 253, 222));
+		
+		JPanel jpanel = new JPanel();
+		jpanel.setLayout(new BoxLayout(jpanel, BoxLayout.Y_AXIS));
+		jpanel.setBackground(new Color(239, 253, 222));
+		
+		JLabel assetName = new JLabel("Asset Name");
+		assetName.setFont(font);
+		JLabel currentMarketValue = new JLabel("Market Value");
+		currentMarketValue.setFont(font);
+		JLabel sellAsset = new JLabel("Sell Asset?");
+		sellAsset.setFont(font);
+		
+		jpanel.add(Box.createRigidArea(new Dimension(0, 250)));
+		jpanel.add(assetName);
+		jpanel.add(currentMarketValue);
+		jpanel.add(sellAsset);
+		
+		pane.add(jpanel);
+		
+		for (Iterator<GameAsset> iterator = player.getPlayerAssets().iterator(); iterator.hasNext();)
+		{
+			Panel panel = new Panel(player, (GameAssetAttraction)iterator.next());
+			
+			pane.add(panel);
+		}
+		int windowSize = 200 + player.getPlayerAssets().size() * 250;
+		if (windowSize > 900)
+		{
+			windowSize = 900;
+		}
+		if (player.getCurrentHouse() != null)
+		{
+			Panel panel = new Panel(player, player.getCurrentHouse());
+			pane.add(panel);
+			windowSize += 254;
+		}
+		
+		//Creating the window//
+		scroll = new JScrollPane(pane);
+		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+		scroll.setBackground(new Color(239, 253, 222));
+		mainFrame = new JFrame(player.getPlayerName() + "'s Assets");
+		mainFrame.setBackground(new Color(239, 253, 222));
+		mainFrame.setResizable(true);
+		mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		mainFrame.setLocationRelativeTo(null);
+		mainFrame.add(scroll);
+		mainFrame.setSize(windowSize, 450);
+		mainFrame.setVisible(true);
+	}
+
+	private class Panel extends JPanel
+	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		private BoxLayout layout = new BoxLayout(this, BoxLayout.Y_AXIS);
+		private JLabel imageIcon, name, currentValue;
+		private JButton sellAsset;
+		
+		/**
+		 * @param player
+		 * @param asset
+		 * Asset has its own panel, that is removed if the user clicks the sell asset buttom, the panel displays 
+		 * the asset, as well as its name and current price
+		 */
+		public Panel(GamePlayer player, GameAsset asset)
+		{
+			setLayout(layout);
+			
+			imageIcon = new JLabel(new ImageIcon(asset.getEntityImage()));
+			imageIcon.setPreferredSize(new Dimension(200, 250));
+			name = new JLabel(asset.getAssetName());
+			name.setFont(font);
+			currentValue = new JLabel("£" + String.valueOf(asset.getCurrentAssetValue()));
+			currentValue.setFont(font);
+			sellAsset = new JButton("Sell asset");
+			sellAsset.setFont(font);
+			sellAsset.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Object[] options = { "YES", "NO" };
+					int choice = JOptionPane.showOptionDialog(null, "Are you sure you want to sell" + asset.getAssetName() + " for £" + asset.getCurrentAssetValue(),
+					             "", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+					             null, options, options[0]);
+					if (choice == 0)
+					{
+						player.sellAsset(asset);
+						JOptionPane.showMessageDialog(null, asset.getAssetName() + " was sold for £" + asset.getCurrentAssetValue(), "", JOptionPane.INFORMATION_MESSAGE, null);
+						hidePanel();
+					}
+				}
+			});
+			this.add(imageIcon);
+			this.add(Box.createRigidArea(new Dimension(10, 0)));
+			this.add(name);
+			this.add(Box.createRigidArea(new Dimension(120, 0)));
+			this.add(currentValue);
+			this.add(Box.createRigidArea(new Dimension(80, 0)));
+			this.add(sellAsset);
+			
+			this.setBackground(new Color(239, 253, 222));
+			this.setVisible(true);
+		}
+		
+		public void hidePanel()
+		{
+			this.setVisible(false);
+		}
+		public JButton getSellAsset() {
+			return sellAsset;
+		}
+
+	}
+}

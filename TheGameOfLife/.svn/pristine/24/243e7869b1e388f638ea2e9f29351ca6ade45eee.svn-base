@@ -1,0 +1,43 @@
+package gameOfLife;
+
+/**
+ * 
+ * @author Josh
+ *
+ * When a child is created it is because the player has
+ * landed on the 'had child' tile so is of 0 years old
+ * 
+ */
+
+//TODO:  Josh and Dan - Increment childs age eaah spin
+//TODO:  Josh and Dan - Update endGameValue every spin
+
+public class GameAssetChild extends GameAsset{
+	
+	// INSTANCE VARIABLES
+	private int childAge;
+
+
+
+	// CONSTRUCTOR
+	public GameAssetChild() {
+
+		super(true);
+		childAge = 0;
+	}
+	
+	
+	// GETTERS AND GETTERS
+	public int getChildAge() {
+		return childAge;
+	}
+
+	public void setChildAge(int childAge) {
+		this.childAge = childAge;
+	}
+	
+	// METHOS
+
+	
+
+}

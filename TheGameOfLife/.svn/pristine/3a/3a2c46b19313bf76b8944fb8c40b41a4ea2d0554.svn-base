@@ -1,0 +1,62 @@
+package gameOfLife;
+
+import java.util.ArrayList;
+
+public class CareerTester 
+{
+	/*
+	 * Method no longer works because careerDecks was removed and replaced with Deck<E>//
+	*/
+	public static void main(String[] args)
+	{
+		/*Generate a deck of cards to test drawing three cards//
+		Decks<Careers> decks = new Decks<Careers>(240, 100, "orange_03.png");
+		Careers card = new Careers(0, 0, "orange_01.png", null, 0);
+		Careers card1 = new Careers(0, 0, "orange_02.png", null, 1);
+		Careers card2 = new Careers(0, 0, "orange_03.png", null, 2);
+		Careers card3 = new Careers(0, 0, "orange_04.png", null, 3);
+		Careers card4 = new Careers(0, 0, "orange_05.png", null, 4);
+		Careers card5 = new Careers(0, 0, "orange_06.png", null, 5);
+		decks.addCard(card);
+		decks.addCard(card1);
+		decks.addCard(card2);
+		decks.addCard(card3);
+		decks.addCard(card4);
+		decks.addCard(card5);
+		decks.addCard(card);
+		decks.addCard(card1);
+		decks.addCard(card2);
+		decks.addCard(card3);
+		decks.addCard(card4);
+		decks.addCard(card5);
+		//Three random cards are selected and player can choose one of the cards//
+		Careers cardChoosen = decks.drawThreeForDecision();
+		System.out.println(cardChoosen.getSalary());
+		*/
+		ArrayList<GamePlayer> list = new ArrayList<GamePlayer>();
+		GamePlayer player = new GamePlayer(0, 0, "Bobby", true);
+		list.add(player);
+		list.add(player);
+		Careers card = new Careers(0, 0, "orange_01.png", "Test", 1000);
+		GameBoard board = new GameBoard(list);
+		player.setPlayerCareer(card);
+		OrangeTile tile1 = new OrangeTile(0, 0, "orange_01.png", 10, "", TileEffects.FINE);
+		OrangeTile tile2 = new OrangeTile(0, 0, "orange_01.png", 10, "", TileEffects.GET_CAT);
+		OrangeTile tile3 = new OrangeTile(0, 0, "orange_01.png", 10, "", TileEffects.GET_DOG);
+		OrangeTile tile4 = new OrangeTile(0, 0, "orange_01.png", 10, "", TileEffects.HAVE_DAUGHTER);
+		OrangeTile tile5 = new OrangeTile(0, 0, "orange_01.png", 10, "", TileEffects.HAVE_SON);
+		OrangeTile tile6 = new OrangeTile(0, 0, "orange_01.png", 10, "", TileEffects.HAVE_TWINS);
+		OrangeTile tile7 = new OrangeTile(0, 0, "orange_01.png", 10, "", TileEffects.PROMOTION);
+		OrangeTile tile8 = new OrangeTile(0, 0, "orange_01.png", 10, "", TileEffects.REWARD);
+		System.out.println("Player money:\t" + player.getPlayerBankBalance());
+		
+		tile1.onLand(player, board);
+		tile2.onLand(player, board);
+		tile3.onLand(player, board);
+		tile4.onLand(player, board);
+		tile5.onLand(player, board);
+		tile6.onLand(player, board);
+		tile7.onLand(player, board);
+		tile8.onLand(player, board);
+	}
+}

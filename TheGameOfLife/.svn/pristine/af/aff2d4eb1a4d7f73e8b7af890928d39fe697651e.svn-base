@@ -1,0 +1,107 @@
+package gameOfLife;
+
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Iterator;
+
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+
+/**
+ * @author Robert Kordula 40131366
+ * A window to allow the current player to view and pay off their loans
+ */
+public class LoanScreen extends CommonScreenAttributes
+{
+	private JFrame mainFrame;
+	private JPanel pane = new JPanel();
+	private JScrollPane scroll;
+	
+	public LoanScreen(GamePlayer player)
+	{	
+		//Frame setup
+		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
+		pane.setBackground(new Color(232, 181, 30));
+		int iii = 0;
+		for (Iterator<Loan> iterator = player.getPlayerLoans().iterator(); iterator.hasNext();)
+		{
+			iii++;
+			Panel panel = new Panel(player, (Loan)iterator.next(), iii);
+			
+			pane.add(panel);
+		}
+		
+		scroll = new JScrollPane(pane);
+		scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scroll.setBackground(new Color(232,181,30));
+		mainFrame = new JFrame(player.getPlayerName() + "'s Assets");
+		mainFrame.setBackground(new Color(232,181,30));
+		mainFrame.setResizable(false);
+		mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		mainFrame.setLocationRelativeTo(null);
+		mainFrame.add(scroll);
+		mainFrame.setSize(1000, 500);
+		mainFrame.setVisible(true);
+		//End Frame setup//
+	}
+
+	private class Panel extends JPanel
+	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		private BoxLayout layout = new BoxLayout(this, BoxLayout.X_AXIS);
+		private JLabel loanNo, amountBorrowed, amountToRepay;
+		private JButton payOffLoan;
+		
+		//Each loan has its own panel, that is removed when the loan is paid off//
+		public Panel(GamePlayer player, Loan loan, int loanNo)
+		{
+			this.setLayout(layout);
+			this.loanNo = new JLabel("Loan No. " + loanNo);
+			amountBorrowed = new JLabel("£" + loan.getLoanAmount());
+			amountToRepay = new JLabel("£" + (int)(loan.getLoanAmount() * 1.25));
+			payOffLoan = new JButton("Sell asset");
+			payOffLoan.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Object[] options = { "YES", "NO" };
+					int choice = JOptionPane.showOptionDialog(null, "Are you sure you want to pay off this loan?  It will cost you £" + (int)(loan.getLoanAmount() * 1.25),
+					             "", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+					             null, options, options[0]);
+					if (choice == 0)
+					{
+						player.payOffLoan(loan);
+						JOptionPane.showConfirmDialog(null, "Loan was paid off");
+						hidePanel();
+					}
+				}
+			});
+			if (loan.getLoanAmount() * 1.25 > player.getPlayerBankBalance())
+			{
+				payOffLoan.setEnabled(false);
+			}
+			this.add(this.loanNo);
+			this.add(amountBorrowed);
+			this.add(amountToRepay);
+			this.add(payOffLoan);
+			this.setBackground(new Color(232,181,30));
+			this.setVisible(true);
+		}
+		
+		public void hidePanel()
+		{
+			this.setVisible(false);
+		}
+	}
+}

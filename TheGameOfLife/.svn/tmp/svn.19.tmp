@@ -1,0 +1,82 @@
+package gameOfLife;
+
+public abstract class Tile extends GameEntity{
+	
+	private GamePlayer playerOnTile;
+	private int multiplier;
+	private TileEffects effect1;
+	private String tileText;
+	private boolean tileActivated;
+	
+	public Tile(int xCoord, int yCoord, String imageName, int multiplier, String tileText, TileEffects effect1)
+	{
+		super(xCoord, yCoord, imageName);
+		this.playerOnTile = null;
+		this.multiplier = multiplier;
+		this.tileText = tileText;
+		this.effect1 = effect1;
+		tileActivated = false;
+	}
+
+	public abstract void onLand(GamePlayer player, GameBoard board);
+	
+	public void movePlayerCoordsToTile(GamePlayer playerOnTile)
+	{
+		playerOnTile.setxCoord(this.getxCoord() + (this.getEntityImage().getWidth() / 2) - (playerOnTile.getEntityImage().getWidth() / 2));
+		playerOnTile.setyCoord(this.getyCoord() - (playerOnTile.getEntityImage().getHeight() / 2));
+	}
+	
+	public int getMultiplier()
+	{
+		return multiplier;
+	}
+
+	public void setMultiplier(int multiplier)
+	{
+		this.multiplier = multiplier;
+	}
+
+	public String getTileText()
+	{
+		return tileText;
+	}
+
+	public void setTileText(String tileText)
+	{
+		this.tileText = tileText;
+	}
+
+	public boolean isTileActivated()
+	{
+		return tileActivated;
+	}
+
+	public void setTileActivated(boolean tileActivated)
+	{
+		this.tileActivated = tileActivated;
+	}
+
+	public GamePlayer getPlayerOnTile() {
+		return playerOnTile;
+	}
+
+	public void setPlayerOnTile(GamePlayer playerOnTile) {
+		this.playerOnTile = playerOnTile;
+
+		if(playerOnTile != null)
+		{
+			movePlayerCoordsToTile(playerOnTile);
+		}
+	}
+
+	public TileEffects getEffect1()
+	{
+		return effect1;
+	}
+
+	public void setEffect1(TileEffects effect1)
+	{
+		this.effect1 = effect1;
+	}
+	
+}

@@ -1,0 +1,419 @@
+package gameOfLife;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.imageio.ImageIO;
+
+public class GamePlayer extends GameEntity implements Comparable<GamePlayer>{
+	
+	// INSTANCE VARIABLES
+	private String playerName;
+	private double playerAssetsValue, playerBankBalance, playerSalary;
+	private TileNode currentTileNode;
+	private int playerAge, movesRemaining, currentRanking;
+	private boolean gender, playerMarried;
+	private ArrayList<GameAsset> playerAssets;
+	private ArrayList<FamilyPegs> playerFamily;
+	private boolean isFirstTurn, workImmediately, universityImmediately, inGame;
+	private GameAssetHouse currentHouse;
+	private GameSpinner gameSpinner;
+	private CarTypes playerCar;
+	
+	// CONSTRUCTOR
+	public GamePlayer(int xCoord, int yCoord, String playerName, boolean gender) {
+		super(xCoord, yCoord, "");
+		this.playerAssets = new ArrayList<>();
+		this.playerFamily = new ArrayList<FamilyPegs>();
+		this.gender = gender;
+		this.playerName = playerName;
+		this.isFirstTurn = true;
+		this.playerMarried = false;
+		this.inGame = true;
+		this.currentHouse = null;
+		
+		if (gender)
+		{
+			this.setEntityImageByName("tempBoy.png");
+		}
+		else
+		{
+			this.setEntityImageByName("tempGirl.png");
+		}
+		playerCar = CarTypes.TIER1;
+	}
+	
+	// METHODS
+	@Override
+	public void drawEntity(Graphics2D graphicsPanel)
+	{
+		super.drawEntity(graphicsPanel);
+		graphicsPanel.setFont(new Font("Arial", Font.BOLD, 20));
+		int nameWidth = graphicsPanel.getFontMetrics().stringWidth(this.playerName);
+
+		drawPlayerName(graphicsPanel, this.getxCoord() + (this.getEntityImage().getWidth() / 2) - (nameWidth / 2), this.getyCoord() - 10, false, Color.WHITE);
+	}
+	
+	public void drawPlayerName(Graphics2D graphicsPanel, int xCoord, int yCoord, boolean showRank, Color color)
+	{
+		graphicsPanel.setColor(color);
+		
+		if(showRank)
+		{
+			graphicsPanel.drawString("#" + currentRanking + " " + playerName, xCoord, yCoord);
+		}
+		else
+		{
+			graphicsPanel.drawString(playerName, xCoord, yCoord);
+		}
+	}
+	
+	public void drawPlayerStats(Graphics2D graphicsPanel, int xCoord, int yCoord)
+	{
+		graphicsPanel.setFont(new Font("Arial", Font.BOLD, 20));
+		int xCoordLocal = xCoord;
+		int yCoordLocal = yCoord;
+		
+		drawPlayerName(graphicsPanel, xCoordLocal, yCoordLocal, true, Color.black);
+		yCoordLocal += graphicsPanel.getFontMetrics().getHeight() + 5;
+		graphicsPanel.drawString("Married: " + isPlayerMarried(), xCoordLocal, yCoordLocal);
+		yCoordLocal += graphicsPanel.getFontMetrics().getHeight() + 5;
+		graphicsPanel.drawString("Gender: " + getGenderString(), xCoordLocal, yCoordLocal);
+		yCoordLocal += graphicsPanel.getFontMetrics().getHeight() + 5;
+		graphicsPanel.drawString("Bank Balance: £" + getPlayerBankBalance(), xCoordLocal, yCoordLocal);
+		yCoordLocal += graphicsPanel.getFontMetrics().getHeight() + 5;
+		graphicsPanel.drawString("Salary: £" + getPlayerSalary(), xCoordLocal, yCoordLocal);
+		
+	}
+	
+	public void diminishBankBalanceFromPayoutTile(int tilePayOutValue)
+	{
+		playerBankBalance -= tilePayOutValue;
+	}
+	
+	public void movePlayerXTiles(int x)
+	{
+		int i;
+		for(i = 1; i <= x; i++)
+		{
+			// If a red tile is encountered we must do it's effect and break from the loop, this will generally mean i != x
+			if(currentTileNode.getTile() instanceof RedTile)
+			{
+				((RedTile)currentTileNode.getTile()).performAction(this);
+			}
+			//If a green tile is encountered we update the player's BankBalance with their salary//
+			else if (currentTileNode.getTile() instanceof GreenTile)
+			{
+				getPaid();
+			}
+			
+			movePlayerOneTile();
+		}
+	
+		while (currentTileNode.getTile().getPlayerOnTile() != null)
+		{
+			movePlayerOneTile();
+		}
+		
+		// TODO: Make sure all possible final tiles are accounted for - To be done by Bobby
+		if (currentTileNode.getTile() instanceof BlueTile)
+		{
+			
+		}
+		else if (!(currentTileNode.getTile() instanceof GreenTile) && !(currentTileNode.getTile() instanceof RedTile))
+		{
+			currentTileNode.getTile().onLand(this);
+		}
+		
+		currentTileNode.getTile().setPlayerOnTile(this);
+	}
+	
+	public void movePlayerOneTile()
+	{
+		currentTileNode.getTile().setPlayerOnTile(null);
+		currentTileNode = currentTileNode.getNextTileNode();
+		currentTileNode.getTile().setPlayerOnTile(this);;
+		for(int i = 1; i < playerFamily.size(); i++)
+		{
+			playerFamily.get(i).movePegToPlayer(this, i);
+		}
+	}
+	
+	public void getPaid()
+	{
+		addToPlayerBankBalance(playerSalary);
+		//TODO: Add visual effect to indicate payday//
+	}
+	
+	public void addToPlayerBankBalance(double amount)
+	{
+		playerBankBalance += amount;
+		//TODO: Add code to update the displayed Player BankBalance value//
+	}
+	
+	public void subtractFromPlayerBankBalance(double amount)
+	{
+		playerBankBalance -= amount;
+		//TODO: Add code to update the displayed Player BankBalance value//
+	}
+	
+	public void getMarried()
+	{
+		if (!playerMarried)
+		{
+			playerFamily.add(new SpousePeg(0, 0, !gender));
+			this.playerFamily.get(this.playerFamily.size() - 1).movePegToPlayer(this, 1);
+			playerMarried = true;
+		}
+	}
+	
+	public void haveChild(boolean gender)
+	{
+		if (playerFamily.size() < 5 && playerMarried)
+		{
+			this.playerFamily.add(new ChildPeg(0, 0, gender));
+			this.playerFamily.get(this.playerFamily.size() - 1).movePegToPlayer(this, playerFamily.size());
+		}
+	}
+	
+	public void getPet(boolean type)
+	{
+		if (playerFamily.size() < 5 && playerMarried)
+		{
+			this.playerFamily.add(new PetPeg(0, 0, type));
+			this.playerFamily.get(this.playerFamily.size() - 1).movePegToPlayer(this, playerFamily.size());
+		}
+	}
+	
+	/**@author Alex
+	 * Modified by: Rachael 14/04/16
+	 * 
+	 * Method sets currentHouse equal to the house the user wishes to buy
+	 * Method generates the current value of the house using the current housing market multiplier and the house base price
+	 * This is completed using the generateNewHousePriceUsingMarket method from GameSpinner
+	 * The player's bank account balance is reduced by the value generated
+	 * 
+	 * @param houseToBuy = house the user has chosen to buy
+	 */
+	public void buyHouse(GameAssetHouse houseToBuy)
+	{
+		houseToBuy.buyAsset(this);
+	}
+	
+	
+	/**@author Alex
+	 * Modified by: Rachael 14/04/16
+	 * 
+	 * Method generates the current value of the house using the current housing market multiplier and the house base price
+	 * This is completed using the generateNewHousePriceUsingMarket method from GameSpinner
+	 * The player's bank account balance is increased by the value generated
+	 * Method sets currentHouse equal to null
+	 * 
+	 */
+	public void sellHouse()
+	{
+		this.currentHouse.sellAsset(this);
+	}
+	
+	@Override
+	public int compareTo(GamePlayer playerComparedTo) {
+		// TODO Auto-generated method stub
+		
+		if(this.playerBankBalance > playerComparedTo.getPlayerBankBalance())
+		{
+			return 1;
+		}
+		else if(this.playerBankBalance < playerComparedTo.getPlayerBankBalance())
+		{
+			return -1;
+		}
+		else if(this.playerName.compareToIgnoreCase(playerComparedTo.getPlayerName()) > 0)
+		{
+			return 1;
+		}
+		else if(this.playerName.compareToIgnoreCase(playerComparedTo.getPlayerName()) < 0)
+		{
+			return -1;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	
+	public String getGenderString()
+	{
+		if(gender)
+		{
+			return "Male";
+		}
+		else
+		{
+			return "Female";
+		}
+	}
+	
+	// GETTERS AND SETTERS
+	public String getPlayerName() {
+		return playerName;
+	}
+
+	public void setPlayerName(String playerName) {
+		this.playerName = playerName;
+	}
+
+	public void setPlayerAssets(double playerAssetsValue) {
+		this.playerAssetsValue = playerAssetsValue;
+	}
+
+	public double getPlayerBankBalance() {
+		return playerBankBalance;
+	}
+
+	public void setPlayerBankBalance(double playerBankBalance) {
+		this.playerBankBalance = playerBankBalance;
+	}
+
+	public int getPlayerAge() {
+		return playerAge;
+	}
+
+	public void setPlayerAge(int playerAge) {
+		this.playerAge = playerAge;
+	}
+
+	public int getMovesRemaining() {
+		return movesRemaining;
+	}
+
+	public void setMovesRemaining(int movesRemaining) {
+		this.movesRemaining = movesRemaining;
+	}
+
+	public double getPlayerSalary()
+	{
+		return playerSalary;
+	}
+
+	public GameSpinner getGameSpinner() {
+		return gameSpinner;
+	}
+
+	public void setGameSpinner(GameSpinner gameSpinner) {
+		this.gameSpinner = gameSpinner;
+	}
+
+	public CarTypes getPlayerCar() {
+		return playerCar;
+	}
+
+	public void setPlayerCar(CarTypes playerCar) {
+		this.playerCar = playerCar;
+	}
+
+	public void setPlayerSalary(double playerSalary)
+	{
+		this.playerSalary = playerSalary;
+	}
+
+	public double getPlayerAssetsValue() {
+		return playerAssetsValue;
+	}
+
+	public void setPlayerAssetsValue(double playerAssetsValue) {
+		this.playerAssetsValue = playerAssetsValue;
+	}
+
+	public TileNode getCurrentTileNode() {
+		return currentTileNode;
+	}
+
+	public void setCurrentTileNode(TileNode currentTileNode) {
+		this.currentTileNode = currentTileNode;
+	}
+
+	public void setPlayerAssets(ArrayList<GameAsset> playerAssets) {
+		this.playerAssets = playerAssets;
+	}
+	
+	public ArrayList<GameAsset> getPlayerAssets()
+	{
+		return playerAssets;
+	}
+
+	public boolean isFirstTurn() {
+		return isFirstTurn;
+	}
+
+	public void setFirstTurn(boolean isFirstTurn) {
+		this.isFirstTurn = isFirstTurn;
+	}
+
+	public boolean isWorkImmediately() {
+		return workImmediately;
+	}
+
+	public void setWorkImmediately(boolean workImmediately) {
+		this.workImmediately = workImmediately;
+	}
+
+	public boolean isUniversityImmediately() {
+		return universityImmediately;
+	}
+
+	public void setUniversityImmediately(boolean universityImmediately) {
+		this.universityImmediately = universityImmediately;
+	}
+	
+	public boolean isGender() {
+		return gender;
+	}
+
+	public void setGender(boolean gender) {
+		this.gender = gender;
+	}
+
+	public ArrayList<FamilyPegs> getPlayerFamily() {
+		return playerFamily;
+	}
+
+	public void setPlayerFamily(ArrayList<FamilyPegs> playerFamily) {
+		this.playerFamily = playerFamily;
+	}
+	
+	public boolean isPlayerMarried() {
+		return playerMarried;
+	}
+
+	public void setPlayerMarried(boolean playerMarried) {
+		this.playerMarried = playerMarried;
+	}
+
+	public boolean isInGame() {
+		return inGame;
+	}
+
+	public void setInGame(boolean inGame) {
+		this.inGame = inGame;
+	}
+
+	public GameAssetHouse getCurrentHouse() {
+		return currentHouse;
+	}
+
+	public void setCurrentHouse(GameAssetHouse currentHouse) {
+		this.currentHouse = currentHouse;
+	}
+
+	public int getCurrentRanking() {
+		return currentRanking;
+	}
+
+	public void setCurrentRanking(int currentRanking) {
+		this.currentRanking = currentRanking;
+	}	
+}

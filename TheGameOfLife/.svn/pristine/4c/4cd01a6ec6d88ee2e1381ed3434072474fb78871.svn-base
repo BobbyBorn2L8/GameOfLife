@@ -1,0 +1,53 @@
+package gameOfLife;
+
+/**
+ * 
+ * @author Josh
+ *
+ * A player can buy a house if he/she lands on that
+ * tile.  Only one house can be owned at a given time
+ * so a player must sell his/her house to buy another.
+ */
+
+public class GameAssetHouse extends GameAsset {
+
+	// INSTANCE VARIABLES
+	private int buyPrice, sellPrice;
+	
+	// CONSTRUCTOR
+	public GameAssetHouse(int buyPrice, int sellPrice) {
+		//super();
+		this.buyPrice = buyPrice;
+		this.sellPrice = sellPrice;
+	}
+	
+	// GETTERS AND SETTERS
+	public int getBuyPrice() {
+		return buyPrice;
+	}
+
+	public void setBuyPrice(int buyPrice) {
+		this.buyPrice = buyPrice;
+	}
+
+	public int getSellPrice() {
+		return sellPrice;
+	}
+
+	public void setSellPrice(int sellPrice) {
+		this.sellPrice = sellPrice;
+	}
+	
+	
+	// METHODS
+	public void applyMultiplierToSellPrice(double multiplier)
+	{
+		this.setSellPrice((int)(this.getSellPrice() * multiplier));
+	}
+	
+	public void applyMultiplierToBuyPrice(double multiplier)
+	{
+		this.setBuyPrice((int)(this.getBuyPrice() * multiplier));
+	}
+
+}

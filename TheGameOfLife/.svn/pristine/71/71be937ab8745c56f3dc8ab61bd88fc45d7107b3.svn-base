@@ -1,0 +1,9 @@
+package gameOfLife;
+
+/*
+ * @author Rachael Coulter
+ */
+public enum District 
+{
+	University, Cathedral, Falls, Titanic
+}

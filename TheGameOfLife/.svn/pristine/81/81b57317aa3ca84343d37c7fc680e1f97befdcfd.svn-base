@@ -1,0 +1,39 @@
+package gameOfLife;
+
+import java.util.Random;
+
+public class GameSpinner {
+	
+	private Random rand;
+	private GameLogic gameLogic;
+	
+	public GameSpinner(GameLogic gameLogic)
+	{
+		this.gameLogic = gameLogic;
+		rand = new Random();
+	}
+	
+	public int spinGameSpinner(GamePlayer player, boolean playerMoving)
+	{
+		int spinResult = rand.nextInt(10) + 1;
+		if (playerMoving)
+		{	
+			if(spinResult == 10)
+			{
+				player.setPlayerAge(player.getPlayerAge() + 10);
+			}
+			else if(spinResult == 1)
+			{
+				randomiseStockMarketMultiplier();
+			}
+			
+		}
+		return spinResult;
+	}
+	
+	public void randomiseStockMarketMultiplier()
+	{
+		gameLogic.adjustStockMarketValue(rand.nextDouble() + 0.5);
+	}
+
+}

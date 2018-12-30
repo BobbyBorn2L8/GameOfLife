@@ -1,0 +1,178 @@
+package gameOfLife;
+
+import java.awt.Component;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.Menu;
+import java.awt.MenuBar;
+import java.awt.MenuItem;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+
+public abstract class CommonScreenAttributes extends JFrame{
+	
+	
+	public void addComponent(JPanel pane, Component component, GridBagConstraints gbc, int gridx, int gridy, int gridwidth, int gridheight)
+	{
+		gbc.gridx = gridx;
+		gbc.gridy = gridy;
+		gbc.gridwidth = gridwidth;
+		gbc.gridheight = gridheight;
+		pane.add(component, gbc);
+	}
+	
+	public MenuBar setupMenuBarExceptSave(final Frame mainFrame, MenuItem saveGame, GameBoard board) 
+	{
+		MenuBar menuBar = new MenuBar();
+		
+		Menu navigation = new Menu("Navigation");
+		
+		MenuItem initialMenuOption = new MenuItem("Main Menu");
+		MenuItem gameGuide = new MenuItem("Game Guide");
+		MenuItem exitGame = new MenuItem("Exit Game");
+		MenuItem gameLog = new MenuItem("Game Events Log");
+		
+		navigation.add(initialMenuOption);
+		navigation.add(gameGuide);
+		navigation.add(gameLog);
+		navigation.add(exitGame);
+		
+		initialMenuOption.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				new GameMainMenu();
+				mainFrame.dispose();
+			}
+		});
+		
+		gameGuide.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				new GameRulesScreen();
+			}
+		});
+		
+		gameLog.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				board.getGameLogic().getGameLog().displayGameEventsLogWindow();
+			}
+		});
+
+		exitGame.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				board.exitGameChoice();
+			}
+		});
+		
+		menuBar.add(navigation);
+		
+		Menu gameOptions = new Menu("Game Options");
+		MenuItem loadGame = new MenuItem("Load Game");
+		
+		loadGame.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+
+			}
+		});
+		
+		if(saveGame != null)
+		{
+			gameOptions.add(saveGame);
+		}
+		
+		gameOptions.add(loadGame);
+		
+		menuBar.add(gameOptions);
+		
+		return menuBar;
+		
+	}
+	
+	/* Being able to save the game is common to multiple screens, and although the implementation in the JMenu may
+	 * differ the core method of saving the actual file(s) does not change so this method is inherited as a common
+	 * method of saving the game.
+	 */
+	
+	public static void saveGame()
+	{
+		JFileChooser saver = new JFileChooser();
+		saver.setCurrentDirectory(null);
+		int retrival = saver.showSaveDialog(null);
+				
+				if(retrival == JFileChooser.APPROVE_OPTION)
+				{
+					try 
+					{
+						FileWriter fw = new FileWriter(saver.getSelectedFile() + ".txt");
+						BufferedWriter bw = new BufferedWriter(fw);
+
+						bw.flush();
+						bw.close();
+						
+					} 
+					
+					catch (IOException e1) 
+					{
+						e1.printStackTrace();
+					}
+					
+				}
+	}
+	
+	/* The method of loading a game from the file(s) is common across all the screen which implement the method, so
+	 * is inherited from this class which contains common methods and attributes used by the screens. 
+	 */
+	
+	public void loadGame()
+	{
+		JFileChooser chooseFile = new JFileChooser();
+		FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("Text Files", "txt");
+		chooseFile.setFileFilter(fileFilter);
+		int returnValue = chooseFile.showOpenDialog(null);
+		
+		if(returnValue == JFileChooser.APPROVE_OPTION)
+		{
+			
+			File file = chooseFile.getSelectedFile();
+			FileInputStream fstream;
+			
+			try 
+			{
+				fstream = new FileInputStream(file);
+				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+				
+			} 
+			catch (FileNotFoundException e) 
+			{
+				e.printStackTrace();
+			} 
+			catch (IOException e) 
+			{
+				e.printStackTrace();
+			}
+			
+		}
+		
+	}
+	
+
+}

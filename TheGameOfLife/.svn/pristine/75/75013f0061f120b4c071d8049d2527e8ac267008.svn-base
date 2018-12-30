@@ -1,0 +1,17 @@
+package gameOfLife;
+
+public class GreenTile extends Tile {
+
+	public GreenTile(int xCoord, int yCoord, String imageName, int multiplier, String tileText) {
+		super(xCoord, yCoord, imageName, multiplier, tileText, null);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void onLand(GamePlayer player, GameBoard board)
+	{
+		// TODO Auto-generated method stub
+		player.getPaid();
+	}
+
+}

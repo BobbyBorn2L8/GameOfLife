@@ -1,0 +1,107 @@
+package gameOfLife;
+
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+
+public class Decks<E> extends GameEntity
+{
+	private ArrayList<E> deck = new ArrayList<E>();
+	JOptionPane pane;
+	JDialog dialog;
+	
+	public Decks(int xCoord, int yCoord, String imageName) 
+	{
+		super(xCoord, yCoord, imageName);
+		// TODO Auto-generated constructor stub
+	}
+
+	
+	public void addCard(E card)
+	{
+		deck.add(card);
+	}
+	
+	public void removeCard(E card)
+	{
+		deck.remove(card);
+	}
+	
+	public E getCardByID(int index)
+	{
+		if (index >= 0 && index < deck.size())
+		{
+			return deck.get(index);
+		}
+		return null;
+	}
+	
+	public E getRandomCard()
+	{
+		int randomNumber = (int)(Math.random() * deck.size());
+		return getCardByID(randomNumber);
+	}
+	
+	public E drawCard()
+	{
+		E card = getRandomCard();
+		removeCard(card);
+		return card;
+	}
+	
+	public E drawThreeForDecision()
+	{
+		ArrayList<E> c = new ArrayList<E>();
+		Component[] options = new Component[3];
+		int noToDraw = 3;
+		if (deck.size() < 3)
+		{
+			noToDraw = deck.size();
+		}
+		for (int iii = 0; iii < noToDraw; iii++)
+		{
+			c.add((E) drawCard());
+			JButton button = new JButton(new ImageIcon(((GameEntity) c.get(iii)).getEntityImage()));
+			button.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent arg0) 
+				{
+					dialog.dispose();
+				}
+			});
+			options[iii] = button;
+		}
+		pane = new JOptionPane("Please select a card", JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION, null, options, options[0]);
+		dialog = pane.createDialog(null, "DECISION TIME!");
+		dialog.setVisible(true);;
+		for (int iii = 0; iii < noToDraw; iii++)
+		{
+			if (c.get(iii) != c.get((int) pane.getValue()))
+			{
+				deck.add(c.get(iii));
+			}
+		}
+		if ((int)pane.getValue() >= 0)
+		{
+			return (E) c.get((int) pane.getValue());
+		}
+		else 
+		{
+			return null;
+		}
+	}
+	
+	public ArrayList<E> getDeck() {
+		return deck;
+	}
+	public void setDeck(ArrayList<E> deck) {
+		this.deck = deck;
+	}
+}

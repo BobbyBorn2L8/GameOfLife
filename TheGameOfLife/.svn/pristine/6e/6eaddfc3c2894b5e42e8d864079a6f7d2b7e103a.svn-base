@@ -1,0 +1,75 @@
+package gameOfLife;
+
+import javax.swing.JOptionPane;
+
+public class BlueTile extends Tile
+{
+	private int multiplier2;
+	private String option1, option2;
+	private TileEffects effect2;
+	
+	public BlueTile(int xCoord, int yCoord, String imageName, int multiplier, int multiplier1, String option1, String option2, TileEffects effect1, TileEffects effect2)
+	{
+		super(xCoord, yCoord, imageName, multiplier, option1 + " or " + option2, effect1);
+		multiplier2 = multiplier1;
+		this.option1 = option1;
+		this.option2 = option2;
+	}
+	
+	@Override
+	public void onLand(GamePlayer player)
+	{
+		Object[] options = {option1, option2};
+		int n = JOptionPane.showOptionDialog(null, "Please select an option",
+				"DECISION TIME!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+		if (n == 0)
+		{
+			getEffect1().effectActivated(player, getMultiplier(), getEffect1());
+		}
+		if (n == 1)
+		{
+			getEffect2().effectActivated(player, getMultiplier2(), getEffect2());
+		}
+	}
+
+	public int getMultiplier2()
+	{
+		return multiplier2;
+	}
+
+	public void setmultiplier2(int multiplier2)
+	{
+		this.multiplier2 = multiplier2;
+	}
+
+	public String getOption1()
+	{
+		return option1;
+	}
+
+	public void setOption1(String option1)
+	{
+		this.option1 = option1;
+	}
+
+	public String getOption2()
+	{
+		return option2;
+	}
+
+	public void setOption2(String option2)
+	{
+		this.option2 = option2;
+	}
+
+	public TileEffects getEffect2()
+	{
+		return effect2;
+	}
+
+	public void setEffect2(TileEffects effect2)
+	{
+		this.effect2 = effect2;
+	}
+	
+}

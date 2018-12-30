@@ -1,0 +1,263 @@
+package gameOfLife;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import javax.swing.JOptionPane;
+
+public class GameSpinner extends GameEntity{
+	
+	private Random rand;
+	private GameLogic gameLogic;
+	private Timer timer;
+	private int spinnerTime, degrees;
+	private BufferedImage originalImage;
+	private int result;
+	private boolean spinning;
+	
+	public GameSpinner(int xCoord, int yCoord, GameLogic gameLogic)
+	{
+		super(xCoord, yCoord, "spinner_Image.png");
+		this.gameLogic = gameLogic;
+		this.rand = new Random();
+		this.originalImage = getEntityImage();
+		this.timer = new Timer();
+		this.spinnerTime = 10;
+		this.degrees = 0;
+		this.result = 0;
+	}
+	
+	@Override
+	public void drawEntity(Graphics2D graphicsPanel)
+	{
+		super.drawEntity(graphicsPanel);
+		
+		if(!spinning)
+		{
+			graphicsPanel.setFont(new Font("Arial", Font.BOLD, 100));
+			graphicsPanel.setColor(Color.white);
+			int nameWidth = graphicsPanel.getFontMetrics().stringWidth(Integer.toString(result));
+			int nameHeight = graphicsPanel.getFontMetrics().getHeight();
+			
+			graphicsPanel.drawString(Integer.toString(result), getxCoord() + (getEntityImage().getWidth() / 2) - (nameWidth / 2), 
+					getyCoord() + (getEntityImage().getHeight() / 2) + (nameHeight / 4));
+		}
+	}
+	
+	public void rotateSpinner(Graphics2D graphicsPanel)
+	{
+		spinning = true;
+		
+		timer.schedule(new TimerTask() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				setEntityImage(originalImage);
+				degrees += 18;
+				animateSpinnerRotation(gameLogic.getBoard().getGameCanvas().getG2(), degrees);
+				spinnerTime += 5;
+				gameLogic.getBoard().updateGameBoard();
+				
+				if(degrees == 720)
+				{
+					// this.cancel();
+					spinnerTime = 10;
+					degrees = 0;
+					result = spinGameSpinner(false);
+					//Debugging code, make sure to comment out when not using//
+					String input;
+					do
+					{
+						input = JOptionPane.showInputDialog(null, "DEBUG: SET SPINNER NUMBER.  COMMENT OUT WHEN FINISHED TESTING");
+						
+					}while(!inputIsInt(input));
+					result = Integer.parseInt(input);
+					/*Don't forget to comment out when not testing*/
+					spinning = false;
+					gameLogic.getBoard().updateGameBoard();
+					
+					//Tests if player is stuck on a red square and accounts for it appropriately//
+					if (gameLogic.getCurrentPlayer().isStuck())
+					{
+						if (result >= 5)
+						{
+							JOptionPane.showMessageDialog(null, "Congratulations! You passed!");
+							if (gameLogic.getCurrentPlayer().isExamSeason())
+							{
+								do
+								{
+									gameLogic.getCurrentPlayer().changeCareer(gameLogic.getBoard());
+								} while(gameLogic.getCurrentPlayer().getPlayerCareer() == null);
+								gameLogic.getCurrentPlayer().setExamSeason(false);
+							}
+							if (gameLogic.getCurrentPlayer().getMovesRemaining() == 0)
+							{
+								gameLogic.getCurrentPlayer().setMovesRemaining(result);
+							}
+							
+							gameLogic.getCurrentPlayer().setCanSpin(false);
+							gameLogic.getCurrentPlayer().setStuck(false);
+							gameLogic.getCurrentPlayer().setLeavingRedSquare(true);
+							gameLogic.getCurrentPlayer().movePlayerXTiles(gameLogic.getCurrentPlayer().getMovesRemaining(), gameLogic.getBoard(), graphicsPanel);
+							gameLogic.getCurrentPlayer().setMovesRemaining(0);
+							
+						}
+						else
+						{
+							gameLogic.getCurrentPlayer().setCanSpin(false);
+							gameLogic.getCurrentPlayer().setMovesRemaining(0);
+							JOptionPane.showMessageDialog(null, "Ohhh, I'm sorry try again next time");
+						}
+					}
+					else
+					{
+						gameLogic.getCurrentPlayer().setCanSpin(false);
+						gameLogic.getCurrentPlayer().movePlayerXTiles(result, gameLogic.getBoard(), graphicsPanel);
+						
+					}
+				}
+				else
+				{
+					rotateSpinner(graphicsPanel);
+				}
+			}
+		}, spinnerTime);
+	}
+
+	public void animateSpinnerRotation(Graphics2D graphicsPanel, int degrees)
+	{
+		AffineTransform at = new AffineTransform();
+		at.rotate(Math.toRadians(degrees), 100, 100);
+		AffineTransformOp op = new AffineTransformOp(at, AffineTransformOp.TYPE_BICUBIC );
+		this.setEntityImage(op.filter(this.getEntityImage(), null));
+	}
+	
+	public int spinGameSpinner(boolean playerMoving)
+	{
+		int spinResult = rand.nextInt(10) + 1;
+		
+		if (playerMoving)
+		{	
+			if(spinResult == 10)
+			{
+				gameLogic.getCurrentPlayer().setPlayerAge(gameLogic.getCurrentPlayer().getPlayerAge() + 10);
+				gameLogic.checkPlayerAge(gameLogic.getCurrentPlayer());
+				JOptionPane.showConfirmDialog(null, "Happy Birthday! You are now " + gameLogic.getCurrentPlayer().getPlayerAge() + " years old");
+			}
+			else if(spinResult == 1)
+			{
+				randomiseStockMarketMultiplier();
+				randomiseHousingMarketMultiplier();
+			}
+		}
+		
+		return spinResult;
+	}
+	
+	public boolean inputIsInt(String inputString)
+	{
+		try
+		{
+			Integer.parseInt(inputString); 
+		}
+		catch(NumberFormatException | NullPointerException e) 
+		{ 
+			return false; 
+		}
+		
+		return true;
+	}
+	
+	public void randomiseStockMarketMultiplier()
+	{
+		double randomNumber = rand.nextDouble() + 0.5;
+		gameLogic.setCurrentStockMarketMultiplier(randomNumber);
+		JOptionPane.showConfirmDialog(null, "Stocks have changed, new stock multiplier is " + (randomNumber * 100) + "%");
+	}
+	
+	/**
+	 * @author Rachael Coulter
+	 * Method to generate a new value to be used as the Market Multiplier
+	 * Market Multiplier is a value between 0.5 and 1.5 used to affect house sales prices.
+	 * 
+	 */
+	public void randomiseHousingMarketMultiplier(){
+		double randomNumber = rand.nextDouble() + 0.5;
+		gameLogic.setCurrentHousingMarketMultiplier(randomNumber);
+		JOptionPane.showConfirmDialog(null, "House prices have changed, new house multiplier is " + (randomNumber * 100) + "%");
+	}
+	
+	//Getters and setters//
+	public Random getRand() {
+		return rand;
+	}
+
+	public void setRand(Random rand) {
+		this.rand = rand;
+	}
+
+	public GameLogic getGameLogic() {
+		return gameLogic;
+	}
+
+	public void setGameLogic(GameLogic gameLogic) {
+		this.gameLogic = gameLogic;
+	}
+
+	public Timer getTimer() {
+		return timer;
+	}
+
+	public void setTimer(Timer timer) {
+		this.timer = timer;
+	}
+
+	public int getSpinnerTime() {
+		return spinnerTime;
+	}
+
+	public void setSpinnerTime(int spinnerTime) {
+		this.spinnerTime = spinnerTime;
+	}
+
+	public int getDegrees() {
+		return degrees;
+	}
+
+	public void setDegrees(int degrees) {
+		this.degrees = degrees;
+	}
+
+	public BufferedImage getOriginalImage() {
+		return originalImage;
+	}
+
+	public void setOriginalImage(BufferedImage originalImage) {
+		this.originalImage = originalImage;
+	}
+
+	public int getResult() {
+		return result;
+	}
+
+	public void setResult(int result) {
+		this.result = result;
+	}
+
+	public boolean isSpinning() {
+		return spinning;
+	}
+
+	public void setSpinning(boolean spinning) {
+		this.spinning = spinning;
+	}
+	
+}

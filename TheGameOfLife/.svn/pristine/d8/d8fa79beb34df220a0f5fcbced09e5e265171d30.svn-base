@@ -1,0 +1,255 @@
+package gameOfLife;
+
+import java.awt.Component;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.Menu;
+import java.awt.MenuBar;
+import java.awt.MenuItem;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+
+public abstract class CommonScreenAttributes extends JFrame{
+	
+	private Frame mainFrame;
+	
+	/**
+	 * Used to add a component to the passed in frame using gridbag constraints and the grid dimensions given
+	 * @author Alex Crowley 40121793
+	 */
+	public void addComponent(JPanel pane, Component component, GridBagConstraints gbc, int gridx, int gridy, int gridwidth, int gridheight)
+	{
+		gbc.gridx = gridx;
+		gbc.gridy = gridy;
+		gbc.gridwidth = gridwidth;
+		gbc.gridheight = gridheight;
+		pane.add(component, gbc);
+	}
+	
+	/**
+	 * @return a menubar object with all the menu items and options required for the game
+	 * @author Alex Crowley 40121793
+	 */
+	public MenuBar setupMenuBarExceptSave(final Frame mainFrame, GameBoard board) 
+	{
+		MenuBar menuBar = new MenuBar();
+		
+		Menu navigation = new Menu("Navigation");
+		
+		MenuItem initialMenuOption = new MenuItem("Main Menu");
+		MenuItem gameGuide = new MenuItem("Game Guide");
+		MenuItem exitGame = new MenuItem("Exit Game");
+		MenuItem endGame = new MenuItem("End Game Early");
+		MenuItem gameLog = new MenuItem("Game Events Log");
+		
+		navigation.add(initialMenuOption);
+		navigation.add(gameGuide);
+		navigation.add(gameLog);
+		navigation.add(endGame);
+		navigation.add(exitGame);
+		
+		initialMenuOption.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				new GameMainMenu();
+				mainFrame.dispose();
+			}
+		});
+		
+		gameGuide.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				new GameRulesScreen();
+			}
+		});
+		
+		gameLog.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				board.getGameLogic().getGameLog().displayGameEventsLogWindow();
+			}
+		});
+		
+		endGame.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				board.getGameLogic().endGame();
+			}
+		});
+
+		exitGame.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				board.exitGameChoice();
+			}
+		});
+		
+		menuBar.add(navigation);
+		
+		Menu gameOptions = new Menu("Game Options");
+		MenuItem loadGame = new MenuItem("Load Game");
+		MenuItem saveGame = new MenuItem("Save Game");
+		MenuItem muteSound = new MenuItem("Mute Sound");
+		
+		loadGame.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				loadGame();
+			}
+		});
+		
+		saveGame.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				saveGame(board.getGameLogic());
+			}
+		});
+		
+		muteSound.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				if(GameSound.isMuted)
+				{
+					GameSound.isMuted = false;
+					muteSound.setLabel("Mute Sound");
+					
+					GameSound.backGroundThemeOne.play();
+					GameSound.backGroundThemeOne.loopSound();
+				}
+				else
+				{
+					GameSound.isMuted = true;
+					muteSound.setLabel("Unmute Sound");
+					GameSound.backGroundThemeOne.pauseSound();
+				}
+			}
+		});
+		
+
+		gameOptions.add(saveGame);
+		gameOptions.add(loadGame);
+		gameOptions.add(muteSound);
+		
+		menuBar.add(gameOptions);
+		
+		return menuBar;
+		
+	}
+	
+	/**
+	 * This method writes the passed in gamelogic object to a serialised file in the players choice of location and also with the players own chosen name
+	 * @param gameLogic
+	 * @author Alex Crowley 40121793
+	 */
+	public static void saveGame(GameLogic gameLogic)
+	{
+		gameLogic.setSavedGame(true);
+		JFileChooser saver = new JFileChooser();
+		saver.setCurrentDirectory(null);
+		int retrival = saver.showSaveDialog(null);
+				
+				if(retrival == JFileChooser.APPROVE_OPTION)
+				{
+					try 
+					{
+						FileOutputStream fileOut = new FileOutputStream(saver.getSelectedFile() + ".ser");
+				        ObjectOutputStream out = new ObjectOutputStream(fileOut);
+				        out.writeObject(gameLogic);
+				        out.close();
+				        fileOut.close();
+						System.out.println("Save Success");
+					} 
+					
+					catch (IOException e1) 
+					{
+						e1.printStackTrace();
+					}
+					
+				}
+	}
+	
+	/**
+	 * This loads a file chosen by the player, setting up a game board instance based on the deserialised gamelogic object using the specific game board constructor for this function
+	 * @author Alex Crowley 40121793
+	 */
+	public void loadGame()
+	{
+		GameBoard loadedBoard = null;
+		JFileChooser chooseFile = new JFileChooser();
+		int returnValue = chooseFile.showOpenDialog(null);
+		
+		if(returnValue == JFileChooser.APPROVE_OPTION)
+		{
+			
+			File file = chooseFile.getSelectedFile();
+			FileInputStream fstream;
+			
+			try 
+			{
+				GameSound.backGroundThemeOne.closeSound();
+				fstream = new FileInputStream(file);
+				ObjectInputStream in = new ObjectInputStream(fstream);
+				GameLogic gameLogic = (GameLogic)in.readObject();
+				gameLogic.setSavedGame(true);
+				gameLogic.populateAttractions();
+				gameLogic.populateHouseDecks();
+		        loadedBoard = new GameBoard(gameLogic);
+		        in.close();
+		        fstream.close();
+		        this.mainFrame.dispose();
+		        loadedBoard.showCanvas();
+			} 
+			catch (FileNotFoundException e) 
+			{
+				e.printStackTrace();
+			} 
+			catch (IOException e) 
+			{
+				e.printStackTrace();
+			} 
+			catch (ClassNotFoundException e) 
+			{
+				e.printStackTrace();
+			}
+			
+		}
+		
+	}
+
+	public Frame getMainFrame() {
+		return mainFrame;
+	}
+
+	public void setMainFrame(Frame mainFrame) {
+		this.mainFrame = mainFrame;
+	}
+	
+	
+	
+
+}

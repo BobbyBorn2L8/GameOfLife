@@ -1,0 +1,204 @@
+package gameOfLife;
+
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.util.ArrayList;
+
+import com.sun.xml.internal.bind.v2.TODO;
+
+public class GamePlayer extends GameEntity{
+	
+	// INSTANCE VARIABLES
+	private String playerName;
+	private double playerAssetsValue, playerKitty, playerSalary;
+	private TileNode currentTileNode;
+	private int playerAge, movesRemaining;
+	private ArrayList<GameAsset> playerAssets;
+	
+	// CONSTRUCTOR
+	public GamePlayer(int xCoord, int yCoord, String imageName, String playerName) {
+		super(xCoord, yCoord, imageName);
+		// TODO Auto-generated constructor stub
+		this.playerAssets = new ArrayList<>();
+		this.playerName = playerName;
+	}
+	
+	// METHODS
+	@Override
+	public void drawEntity(Graphics2D graphicsPanel)
+	{
+		super.drawEntity(graphicsPanel);
+		graphicsPanel.setFont(new Font("Arial", Font.BOLD, 20));
+		int nameWidth = graphicsPanel.getFontMetrics().stringWidth(this.playerName);
+		
+		graphicsPanel.drawString(playerName, this.getxCoord() + (this.getEntityImage().getWidth() / 2) - (nameWidth / 2), this.getyCoord() - 10);
+	}
+	
+	public void sellAsset(GameAssetHouse asset)
+	{
+		// TODO: Rachael to do this method (doing it for any asset means it can be done for a house)
+
+		
+		playerKitty += asset.getSellPrice();
+		playerAssets.remove(asset);
+		asset.setIsUsed(true);
+		
+		// TODO: Josh and Dan need to display message
+	}
+	
+	public void buyAsset(GameAssetHouse asset)
+	{
+		// TODO: Rachael to do this method (doing it for any asset means it can be done for a house)
+		
+		
+		// Check if you have sufficient funds
+		if(playerKitty < asset.getBuyPrice()){
+			//Cannot buy
+			// TODO: Josh and Dan - Display error message
+		}
+		else if(playerHasHouse() == true){
+			// You already have a house!
+			// TODO: Josh and Dan - Display error message
+		}
+		else if(asset.isUsed() == true){
+			// Player already owns this property
+			// TODO: Josh and Dan - Display error message
+		}
+		else{
+			playerKitty -= asset.getBuyPrice();
+			playerAssets.add(asset);
+			// TODO: Josh and Dan - Display purchase message
+		}
+		
+	}
+	
+	public void diminishKittyFromPayoutTile(int tilePayOutValue)
+	{
+		playerKitty += tilePayOutValue;
+	}
+	
+	public void movePlayerXTiles(int x)
+	{
+		currentTileNode.getTile().setPlayerOnTile(null);
+		int i;
+		for(i = 1; i <= x; i++)
+		{
+			// If a red tile is encountered we must do it's effect and break from the loop, this will generally mean i != x
+			if(currentTileNode.getTile() instanceof RedTile)
+			{
+				((RedTile)currentTileNode.getTile()).performAction(this);
+			}
+			//If a green tile is encounted we update the player's kitty with their salary//
+			else if (currentTileNode.getTile() instanceof GreenTile)
+			{
+				getPaid();
+			}
+			movePlayerOneTile();
+		}
+	
+		while (currentTileNode.getTile().getPlayerOnTile() != null)
+		{
+			movePlayerOneTile();
+		}
+		if (!(currentTileNode.getTile() instanceof GreenTile) && !(currentTileNode.getTile() instanceof RedTile))
+		{
+			currentTileNode.getTile().onLand(this);
+		}
+		currentTileNode.getTile().setPlayerOnTile(this);
+	}
+	
+	public void movePlayerOneTile()
+	{
+		currentTileNode = currentTileNode.getNextTileNode();
+		currentTileNode.getTile().movePlayerCoordsToTile(this);
+	}
+	
+	public void getPaid()
+	{
+		playerKitty += playerSalary;
+		//TODO: Code needs to be added to update players displayed money
+	}
+	
+	private boolean playerHasHouse(){
+		// Test to see whether you have a house already
+		for(int i=0; i<playerAssets.size(); i++){
+			if(playerAssets.get(i) instanceof GameAssetHouse){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	
+	// GETTERS AND SETTERS
+	public String getPlayerName() {
+		return playerName;
+	}
+
+	public void setPlayerName(String playerName) {
+		this.playerName = playerName;
+	}
+
+	public double getPlayerAssets() {
+		return playerAssetsValue;
+	}
+
+	public void setPlayerAssets(double playerAssetsValue) {
+		this.playerAssetsValue = playerAssetsValue;
+	}
+
+	public double getPlayerKitty() {
+		return playerKitty;
+	}
+
+	public void setPlayerKitty(double playerKitty) {
+		this.playerKitty = playerKitty;
+	}
+
+	public int getPlayerAge() {
+		return playerAge;
+	}
+
+	public void setPlayerAge(int playerAge) {
+		this.playerAge = playerAge;
+	}
+
+	public int getMovesRemaining() {
+		return movesRemaining;
+	}
+
+	public void setMovesRemaining(int movesRemaining) {
+		this.movesRemaining = movesRemaining;
+	}
+
+	public double getPlayerSalary()
+	{
+		return playerSalary;
+	}
+
+	public void setPlayerSalary(double playerSalary)
+	{
+		this.playerSalary = playerSalary;
+	}
+
+	public double getPlayerAssetsValue() {
+		return playerAssetsValue;
+	}
+
+	public void setPlayerAssetsValue(double playerAssetsValue) {
+		this.playerAssetsValue = playerAssetsValue;
+	}
+
+	public TileNode getCurrentTileNode() {
+		return currentTileNode;
+	}
+
+	public void setCurrentTileNode(TileNode currentTileNode) {
+		this.currentTileNode = currentTileNode;
+	}
+
+	public void setPlayerAssets(ArrayList<GameAsset> playerAssets) {
+		this.playerAssets = playerAssets;
+	}
+
+}

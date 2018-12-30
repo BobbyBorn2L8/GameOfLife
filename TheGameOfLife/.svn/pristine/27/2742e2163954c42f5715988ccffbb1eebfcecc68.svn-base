@@ -1,0 +1,317 @@
+package gameOfLife;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Random;
+
+/**
+ * 
+ * @author Rachael Coulter
+ * @version 1.0
+ * @since 06/04/16
+ *
+ * The player can buy a house at any time during their turn. 
+ * The player presses the 'buy house' button and can then choose which area to live in
+ * Different areas are different prices
+ * Within that area you can choose between three randomly selected houses
+ * Their prices will be affected by a multiplier which is based on the housing market
+ * You may only have one house at any time
+ * 
+ * The player can sell a house at any time during their turn.
+ * The player presses 'sell assets'
+ * The player then can choose which asset they wish to sell.
+ * The selling price is determined by the selling price multiplied by the housing market multiplier
+ * 
+ * 
+ */
+
+public class GameAssetHouse extends GameAsset {
+	private enum HouseType{
+		Small, Medium, Large, Mansion
+	}
+	
+	// Instance Variables
+	private String houseName;
+	//private int houseBasePrice;
+	private District houseDistrict;
+	private int houseNoOfBedrooms;
+	// private double marketMultiplier;
+	private int currentHousePrice, originalHousePrice, houseMaintenance;
+
+	//Arraylists for Districts
+	static ArrayList<GameAssetHouse> fallsRoadHouses = new ArrayList<GameAssetHouse>();
+	static ArrayList<GameAssetHouse> universityHouses = new ArrayList<GameAssetHouse>();
+	static ArrayList<GameAssetHouse> cathedralQtrHouses = new ArrayList<GameAssetHouse>();
+	static ArrayList<GameAssetHouse> titanicHouses = new ArrayList<GameAssetHouse>();
+	
+	
+	/** Constructor
+	 * 
+	 * @param houseName - This is the name of the house, used for descriptive purposes
+	 * @param houseBasePrice - This is the price of the house, before market multipliers are applied
+	 * @param houseDistrict - This is the district that the house is found in
+	 * @param houseNoOfBedrooms - The number of bedrooms the house has, which will impact how many people can live in the house
+	 * 
+	 */
+	
+	public GameAssetHouse(String houseName, District houseDistrict, int houseNoOfBedrooms, int currentHousePrice, String houseImageName) 
+	{
+		super(currentHousePrice, houseName, houseImageName);
+		this.houseDistrict = houseDistrict;
+		this.houseNoOfBedrooms = houseNoOfBedrooms;
+	}
+	
+	public GameAssetHouse(String houseName, District houseDistrict, int houseNoOfBedrooms, int currentHousePrice, int xCoord, int yCoord, String houseImageName) 
+	{
+		super(currentHousePrice, xCoord, yCoord, houseName, houseImageName);
+		this.houseDistrict = houseDistrict;
+		this.houseNoOfBedrooms = houseNoOfBedrooms;
+	}
+	
+	public void generateNewHousePriceUsingMarket(double multiplier)
+	{
+		this.currentHousePrice = (int)(currentHousePrice * multiplier);
+	}
+	
+	@Override
+	public void sellAsset(GamePlayer assetOwner)
+	{
+		super.sellAsset(assetOwner);
+		assetOwner.setCurrentHouse(null);
+	}
+	
+	@Override
+	public void buyAsset(GamePlayer assetBuyer)
+	{
+		super.buyAsset(assetBuyer);
+		assetBuyer.setCurrentHouse(this);
+	}
+	
+	
+	// Creating Falls Road House Objects
+	/*
+	static GameAssetHouse fallsCheap1 = new GameAssetHouse("14 Falls Court", 67495, District.Falls, 1);
+	static GameAssetHouse fallsCheap2 = new GameAssetHouse("91 Clowney Street", 64950, District.Falls, 1);
+	static GameAssetHouse fallsCheap3 = new GameAssetHouse("42 Rodney Parade", 69950, District.Falls, 2);
+	static GameAssetHouse fallsCheap4 = new GameAssetHouse("67 Broadway", 65495, District.Falls, 2);
+	static GameAssetHouse fallsMedium1 = new GameAssetHouse("51 Falls Drive", 74950, District.Falls, 2);
+	static GameAssetHouse fallsMedium2 = new GameAssetHouse("37 Crocus Street", 75950, District.Falls, 3);
+	static GameAssetHouse fallsMedium3 = new GameAssetHouse("9 Rodney Drive", 74950, District.Falls, 2);
+	static GameAssetHouse fallsExpensive1 = new GameAssetHouse("17 Sorella Street", 99750, District.Falls, 3);
+	static GameAssetHouse fallsExpensive2 = new GameAssetHouse("32 Ross Mill Avenue", 99950, District.Falls, 4);
+	static GameAssetHouse fallsLuxury1 = new GameAssetHouse("6A St James Road", 115000, District.Falls, 4);
+	
+	
+	// Creating university house objects
+	
+	static GameAssetHouse uniCheap1 = new GameAssetHouse("24 Jerusalem Street", 70000, District.University, 2);
+	static GameAssetHouse uniCheap2 = new GameAssetHouse("2 Palestine Street", 79950, District.University, 3);
+	static GameAssetHouse uniCheap3 = new GameAssetHouse("25 Damascus Street", 79950, District.University, 2);
+	static GameAssetHouse uniMedium1 = new GameAssetHouse("20A Fitzroy Avenue", 125000, District.University, 4);
+	static GameAssetHouse uniMedium2 = new GameAssetHouse("51 Dunluce Avenue", 127500, District.University, 2);
+	static GameAssetHouse uniMedium3 = new GameAssetHouse("38 Windsor Drive", 129950, District.University, 3);
+	static GameAssetHouse uniExpensive1 = new GameAssetHouse("99 Rugby Avenue", 170000, District.University, 5);
+	static GameAssetHouse uniExpensive2 = new GameAssetHouse("72 University Street", 174950, District.University, 4);
+	static GameAssetHouse uniExpensive3 = new GameAssetHouse("152 Malone Avenue", 189850, District.University, 2);
+	static GameAssetHouse uniLuxury1 = new GameAssetHouse("1 Mount Pleasant", 455000, District.University, 3);
+	
+	// Creating Cathedral Quarter House objects
+	
+	static GameAssetHouse cathCheap1 = new GameAssetHouse("8 Quay Gate", 106000, District.Cathedral, 1);
+	static GameAssetHouse cathCheap2 = new GameAssetHouse("32B The Obel", 115000, District.Cathedral, 1);
+	static GameAssetHouse cathMedium1 = new GameAssetHouse("10 Queens Square", 159950, District.Cathedral, 2);
+	static GameAssetHouse cathMedium2 = new GameAssetHouse("Apt 2 Merchant Building", 159950, District.Cathedral, 2);
+	static GameAssetHouse cathMedium3 = new GameAssetHouse("54 Custom House Square", 165000, District.Cathedral, 1);
+	static GameAssetHouse cathExpensive1 = new GameAssetHouse("33 Queens Square", 168995, District.Cathedral, 2);
+	static GameAssetHouse cathExpensive2 = new GameAssetHouse("21 Custom House Residence", 179000, District.Cathedral, 1);
+	static GameAssetHouse cathExpensive3 = new GameAssetHouse("74 Queens Square", 174000, District.Cathedral, 2);
+	static GameAssetHouse cathLuxury1 = new GameAssetHouse("215 Saint Anne's Square", 180000, District.Cathedral, 2);
+	static GameAssetHouse cathLuxury2 = new GameAssetHouse("4 Ulster Street", 199950, District.Cathedral, 3);
+	
+	
+	// Creating Titanic Quarter House Objects
+	
+	static GameAssetHouse titanicMedium1 = new GameAssetHouse("68 Newtownards Road", 400000, District.Titanic, 1);
+	static GameAssetHouse titanicMedium2 = new GameAssetHouse("Apt 3 Sea Quay", 780000, District.Titanic, 1);
+	static GameAssetHouse titanicExpensive1 = new GameAssetHouse("75B The Arc", 799850, District.Titanic, 1);
+	static GameAssetHouse titanicExpensive2 = new GameAssetHouse("89 The Arc", 799850, District.Titanic, 1);
+	static GameAssetHouse titanicExpensive3 = new GameAssetHouse("74 Queens Way", 875000, District.Titanic, 2);
+	static GameAssetHouse titanicExpensive4 = new GameAssetHouse("47 Kings Road", 899955, District.Titanic, 2);
+	static GameAssetHouse titanicLuxury1 = new GameAssetHouse("Titanic View", 978000, District.Titanic, 2);
+	static GameAssetHouse titanicLuxury2 = new GameAssetHouse("2 Titanic Walk", 1100250, District.Titanic, 2);
+	static GameAssetHouse titanicLuxury3 = new GameAssetHouse("36 The Arc", 1250000, District.Titanic, 3);
+	static GameAssetHouse titanicLuxury4 = new GameAssetHouse("The Penthouse - Queen's Road", 1500000, District.Titanic, 4);
+	*/
+	
+	
+	// Getters and Setters
+	public String getHouseName() {
+		return houseName;
+	}
+
+	public void setHouseName(String houseName) {
+		this.houseName = houseName;
+	}
+
+	/*
+	public int getHouseBasePrice() {
+		return houseBasePrice;
+	}
+
+	public void setHouseBasePrice(int houseBasePrice) {
+		this.houseBasePrice = houseBasePrice;
+	}
+	*/
+
+	public District getHouseDistrict() {
+		return houseDistrict;
+	}
+
+	public void setHouseDistrict(District houseDistrict) {
+		this.houseDistrict = houseDistrict;
+	}
+
+	public int getHouseNoOfBedrooms() {
+		return houseNoOfBedrooms;
+	}
+
+	public void setHouseNoOfBedrooms(int houseNoOfBedrooms) {
+		this.houseNoOfBedrooms = houseNoOfBedrooms;
+	}
+
+
+	public int getCurrentHousePrice() {
+		return currentHousePrice;
+	}
+
+
+	public void setCurrentHousePrice(int currentHousePrice) {
+		this.currentHousePrice = currentHousePrice;
+	}
+	
+	public int getHouseMaintenance() {
+		return houseMaintenance;
+	}
+
+	public void setHouseMaintenance(int houseMaintenance) {
+		this.houseMaintenance = houseMaintenance;
+	}
+	
+	public int getOriginalHousePrice() {
+		return originalHousePrice;
+	}
+
+	public void setOriginalHousePrice(int originalHousePrice) {
+		this.originalHousePrice = originalHousePrice;
+	}
+	
+	/*
+	public double getMarketMultiplier() {
+		return marketMultiplier;
+	}
+
+	public void setMarketMultiplier(double marketMultiplier) {
+		this.marketMultiplier = marketMultiplier;
+	}
+	*/
+	
+	
+	// Methods
+	
+	//// Code moved to Game Spinner
+	/**
+	 * Method to generate a new value to be used as the Market Multiplier
+	 * Market Multiplier is a value between 0.5 and 1.5 used to affect house sales prices.
+	 * @return a double value between 0.5 and 1.5, used to generate house prices
+	 */
+	/*
+	public double generateNewMarketMultiplier(){
+		
+		Random rand = new Random();
+		double min = 0.5;
+		double max = 1.5;
+		
+		marketMultiplier = min + Math.random() * ((max-min) + 1);
+		
+		return marketMultiplier;
+	}
+	*/
+	
+	// Code moved to Game Spinner
+	/**
+	 * 
+	 * @param housePrice = The price of the house before taking into account market. Gained by exampleHouse.getHouseBasePrice();
+	 * @param marketMultiplier = The multiplier used to generate current value of the house. Gained by using the getMarketMultiplier(); method
+	 * @return an integer representing the current house price
+	 */
+	
+	/*public Integer generateNewHousePriceUsingMarket(int housePrice, double marketMultiplier){
+		
+		housePrice = (int) (housePrice * marketMultiplier);
+		
+		return housePrice;
+		
+	
+	}
+	*/
+	
+	/*
+	public static void main(String[] args) {
+		
+		//Adding Falls Road Houses to Arraylist
+		
+		fallsRoadHouses.add(fallsCheap1);
+		fallsRoadHouses.add(fallsCheap2);
+		fallsRoadHouses.add(fallsCheap3);
+		fallsRoadHouses.add(fallsCheap4);
+		fallsRoadHouses.add(fallsMedium1);
+		fallsRoadHouses.add(fallsMedium2);
+		fallsRoadHouses.add(fallsMedium3);
+		fallsRoadHouses.add(fallsExpensive1);
+		fallsRoadHouses.add(fallsExpensive2);
+		fallsRoadHouses.add(fallsLuxury1);
+		
+		
+		//Adding University Houses to Arraylist
+		
+		universityHouses.add(uniCheap1);
+		universityHouses.add(uniCheap2);
+		universityHouses.add(uniCheap3);
+		universityHouses.add(uniMedium1);
+		universityHouses.add(uniMedium2);
+		universityHouses.add(uniMedium3);
+		universityHouses.add(uniExpensive1);
+		universityHouses.add(uniExpensive2);
+		universityHouses.add(uniExpensive3);
+		universityHouses.add(uniLuxury1);
+		
+		//Adding Cathedral Quarter Houses to ArrayList
+		
+		cathedralQtrHouses.add(cathCheap1);
+		cathedralQtrHouses.add(cathCheap2);
+		cathedralQtrHouses.add(cathMedium1);
+		cathedralQtrHouses.add(cathMedium2);
+		cathedralQtrHouses.add(cathMedium3);
+		cathedralQtrHouses.add(cathExpensive1);
+		cathedralQtrHouses.add(cathExpensive2);
+		cathedralQtrHouses.add(cathExpensive3);
+		cathedralQtrHouses.add(cathLuxury1);
+		cathedralQtrHouses.add(cathLuxury2);
+		
+		//Adding Titanic Quarter Houses to ArrayList
+		titanicHouses.add(titanicMedium1);
+		titanicHouses.add(titanicMedium2);
+		titanicHouses.add(titanicExpensive1);
+		titanicHouses.add(titanicExpensive2);
+		titanicHouses.add(titanicExpensive3);
+		titanicHouses.add(titanicExpensive4);
+		titanicHouses.add(titanicLuxury1);
+		titanicHouses.add(titanicLuxury2);
+		titanicHouses.add(titanicLuxury3);
+		titanicHouses.add(titanicLuxury4);
+		
+
+	}
+	*/
+
+}

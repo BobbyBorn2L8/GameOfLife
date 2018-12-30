@@ -1,0 +1,42 @@
+package gameOfLife;
+
+public enum TileEffects 
+{
+	PAY_ANOTHER, FINE, REWARD, HAVE_SON, HAVE_DAUGHTER, HAVE_TWINS, GET_PET, LIFE_TILE, CHOOSE_CAREER, PAYDAY, NOTHING;
+	
+	public void effectActivated(GamePlayer player, int multiplier, TileEffects effect)
+	{
+		switch(effect)
+		{
+			case FINE:
+				player.subtractFromPlayerBankBalance(multiplier);
+				break;
+			case GET_PET:
+				System.out.println("Player get pet peg");
+				break;
+			case HAVE_DAUGHTER:
+				System.out.println("Player get girl peg");
+				break;
+			case HAVE_SON:
+				System.out.println("Player get boy peg");
+				break;
+			case HAVE_TWINS:
+				System.out.println("Player get two child pegs");
+				break;
+			case LIFE_TILE:
+				System.out.println("Player draw life tiles");
+				break;
+			case PAY_ANOTHER:
+				System.out.println("Player pay another player");
+				break;
+			case REWARD:
+				player.addToPlayerBankBalance(multiplier);
+				break;
+			case CHOOSE_CAREER:
+				System.out.println("Player choose a new career");
+				break;
+			default:
+				break;
+		}
+	}
+}

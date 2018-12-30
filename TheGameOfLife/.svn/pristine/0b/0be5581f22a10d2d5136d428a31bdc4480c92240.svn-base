@@ -1,0 +1,23 @@
+package gameOfLife;
+
+public class BobbyTest 
+{
+	public static void main(String[] args)
+	{
+		GamePlayer player = new GamePlayer(0, 0, "Bobby", true);
+		
+		Loan loan1 = new Loan(10);
+		player.getPlayerLoans().add(loan1);
+		Loan loan2 = new Loan(100);
+		player.getPlayerLoans().add(loan2);
+		Loan loan3 = new Loan(10000);
+		player.getPlayerLoans().add(loan3);
+		Loan loan4 = new Loan(1000);
+		player.getPlayerLoans().add(loan4);
+		Loan loan5 = new Loan(100000);
+		player.getPlayerLoans().add(loan5);
+		
+		LoanScreen screen = new LoanScreen(player);
+		screen.setVisible(true);;
+	}
+}

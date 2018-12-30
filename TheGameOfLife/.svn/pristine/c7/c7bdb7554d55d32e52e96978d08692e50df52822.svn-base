@@ -1,0 +1,99 @@
+package gameOfLife;
+
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Iterator;
+
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+
+
+public class GamePlayerAssetScreen extends CommonScreenAttributes {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JFrame mainFrame;
+	private JPanel pane = new JPanel();
+	private JScrollPane scroll;
+	
+	public GamePlayerAssetScreen(GamePlayer player)
+	{	
+		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
+		pane.setBackground(new Color(232, 181, 30));
+		for (Iterator<GameAsset> iterator = player.getPlayerAssets().iterator(); iterator.hasNext();)
+		{
+			Panel panel = new Panel(player, (GameAssetAttraction)iterator.next());
+			
+			pane.add(panel);
+		}
+		
+		scroll = new JScrollPane(pane);
+		scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scroll.setBackground(new Color(232,181,30));
+		mainFrame = new JFrame(player.getPlayerName() + "'s Assets");
+		mainFrame.setBackground(new Color(232,181,30));
+		mainFrame.setResizable(false);
+		mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		mainFrame.setLocationRelativeTo(null);
+		mainFrame.add(scroll);
+		mainFrame.setSize(1000, 500);
+		mainFrame.setVisible(true);
+	}
+
+	private class Panel extends JPanel
+	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		private BoxLayout layout = new BoxLayout(this, BoxLayout.X_AXIS);
+		private JLabel imageIcon, name, currentValue;
+		private JButton sellAsset;
+		
+		public Panel(GamePlayer player, GameAssetAttraction asset)
+		{
+			this.setLayout(layout);
+			imageIcon = new JLabel(new ImageIcon(asset.getEntityImage()));
+			name = new JLabel(asset.getAssetName());
+			currentValue = new JLabel("£" + String.valueOf(asset.getCurrentAssetValue()));
+			sellAsset = new JButton("Sell asset");
+			sellAsset.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Object[] options = { "YES", "NO" };
+					int choice = JOptionPane.showOptionDialog(null, "Are you sure you want to sell" + asset.getAssetName() + " for £" + asset.getCurrentAssetValue(),
+					             "", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+					             null, options, options[0]);
+					if (choice == 0)
+					{
+						player.sellAsset(asset);
+						JOptionPane.showConfirmDialog(null, asset.getAssetName() + " was sold for £" + asset.getCurrentAssetValue());
+						hidePanel();
+					}
+				}
+			});
+			this.add(imageIcon);
+			this.add(name);
+			this.add(currentValue);
+			this.add(sellAsset);
+			this.setBackground(new Color(232,181,30));
+			this.setVisible(true);
+		}
+		
+		public void hidePanel()
+		{
+			this.setVisible(false);
+		}
+	}
+}

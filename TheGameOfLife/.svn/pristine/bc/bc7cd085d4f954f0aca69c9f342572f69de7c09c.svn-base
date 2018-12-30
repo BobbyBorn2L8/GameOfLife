@@ -1,0 +1,572 @@
+package gameOfLife;
+
+import java.util.ArrayList;
+
+/**
+ * 
+ * @author Rachael
+ *
+ * Code required for testing
+ * Including, but not limited to, white box testing, unit testing and integration testing.
+ * 
+ */
+
+public class Test 
+{
+	
+	public static void main(String[] args) {
+		
+//**** Easter Week 2 Testing ****//
+		
+		/*Testing GameTurnTimer
+			
+		GameTurnTimer testTimer = new GameTurnTimer();
+		
+		testTimer.beginTurnTiming();
+			
+		*/	
+			
+		//Testing GameSpinner
+	/*		
+		GameLogic gameLogic = new GameLogic(null);
+		GameSpinner spinner = new GameSpinner(gameLogic);	
+		*/
+		//First Test
+		/*GamePlayer test1 = new GamePlayer();
+		test1.setPlayerName("Jim");
+		System.out.println("The spin result before method execution is: " + spinner.getSpinResult());
+		
+		spinner.spinGameSpinner(test1);
+		
+		System.out.println("The spin result after method execution is: " + spinner.getSpinResult());
+		*/
+		
+		//Second Test
+		/*GamePlayer test2 = new GamePlayer();
+		test2.setPlayerName("Kerry");
+		test2.setPlayerAssets(1000);
+		test2.setPlayerKitty(1000);
+		System.out.println("The spin result before method execution is: " + spinner.getSpinResult());
+		
+		spinner.spinGameSpinner(test2);
+		
+		System.out.println("The spin result after method execution is: " + spinner.getSpinResult());
+		*/
+		
+		//Third Test
+		/*GamePlayer test3 = new GamePlayer();
+		test3.setPlayerName("Bill");
+		test3.setPlayerAssets(1000);
+		test3.setPlayerKitty(1000);
+		test3.setPlayerAge(20);
+		
+		System.out.println("The spin result before method execution is: " + spinner.getSpinResult());
+		
+		spinner.spinGameSpinner(test3);
+		
+		System.out.println("The spin result after method execution is: " + spinner.getSpinResult());
+		*/
+		
+		//Fourth Test
+		/*GamePlayer test4 = new GamePlayer();
+		test4.setPlayerName("Bill");
+		test4.setPlayerAssets(2000);
+		test4.setPlayerKitty(2000);
+		test4.setPlayerAge(20);
+		
+		System.out.println("The spin result before method execution is: " + spinner.getSpinResult());
+		System.out.println("The player's age after method exucution is: " + test4.getPlayerAge());
+		
+		spinner.spinGameSpinner(test4);
+		
+		System.out.println("The spin result after method execution is: " + spinner.getSpinResult());
+		System.out.println("The player's age after method exucution is: " + test4.getPlayerAge());
+		*/
+		
+		//Fifth Test
+		
+		/*GamePlayer test5 = new GamePlayer();
+		System.out.println("The spin result before method execution is: " + spinner.getSpinResult());
+		
+		spinner.spinGameSpinner(test5);
+		
+		System.out.println("The spin result after method execution is: " + spinner.getSpinResult());
+		*/
+		
+		//Sixth Test
+		
+		/*GamePlayer test6 = new GamePlayer();
+		
+		System.out.println("The spin result before method execution is: " + spinner.getSpinResult());
+		
+		spinner.spinGameSpinner();
+		
+		System.out.println("The spin result after method execution is: " + spinner.getSpinResult());
+		*/
+
+
+//**** Easter Week 3 Testing ****//
+	
+		// First Test
+		/*
+		ChildPeg testOne = new ChildPeg(0, 0, false);
+		System.out.println("A child peg has been created at X CoOrd " + testOne.getxCoord() + " and Y CoOrd " + testOne.getyCoord() +
+				"\nIs the gender of the peg male? " + testOne.isGender());
+	   */
+		
+		//Second Test
+		/*
+		ChildPeg testTwo = new ChildPeg(0, 0, true);
+		System.out.println("A child peg has been created at X CoOrd " + testTwo.getxCoord() + " and Y CoOrd " + testTwo.getyCoord() +
+				"\nIs the gender of the peg male? " + testTwo.isGender());
+				*/
+		
+		//Third Test
+		/*
+		ChildPeg testThree = new ChildPeg(1, 3, false);
+		System.out.println("A child peg has been created at X CoOrd " + testThree.getxCoord() + " and Y CoOrd " + testThree.getyCoord() +
+				"\nIs the gender of the peg male? " + testThree.isGender());
+		*/
+		
+		//Fourth Test
+		/*
+		ChildPeg testFour = new ChildPeg(20, 30, false);
+		System.out.println("A child peg has been created at X CoOrd " + testFour.getxCoord() + " and Y CoOrd " + testFour.getyCoord() +
+				"\nIs the gender of the peg male? " + testFour.isGender());
+				*/
+		
+		//Fifth Test
+		/*ChildPeg testFive = new ChildPeg(0, 0, false);
+		GamePlayer testFiveGP = new GamePlayer(1, 1, "Harry", true);
+		
+		System.out.println("Before method execution the ChildPeg is at X and Y coordinates " + testFive.getxCoord() +
+				", " + testFive.getyCoord() + "\nThe GamePlayer is at X and Y coordinates " + testFiveGP.getxCoord() +
+				", " + testFiveGP.getyCoord());
+		
+		testFive.movePegToPlayer(testFiveGP, 1);
+		
+		System.out.println("After method execution the ChildPeg is at X and Y coordinates " + testFive.getxCoord() +
+				", " + testFive.getyCoord() + "\nThe GamePlayer is at X and Y coordinates " + testFiveGP.getxCoord() +
+				", " + testFiveGP.getyCoord());
+		
+	   */
+		
+		//Sixth Test
+		
+		/*ChildPeg testSix = new ChildPeg(0, 0, false);
+		GamePlayer testSixGP = new GamePlayer(2, 2, "Joan", false);
+		
+		System.out.println("Before method execution the ChildPeg is at X and Y coordinates " + testSix.getxCoord() +
+				", " + testSix.getyCoord() + "\nThe GamePlayer is at X and Y coordinates " + testSixGP.getxCoord() +
+				", " + testSixGP.getyCoord());
+		
+		testSix.movePegToPlayer(testSixGP, 2);
+		
+		System.out.println("After method execution the ChildPeg is at X and Y coordinates " + testSix.getxCoord() +
+				", " + testSix.getyCoord() + "\nThe GamePlayer is at X and Y coordinates " + testSixGP.getxCoord() +
+				", " + testSixGP.getyCoord());
+		*/
+		
+		//Seventh Test
+		
+		/*SpousePeg testSeven = new SpousePeg(0, 0, false);
+		System.out.println("A spouse peg has been created at X CoOrd " + testSeven.getxCoord() + " and Y CoOrd " + testSeven.getyCoord() +
+				"\nIs the gender of the peg male? " + testSeven.isGender());
+		*/
+		
+		//Eighth Test
+		/*SpousePeg testEight = new SpousePeg(0, 0, true);
+		System.out.println("A spouse peg has been created at X CoOrd " + testEight.getxCoord() + " and Y CoOrd " + testEight.getyCoord() +
+				"\nIs the gender of the peg male? " + testEight.isGender());
+		*/
+		
+		//Ninth Test
+		/*SpousePeg testNine = new SpousePeg(1, 3, false);
+		System.out.println("A spouse peg has been created at X CoOrd " + testNine.getxCoord() + " and Y CoOrd " + testNine.getyCoord() +
+				"\nIs the gender of the peg male? " + testNine.isGender());
+		*/
+		
+		//Tenth test
+		/*SpousePeg testTen = new SpousePeg(20, 30, false);
+		System.out.println("A spouse peg has been created at X CoOrd " + testTen.getxCoord() + " and Y CoOrd " + testTen.getyCoord() +
+				"\nIs the gender of the peg male? " + testTen.isGender());
+			*/
+		
+		//Eleventh Test
+		/*SpousePeg testEleven = new SpousePeg(0, 0, false);
+		GamePlayer testElevenGP = new GamePlayer(1, 1, "Harry", true);
+		
+		System.out.println("Before method execution the SpousePeg is at X and Y coordinates " + testEleven.getxCoord() +
+				", " + testEleven.getyCoord() + "\nThe GamePlayer is at X and Y coordinates " + testElevenGP.getxCoord() +
+				", " + testElevenGP.getyCoord());
+		
+		testEleven.movePegToPlayer(testElevenGP, 1);
+		
+		System.out.println("After method execution the SpousePeg is at X and Y coordinates " + testEleven.getxCoord() +
+				", " + testEleven.getyCoord() + "\nThe GamePlayer is at X and Y coordinates " + testElevenGP.getxCoord() +
+				", " + testElevenGP.getyCoord());
+		 */
+		
+		//Twelfth Test
+		/*SpousePeg testTwelve = new SpousePeg(0, 0, false);
+		GamePlayer testTwelveGP = new GamePlayer(2, 2, "Joan", false);
+		
+		System.out.println("Before method execution the SpousePeg is at X and Y coordinates " + testTwelve.getxCoord() +
+				", " + testTwelve.getyCoord() + "\nThe GamePlayer is at X and Y coordinates " + testTwelveGP.getxCoord() +
+				", " + testTwelveGP.getyCoord());
+		
+		testTwelve.movePegToPlayer(testTwelveGP, 2);
+		
+		System.out.println("After method execution the SpousePeg is at X and Y coordinates " + testTwelve.getxCoord() +
+				", " + testTwelve.getyCoord() + "\nThe GamePlayer is at X and Y coordinates " + testTwelveGP.getxCoord() +
+				", " + testTwelveGP.getyCoord());
+		*/
+		
+		//Thirteenth Test
+		/*PetPeg test13 = new PetPeg(0, 0, true);
+		System.out.println("A pet peg has been created at X CoOrd " + test13.getxCoord() + " and Y CoOrd " + test13.getyCoord() +
+				"\nIs the peg a dog? " + test13.isType());
+		*/
+		
+		//Fourteenth Test
+		/*PetPeg test14 = new PetPeg(0, 0, false);
+		System.out.println("A pet peg has been created at X CoOrd " + test14.getxCoord() + " and Y CoOrd " + test14.getyCoord() +
+				"\nIs the peg a dog? " + test14.isType());
+				
+				*/
+		
+		//Fifteenth Test
+		/*PetPeg test15 = new PetPeg(1, 3, true);
+		System.out.println("A pet peg has been created at X CoOrd " + test15.getxCoord() + " and Y CoOrd " + test15.getyCoord() +
+				"\nIs the peg a dog? " + test15.isType());
+				*/
+		
+		//Sixteenth Test
+		/*PetPeg test16 = new PetPeg(20, 30, true);
+		System.out.println("A pet peg has been created at X CoOrd " + test16.getxCoord() + " and Y CoOrd " + test16.getyCoord() +
+				"\nIs the peg a dog? " + test16.isType());
+		*/
+		
+		//Seventeenth Test
+		/*PetPeg test17 = new PetPeg(0, 0, false);
+		GamePlayer test17GP = new GamePlayer(1, 1, "Harry", true);
+		
+		System.out.println("Before method execution the PetPeg is at X and Y coordinates " + test17.getxCoord() +
+				", " + test17.getyCoord() + "\nThe GamePlayer is at X and Y coordinates " + test17GP.getxCoord() +
+				", " + test17GP.getyCoord());
+		
+		test17.movePegToPlayer(test17GP, 1);
+		
+		System.out.println("After method execution the PetPeg is at X and Y coordinates " + test17.getxCoord() +
+				", " + test17.getyCoord() + "\nThe GamePlayer is at X and Y coordinates " + test17GP.getxCoord() +
+				", " + test17GP.getyCoord());
+		*/
+		
+		//Eighteenth test
+		
+		/*PetPeg test18 = new PetPeg(0, 0, false);
+		GamePlayer test18GP = new GamePlayer(2, 2, "Joan", false);
+		
+		System.out.println("Before method execution the ChildPeg is at X and Y coordinates " + test18.getxCoord() +
+				", " + test18.getyCoord() + "\nThe GamePlayer is at X and Y coordinates " + test18GP.getxCoord() +
+				", " + test18GP.getyCoord());
+		
+		test18.movePegToPlayer(test18GP, 2);
+		
+		System.out.println("After method execution the ChildPeg is at X and Y coordinates " + test18.getxCoord() +
+				", " + test18.getyCoord() + "\nThe GamePlayer is at X and Y coordinates " + test18GP.getxCoord() +
+				", " + test18GP.getyCoord());
+		*/
+		
+		// Black Box Test of Choosing Work or Queens (Tests 19 - 27)
+		/*
+		GamePlayer test19GP = new GamePlayer(0, 0, null, false);
+		GameLogic test19GL = new GameLogic(null);
+		
+		test19GL.playerChoiceWorkVSQueens(test19GP);
+		*/
+		
+		//Test 28
+		
+		/*GameLogic test28GL = new GameLogic(null);
+		GamePlayer test28GP = new GamePlayer(0, 0, "Caoimhe", false);
+		
+		test28GL.playerChoiceWorkVSQueens(test28GP);
+		
+		System.out.println("The isWorkImmediately() method returns: " + test28GP.isWorkImmediately()
+		+ "\nThe isUniversityImmediately() method returns: " + test28GP.isUniversityImmediately() +
+		"\nThe setFirstTurn() method returns: " + test28GP.isFirstTurn());
+		 	*/
+		
+		//Test 29
+		
+		/*GameLogic test28GL = new GameLogic(null);
+		GamePlayer test28GP = new GamePlayer(0, 0, "Ruairi", true);
+		
+		test28GL.playerChoiceWorkVSQueens(test28GP);
+		
+		System.out.println("The isWorkImmediately() method returns: " + test28GP.isWorkImmediately()
+		+ "\nThe isUniversityImmediately() method returns: " + test28GP.isUniversityImmediately() +
+		"\nThe setFirstTurn() method returns: " + test28GP.isFirstTurn());
+		 */
+
+		//Test 30
+		
+		/*GameLogic test28GL = new GameLogic(null);
+		GamePlayer test28GP = new GamePlayer(3, 1, "Joe", true);
+		
+		test28GL.playerChoiceWorkVSQueens(test28GP);
+		
+		System.out.println("The isWorkImmediately() method returns: " + test28GP.isWorkImmediately()
+		+ "\nThe isUniversityImmediately() method returns: " + test28GP.isUniversityImmediately() +
+		"\nThe setFirstTurn() method returns: " + test28GP.isFirstTurn());
+		 */
+		
+		//Test 31
+		/*
+		GameLogic test28GL = new GameLogic(null);
+		GamePlayer test28GP = new GamePlayer(0, 0, "Caoimhe", false);
+		
+		test28GL.playerChoiceWorkVSQueens(test28GP);
+		
+		System.out.println("The isWorkImmediately() method returns: " + test28GP.isWorkImmediately()
+		+ "\nThe isUniversityImmediately() method returns: " + test28GP.isUniversityImmediately() +
+		"\nThe setFirstTurn() method returns: " + test28GP.isFirstTurn());
+		 */
+		
+		//Test 39
+		
+		/*GameAssetHouse test39GAH = new GameAssetHouse(null, 0, null, 0);
+		
+		System.out.println("The market multiplier prior to method implemementation is: " + test39GAH.getMarketMultiplier());
+		
+		test39GAH.generateNewMarketMultiplier();
+		
+		System.out.println("The market multiplier after one method implemementation is: " + test39GAH.getMarketMultiplier());
+		
+		test39GAH.generateNewMarketMultiplier();
+		
+		System.out.println("The market multiplier after two method implemementations is: " + test39GAH.getMarketMultiplier());
+		
+		test39GAH.generateNewMarketMultiplier();
+		
+		System.out.println("The market multiplier after three method implemementations is: " + test39GAH.getMarketMultiplier());
+		*/
+		
+		//Test 40
+		/*GameAssetHouse test40GAH = new GameAssetHouse(null, 0, null, 0);
+		
+		System.out.println("The price of the house before taking into account the market is: £100000");
+		
+		int newPrice = test40GAH.generateNewHousePriceUsingMarket(100000, 1.1);
+		
+		System.out.println("The price of the house after taking into account the market is: £" + newPrice);
+		*/
+		
+		//Test 41
+		
+		/*GameAssetHouse test41GAH = new GameAssetHouse(null, 0, null, 0);
+		
+		System.out.println("The price of the house before taking into account the market is: £200000");
+		
+		double mm = test41GAH.generateNewMarketMultiplier();
+		
+		System.out.println("The market multiplier is: " + mm);
+		
+		int newPrice = test41GAH.generateNewHousePriceUsingMarket(200000, mm);
+		
+		System.out.println("The price of the house after taking into account the market is: £" + newPrice);
+		 */
+		
+		//Test 42
+		
+		/*GameAssetHouse test42GAH = GameAssetHouse.fallsCheap1;
+		
+		System.out.println("The price of the house before taking into account the market is: £" + test42GAH.getHouseBasePrice());
+		
+		double mm = test42GAH.generateNewMarketMultiplier();
+		
+		System.out.println("The market multiplier is: " + mm);
+		
+		int newPrice = test42GAH.generateNewHousePriceUsingMarket(test42GAH.getHouseBasePrice(), mm);
+		
+		System.out.println("The price of the house after taking into account the market is: £" + newPrice);
+		*/
+		
+		
+//**** Easter Week 2 Missed Deadline Testing ****//
+		
+		//Test 2
+		
+		/*GamePlayer test2 = new GamePlayer(0, 0, null, false);
+		System.out.println("The family prior to method creation is: " + test2.getPlayerFamily().toString());
+		System.out.println("Is the player married? " +  test2.isPlayerMarried());
+		
+		test2.getMarried();
+		
+		System.out.println("The family after method creation is: " + test2.getPlayerFamily().toString());
+		System.out.println("Is the player married? " +  test2.isPlayerMarried());
+		*/
+		
+		//Test Three
+		/*GamePlayer test3 = new GamePlayer(0, 0, null, false);
+		
+		test3.setPlayerMarried(true);
+		System.out.println("The family prior to method creation is: " + test3.getPlayerFamily().toString());
+		System.out.println("Is the player married? " +  test3.isPlayerMarried());
+		
+		test3.haveChild(true);
+		
+		System.out.println("The family after method creation is: " + test3.getPlayerFamily().toString());
+		System.out.println("Is the player married? " +  test3.isPlayerMarried());
+		*/
+		
+		//Test Four
+		/*GamePlayer test4 = new GamePlayer(0, 0, null, false);
+		
+		test4.setPlayerMarried(true);
+		System.out.println("The family prior to method creation is: " + test4.getPlayerFamily().toString());
+		System.out.println("Is the player married? " +  test4.isPlayerMarried());
+		
+		test4.getPet(true);
+		
+		System.out.println("The family after method creation is: " + test4.getPlayerFamily().toString());
+		System.out.println("Is the player married? " +  test4.isPlayerMarried());
+	*/
+		
+//**** Easter Week 3 Testing ****//
+		
+		//Test One
+		
+	/*	GamePlayer testOne = new GamePlayer(0, 0, null, false);
+		
+		System.out.println("Player bank balance before landing on square is: " + testOne.getPlayerBankBalance());
+		
+		testOne.addToPlayerBankBalance(300);
+		
+		System.out.println("Player bank balance after landing on square is: " + testOne.getPlayerBankBalance());
+	*/
+		
+		//Test Two
+		
+	/*	GamePlayer player = new GamePlayer(0, 0, "token_01_small.png", true);
+		Tile tile = new OrangeTile(0, 0, "orange_01.png", 200, "Add 200", TileEffects.REWARD);
+		  
+		  System.out.println("The player's bank balance before landing on the tile is: " + player.getPlayerBankBalance());
+		  tile.onLand(player);
+		  System.out.println("The player's bank balance after landing on the tile is: " + player.getPlayerBankBalance());
+	*/
+		
+		//Test Three
+	/*	ArrayList<GamePlayer> players = new ArrayList<GamePlayer>();
+		GameBoard board = new GameBoard();
+		GamePlayer player = new GamePlayer(0, 0, null, true);
+		
+		players.add(player);
+		GameLogic logic = new GameLogic(players, board);
+		logic.setRetirementAge(70);
+		
+		
+		player.setPlayerAge(12);
+		System.out.println(logic.playerMustRetire(player));
+		*/
+		
+		//Test Four
+		
+		/*ArrayList<GamePlayer> players = new ArrayList<GamePlayer>();
+		GameBoard board = new GameBoard();
+		GamePlayer player = new GamePlayer(0, 0, null, true);
+		
+		players.add(player);
+		GameLogic logic = new GameLogic(players, board);
+		logic.setRetirementAge(70);
+		
+		
+		player.setPlayerAge(70);
+		System.out.println(logic.playerMustRetire(player));*/
+		
+		
+		//Test Five
+		
+	/*	ArrayList<GamePlayer> players = new ArrayList<GamePlayer>();
+		GameBoard board = new GameBoard();
+		GamePlayer player = new GamePlayer(0, 0, null, true);
+		
+		players.add(player);
+		GameLogic logic = new GameLogic(players, board);
+		logic.setRetirementAge(70);
+		
+		
+		player.setPlayerAge(75);
+		System.out.println(logic.playerMustRetire(player)); */
+		
+		//Test Six
+		
+		/*GamePlayer player = new GamePlayer(0, 0, null, false);
+		ArrayList<GamePlayer> list = new ArrayList<GamePlayer>();
+		list.add(player);
+		GameBoard board = new GameBoard();
+		GameLogic logic = new GameLogic(list, board);
+		GameSpinner spin = new GameSpinner(0, 0, logic);
+		
+		logic.getCurrentPlayer().setPlayerAge(30);
+		
+		System.out.println("Player's age before spin is: " + logic.getCurrentPlayer().getPlayerAge());
+		
+		spin.setResult(10);
+		
+		System.out.println("Player's age before spin is: " + logic.getCurrentPlayer().getPlayerAge()); */
+		
+		//Test Seven
+		
+		/*GamePlayer player = new GamePlayer(0, 0, null, false);
+		ArrayList<GamePlayer> list = new ArrayList<GamePlayer>();
+		list.add(player);
+		GameBoard board = new GameBoard();
+		GameLogic logic = new GameLogic(list, board);
+		GameSpinner spin = new GameSpinner(0, 0, logic);
+
+		logic.getCurrentPlayer().setPlayerAge(30);
+				
+		System.out.println("Player's age before spin is: " + logic.getCurrentPlayer().getPlayerAge());
+				
+		spin.setResult(3);
+				
+		System.out.println("Player's age before spin is: " + logic.getCurrentPlayer().getPlayerAge());*/
+		
+		// Test Eight
+		
+		/*GamePlayer player = new GamePlayer(0, 0, null, false);
+		ArrayList<GamePlayer> list = new ArrayList<GamePlayer>();
+		list.add(player);
+		GameBoard board = new GameBoard();
+		GameLogic logic = new GameLogic(list, board);
+		GameSpinner spin = new GameSpinner(0, 0, logic);
+
+		logic.getCurrentPlayer().setPlayerAge(40);
+				
+		System.out.println("Player's age before spin is: " + logic.getCurrentPlayer().getPlayerAge());
+				
+		spin.setResult(1);
+				
+		System.out.println("Player's age before spin is: " + logic.getCurrentPlayer().getPlayerAge());*/
+		
+		// Test Nine
+		
+		/*GamePlayer player = new GamePlayer(0, 0, null, false);
+		ArrayList<GamePlayer> list = new ArrayList<GamePlayer>();
+		list.add(player);
+		GameBoard board = new GameBoard();
+		GameLogic logic = new GameLogic(list, board);
+		GameSpinner spin = new GameSpinner(0, 0, logic);
+
+		logic.getCurrentPlayer().setPlayerAge(40);
+						
+		System.out.println("Player's age before spin is: " + logic.getCurrentPlayer().getPlayerAge());
+						
+		spin.setResult(3);
+						
+		System.out.println("Player's age before spin is: " + logic.getCurrentPlayer().getPlayerAge());	
+		*/
+}
+}

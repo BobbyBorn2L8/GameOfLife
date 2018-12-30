@@ -1,0 +1,39 @@
+package gameOfLife;
+
+/**
+ * 
+ * @author Josh
+ *
+ * When a pet is created it is because the player has
+ * landed on the 'adopt pet' tile so is of 0 years old
+ * 
+ */
+
+//TODO:  Josh and Dan - Increment pets age each spin
+//TODO:  Josh and Dan - Update endGameValue every spin
+
+public class GameAssetPet extends GameAsset {
+	
+	// INSTANCE VARIABLES
+	private int petAge;
+
+
+
+	// CONSTRUCTOR
+	public GameAssetPet() {
+
+		super(true);
+		petAge = 0;
+	}
+	
+	
+	// GETTERS AND GETTERS
+	public int getChildAge() {
+		return petAge;
+	}
+
+	public void setChildAge(int childAge) {
+		this.petAge = childAge;
+	}
+
+}

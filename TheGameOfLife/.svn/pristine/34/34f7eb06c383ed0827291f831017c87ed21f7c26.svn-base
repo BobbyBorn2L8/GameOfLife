@@ -1,0 +1,67 @@
+package gameOfLife;
+
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+public class PetPeg extends FamilyPegs
+{
+	//Boolean to store type of pet, true is dog, false is cat//
+	private boolean type;
+	public PetPeg(int xCoord, int yCoord, boolean type) 
+	{
+		super(xCoord, yCoord, "");
+		this.setType(type);
+		String imageName;
+		if (type)
+		{
+			imageName = "resizedimages/pet_01.png";
+		}
+		else
+		{
+			imageName = "resizedimages/pet_01.png";
+		}
+		
+	    setEntityImageByName(imageName);
+	}
+	@Override
+	public void movePegToPlayer(GamePlayer player, int position) 
+	{
+		int XDifference = 0;
+		int YDifference = 0;
+		if (player.isPlayerMarried())
+		{
+			if (position == 1)
+			{
+				XDifference = getEntityImage().getWidth() + 2;
+				YDifference = 0;
+			}
+			else if (position == 2)
+			{
+				XDifference = getEntityImage().getWidth() + 2;
+				YDifference = player.getEntityImage().getHeight() - getEntityImage().getHeight() + 2;
+			}
+		}
+		else
+		{
+			if (position == 0)
+			{
+				XDifference = 0;
+				YDifference = player.getEntityImage().getHeight() - getEntityImage().getHeight() + 2;
+			}
+			else if (position == 1)
+			{
+				XDifference = getEntityImage().getWidth() + 2;
+				YDifference = 0;
+			}
+		}
+		this.setxCoord(player.getxCoord() - XDifference);
+		this.setyCoord(player.getyCoord() + YDifference);	
+	}
+	public boolean isType() {
+		return type;
+	}
+	public void setType(boolean type) {
+		this.type = type;
+	}
+}

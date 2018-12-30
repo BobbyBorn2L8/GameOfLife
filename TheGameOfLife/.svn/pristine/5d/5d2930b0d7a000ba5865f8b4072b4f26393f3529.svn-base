@@ -1,0 +1,18 @@
+package gameOfLife;
+
+import java.awt.Graphics2D;
+
+public class OrangeTile extends Tile 
+{
+	public OrangeTile(String imageName, int multiplier, String tileText, TileEffects effect) {
+		super(0, 0, imageName, multiplier, tileText, effect);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void onLand(GamePlayer player, GameBoard board, Graphics2D panel)
+	{
+		getEffect1().effectActivated(player, getMultiplier(), getEffect1(), board, panel);
+	}
+
+}

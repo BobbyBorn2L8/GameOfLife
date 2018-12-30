@@ -1,0 +1,161 @@
+package gameOfLife;
+
+import java.awt.Graphics2D;
+import java.io.Serializable;
+
+public class GameBoardTileList implements Serializable{
+	
+	private TileNode headTileNode;
+	private int listSize;
+	private final int TILE_SPACING_PX = 10;
+	
+	public GameBoardTileList()
+	{
+		this.listSize = 0;
+	}
+	
+	public void addNode(TileNode tileNodeToAdd, char direction)	
+	{
+		if(listSize == 0)
+		{
+			this.headTileNode = tileNodeToAdd;
+		}
+		else
+		{
+			TileNode currentNode = this.headTileNode;
+			
+			while(currentNode.getNextTileNode() != null)
+			{
+				currentNode = currentNode.getNextTileNode();
+			}
+			
+			if(direction == 'u' || direction == 'U')
+			{
+				tileNodeToAdd.getTile().setxCoord(currentNode.getTile().getxCoord());
+				tileNodeToAdd.getTile().setyCoord(currentNode.getTile().getyCoord() - currentNode.getTile().getEntityImage().getHeight() - TILE_SPACING_PX);
+			}
+			else if(direction == 'd' || direction == 'D')
+			{
+				tileNodeToAdd.getTile().setxCoord(currentNode.getTile().getxCoord());
+				tileNodeToAdd.getTile().setyCoord(currentNode.getTile().getyCoord() + currentNode.getTile().getEntityImage().getHeight() + TILE_SPACING_PX);
+			}
+			else if(direction == 'r' || direction == 'R')
+			{
+				tileNodeToAdd.getTile().setxCoord(currentNode.getTile().getxCoord() + currentNode.getTile().getEntityImage().getWidth() + TILE_SPACING_PX);
+				tileNodeToAdd.getTile().setyCoord(currentNode.getTile().getyCoord());
+			}
+			else if(direction == 'l' || direction == 'L')
+			{
+				tileNodeToAdd.getTile().setxCoord(currentNode.getTile().getxCoord() - currentNode.getTile().getEntityImage().getWidth() - TILE_SPACING_PX);
+				tileNodeToAdd.getTile().setyCoord(currentNode.getTile().getyCoord());
+			}
+			
+			currentNode.setNextTileNode(tileNodeToAdd);
+		}
+		
+		listSize++;
+	}
+	
+	
+	public void drawList(Graphics2D graphicsPanel)
+	{
+		if(listSize == 0)
+		{
+			return;
+		}
+		else
+		{
+			TileNode currentNode = this.headTileNode;
+			
+			/*
+			while(currentNode.getNextTileNode() != null && !currentNode.getNextTileNode().equals(headTileNode))
+			{
+				currentNode.getTile().drawEntity(graphicsPanel);
+				currentNode = currentNode.getNextTileNode();
+			}
+			
+			currentNode.getTile().drawEntity(graphicsPanel);
+			*/
+			
+			for(int i = 1; i <= listSize; i++)
+			{
+				currentNode.getTile().drawEntity(graphicsPanel);
+				currentNode = currentNode.getNextTileNode();
+			}
+		}
+	}
+
+	public TileNode getHeadTileNode() {
+		return headTileNode;
+	}
+
+	public void setHeadTileNode(TileNode headTileNode) {
+		this.headTileNode = headTileNode;
+	}
+
+	public int getListSize() {
+		return listSize;
+	}
+
+	public void setListSize(int listSize) {
+		this.listSize = listSize;
+	}
+}
+
+class TileNode implements Serializable{
+	
+	private Tile tile;
+	private TileNode nextTileNode;
+	private TileNode sideListHeadNode;
+	
+	public TileNode(Tile tile, TileNode sideListHeadNode)
+	{
+		this.tile = tile;
+		this.sideListHeadNode = sideListHeadNode;
+	}
+
+	public Tile getTile() {
+		return tile;
+	}
+
+	public void setTile(Tile tile) {
+		this.tile = tile;
+	}
+
+	public TileNode getNextTileNode() {
+		return nextTileNode;
+	}
+
+	public void setNextTileNode(TileNode nextTileNode) {
+		this.nextTileNode = nextTileNode;
+	}
+
+	public TileNode getSideListHeadNode() {
+		return sideListHeadNode;
+	}
+
+	public void setSideListHeadNode(TileNode sideListHeadNode, char direction) {
+		this.sideListHeadNode = sideListHeadNode;
+		
+		if(direction == 'u' || direction == 'U')
+		{
+			sideListHeadNode.getTile().setxCoord(getTile().getxCoord());
+			sideListHeadNode.getTile().setyCoord(getTile().getyCoord() - getTile().getEntityImage().getHeight() - 10);
+		}
+		else if(direction == 'd' || direction == 'D')
+		{
+			sideListHeadNode.getTile().setxCoord(getTile().getxCoord());
+			sideListHeadNode.getTile().setyCoord(getTile().getyCoord() + getTile().getEntityImage().getHeight() + 10);
+		}
+		else if(direction == 'r' || direction == 'R')
+		{
+			sideListHeadNode.getTile().setxCoord(getTile().getxCoord() + getTile().getEntityImage().getWidth() + 10);
+			sideListHeadNode.getTile().setyCoord(getTile().getyCoord());
+		}
+		else if(direction == 'l' || direction == 'L')
+		{
+			sideListHeadNode.getTile().setxCoord(getTile().getxCoord() - getTile().getEntityImage().getWidth() - 10);
+			sideListHeadNode.getTile().setyCoord(getTile().getyCoord());
+		}
+	}
+}

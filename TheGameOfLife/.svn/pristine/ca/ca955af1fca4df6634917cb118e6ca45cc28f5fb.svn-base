@@ -1,0 +1,50 @@
+package gameOfLife;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class GameTurnTimer extends Timer {
+	
+	private GameLogic gameLogic;
+	private final int GAME_TURN_TIME = 60;
+	
+	public GameTurnTimer(GameLogic gameLogic)
+	{
+		this.gameLogic = gameLogic;
+	}
+	
+	public void beginTurnTiming()
+	{
+		System.out.println(gameLogic.getCurrentPlayer().getPlayerName());
+		gameLogic.getCurrentPlayer().setCanSpin(true);
+		
+		if(gameLogic.getCurrentPlayer().isFirstTurn())
+		{
+			gameLogic.playerChoiceWorkVSQueens(gameLogic.getCurrentPlayer());
+		}
+		
+		this.schedule(new TimerTask() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				
+				if(gameLogic.getCurrentPlayer().isCanSpin())
+				{
+					gameLogic.moveTurnToNextPlayer();
+					beginTurnTiming();
+				}
+				else
+				{
+					run();
+				}
+			}
+		}, GAME_TURN_TIME * 1000);
+	}
+	
+	public void endTurnTiming()
+	{
+	}
+	
+
+}

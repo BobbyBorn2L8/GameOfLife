@@ -1,0 +1,15 @@
+package gameOfLife;
+
+public class GameAssetStock extends GameAsset {
+
+	public GameAssetStock(int currentAssetValue, String assetName, String assetImageName) {
+		super(currentAssetValue, assetName, assetImageName);
+		// TODO Auto-generated constructor stub
+	}
+	
+	public GameAssetStock(int currentAssetValue, int xCoord, int yCoord, String assetName, String assetImageName) {
+		super(currentAssetValue, xCoord, yCoord, assetName, assetImageName);
+		// TODO Auto-generated constructor stub
+	}
+
+}

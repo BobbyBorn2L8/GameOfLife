@@ -1,0 +1,121 @@
+package gameOfLife;
+
+import javax.swing.JOptionPane;
+
+public enum TileEffects 
+{
+	FINE, REWARD, HAVE_SON, HAVE_DAUGHTER, GET_CAT, GET_DOG, CHOOSE_CAREER, PROMOTION, STOCK_MARKET, HOUSE_MARKET, NOTHING;
+	
+	public void effectActivated(GamePlayer player, int multiplier, TileEffects effect, GameBoard board)
+	{
+		switch(effect)
+		{
+			case FINE:
+				player.subtractFromPlayerBankBalance(multiplier);
+				JOptionPane.showMessageDialog(null, player.getPlayerName() + " pays out £" + multiplier);
+				break;
+			case GET_CAT:
+				if (player.getPlayerFamily().size() < 5)
+				{
+					player.getPet(false);
+					JOptionPane.showMessageDialog(null, player.getPlayerName() + " gets a cat");
+				}
+				else
+				{
+					player.subtractFromPlayerBankBalance(1000);
+					JOptionPane.showMessageDialog(null, player.getPlayerName() + ": Pet insurance for the year, pay £1000");
+				}
+				break;
+			case GET_DOG:
+				if (player.getPlayerFamily().size() < 5)
+				{
+					player.getPet(true);
+					JOptionPane.showMessageDialog(null, player.getPlayerName() + " gets a dog");
+				}
+				else
+				{
+					player.subtractFromPlayerBankBalance(1000);
+					JOptionPane.showMessageDialog(null, player.getPlayerName() + ": Pet insurance for the year, pay £1000");
+				}
+				break;
+			case HAVE_DAUGHTER:
+				if (player.getPlayerFamily().size() < 5)
+				{
+					player.haveChild(false);
+					JOptionPane.showMessageDialog(null, player.getPlayerName() + " has a beautiful little girl");
+				}
+				else
+				{
+					player.subtractFromPlayerBankBalance(1000);
+					JOptionPane.showMessageDialog(null, player.getPlayerName() + ": Child's birthday, pay £1000");
+				}
+				break;
+			case HAVE_SON:
+				if (player.getPlayerFamily().size() < 5)
+				{
+					player.haveChild(true);
+					JOptionPane.showMessageDialog(null, player.getPlayerName() + " has a gorgeous little boy");
+				}
+				else
+				{
+					player.subtractFromPlayerBankBalance(1000);
+					JOptionPane.showMessageDialog(null, player.getPlayerName() + ": Child's birthday, pay £1000");
+				}
+				break;
+			case REWARD:
+				player.addToPlayerBankBalance(multiplier);
+				JOptionPane.showMessageDialog(null, player.getPlayerName() + " is paid £" + multiplier);
+				break;
+			case CHOOSE_CAREER:
+				Careers career;
+				do
+				{
+					if (!player.isUniversityImmediately())
+					{
+						career = board.getCareers().drawThreeForDecision();
+					}
+					else
+					{
+						career = board.getUniCareers().drawThreeForDecision();
+					}
+				} while(career != null);
+				if (!player.isUniversityImmediately())
+				{
+					board.getCareers().addCard(player.getPlayerCareer());
+				}
+				else
+				{
+					board.getUniCareers().addCard(player.getPlayerCareer());
+				}
+				player.setPlayerCareer(career);
+				break;
+			case PROMOTION:
+				player.promoted(multiplier);
+			case STOCK_MARKET:
+				board.getGameLogic().setCurrentStockMarketMultiplier(multiplier / 100);
+				if (multiplier < 100)
+				{
+					JOptionPane.showMessageDialog(null, "THE STOCK MARKET HAS CRASHED!!!!  All assets are 50% cheaper to buy and sell");
+				}
+				else 
+				{
+					JOptionPane.showMessageDialog(null, "THE STOCK MARKET HAS ROCKETED UPWARDS!!!!  All assets are 50% dearer to buy and sell");
+				}
+				break;
+			case HOUSE_MARKET:
+				board.getGameLogic().setCurrentHousingMarketMultiplier(multiplier / 100);
+				if (multiplier < 100)
+				{
+					JOptionPane.showMessageDialog(null, "THE HOUSE MARKET HAS CRASHED!!!!  All houses are 50% cheaper to buy and sell");
+				}
+				else 
+				{
+					JOptionPane.showMessageDialog(null, "THE HOUSE MARKET HAS ROCKETED UPWARDS!!!!  All houses are 50% dearer to buy and sell");
+				}
+				break;
+
+			default:
+				break;
+		}
+	}
+}

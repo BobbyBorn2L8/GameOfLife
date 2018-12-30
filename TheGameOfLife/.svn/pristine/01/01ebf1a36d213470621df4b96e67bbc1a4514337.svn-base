@@ -1,0 +1,110 @@
+package gameOfLife;
+
+/**
+ * 
+ * @author Rachael
+ *
+ * Code required for testing
+ * Including, but not limited to, white box testing, unit testing and integration testing.
+ * 
+ */
+
+public class Test 
+{
+	
+	public static void main(String[] args) {
+		
+	//**** Easter Week 2 Testing ****//
+		
+	/*Testing GameTurnTimer
+		
+	GameTurnTimer testTimer = new GameTurnTimer();
+	
+	testTimer.beginTurnTiming();
+		
+	*/	
+		
+	//Testing GameSpinner
+		
+	GameLogic gameLogic = new GameLogic(null);
+	GameSpinner spinner = new GameSpinner(gameLogic);	
+	spinner.setSpinResult(0);
+	
+	//First Test
+	/*GamePlayer test1 = new GamePlayer();
+	test1.setPlayerName("Jim");
+	System.out.println("The spin result before method execution is: " + spinner.getSpinResult());
+	
+	spinner.spinGameSpinner(test1);
+	
+	System.out.println("The spin result after method execution is: " + spinner.getSpinResult());
+	*/
+	
+	//Second Test
+	/*GamePlayer test2 = new GamePlayer();
+	test2.setPlayerName("Kerry");
+	test2.setPlayerAssets(1000);
+	test2.setPlayerKitty(1000);
+	System.out.println("The spin result before method execution is: " + spinner.getSpinResult());
+	
+	spinner.spinGameSpinner(test2);
+	
+	System.out.println("The spin result after method execution is: " + spinner.getSpinResult());
+	*/
+	
+	//Third Test
+	/*GamePlayer test3 = new GamePlayer();
+	test3.setPlayerName("Bill");
+	test3.setPlayerAssets(1000);
+	test3.setPlayerKitty(1000);
+	test3.setPlayerAge(20);
+	
+	System.out.println("The spin result before method execution is: " + spinner.getSpinResult());
+	
+	spinner.spinGameSpinner(test3);
+	
+	System.out.println("The spin result after method execution is: " + spinner.getSpinResult());
+	*/
+	
+	//Fourth Test
+	/*GamePlayer test4 = new GamePlayer();
+	test4.setPlayerName("Bill");
+	test4.setPlayerAssets(2000);
+	test4.setPlayerKitty(2000);
+	test4.setPlayerAge(20);
+	
+	System.out.println("The spin result before method execution is: " + spinner.getSpinResult());
+	System.out.println("The player's age after method exucution is: " + test4.getPlayerAge());
+	
+	spinner.spinGameSpinner(test4);
+	
+	System.out.println("The spin result after method execution is: " + spinner.getSpinResult());
+	System.out.println("The player's age after method exucution is: " + test4.getPlayerAge());
+	*/
+	
+	//Fifth Test
+	
+	/*GamePlayer test5 = new GamePlayer();
+	System.out.println("The spin result before method execution is: " + spinner.getSpinResult());
+	
+	spinner.spinGameSpinner(test5);
+	
+	System.out.println("The spin result after method execution is: " + spinner.getSpinResult());
+	*/
+	
+	//Sixth Test
+	
+	/*GamePlayer test6 = new GamePlayer();
+	
+	System.out.println("The spin result before method execution is: " + spinner.getSpinResult());
+	
+	spinner.spinGameSpinner();
+	
+	System.out.println("The spin result after method execution is: " + spinner.getSpinResult());
+	*/
+	
+	
+	
+	}
+	
+}

@@ -1,0 +1,10 @@
+package gameOfLife;
+
+public class GameAssetAttraction extends GameAsset
+{
+	public GameAssetAttraction(int currentAssetValue, String assetName, String assetImageName) 
+	{
+		super(currentAssetValue, 0, 0, assetName, assetImageName);
+	}
+
+}

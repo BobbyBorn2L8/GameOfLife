@@ -1,0 +1,285 @@
+package gameOfLife;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.imageio.ImageIO;
+
+public class GamePlayer extends GameEntity{
+	
+	// INSTANCE VARIABLES
+	private String playerName;
+	private double playerAssetsValue, playerKitty, playerSalary;
+	private TileNode currentTileNode;
+	private int playerAge, movesRemaining;
+	private boolean gender, playerMarried;
+	private ArrayList<GameAsset> playerAssets;
+	private ArrayList<FamilyPegs> playerFamily;
+	private boolean isFirstTurn, workImmediately, universityImmediately, inGame;
+	private GameAssetHouse currentHouse;
+	
+	// CONSTRUCTOR
+	public GamePlayer(int xCoord, int yCoord, String playerName, boolean gender) {
+		super(xCoord, yCoord, "");
+		this.playerAssets = new ArrayList<>();
+		this.playerFamily = new ArrayList<FamilyPegs>();
+		this.gender = gender;
+		this.playerName = playerName;
+		this.isFirstTurn = true;
+		this.playerMarried = false;
+		this.inGame = true;
+		this.currentHouse = null;
+		
+		if (gender)
+		{
+			this.setEntityImageByName("tempBoy.png");
+		}
+		else
+		{
+			this.setEntityImageByName("tempGirl.png");
+		}
+
+	}
+	
+	// METHODS
+	@Override
+	public void drawEntity(Graphics2D graphicsPanel)
+	{
+		super.drawEntity(graphicsPanel);
+		graphicsPanel.setColor(Color.WHITE);
+		graphicsPanel.setFont(new Font("Arial", Font.BOLD, 20));
+		int nameWidth = graphicsPanel.getFontMetrics().stringWidth(this.playerName);
+		
+		graphicsPanel.drawString(playerName, this.getxCoord() + (this.getEntityImage().getWidth() / 2) - (nameWidth / 2), this.getyCoord() - 10);
+	}
+	
+	public void diminishKittyFromPayoutTile(int tilePayOutValue)
+	{
+		playerKitty -= tilePayOutValue;
+	}
+	
+	public void movePlayerXTiles(int x)
+	{
+		int i;
+		for(i = 1; i <= x; i++)
+		{
+			// If a red tile is encountered we must do it's effect and break from the loop, this will generally mean i != x
+			if(currentTileNode.getTile() instanceof RedTile)
+			{
+				((RedTile)currentTileNode.getTile()).performAction(this);
+			}
+			//If a green tile is encounted we update the player's kitty with their salary//
+			else if (currentTileNode.getTile() instanceof GreenTile)
+			{
+				getPaid();
+			}
+			
+			movePlayerOneTile();
+		}
+	
+		while (currentTileNode.getTile().getPlayerOnTile() != null)
+		{
+			movePlayerOneTile();
+		}
+		
+		// TODO: Make sure all possible final tiles are accounted for - To be done by Bobby
+		if (!(currentTileNode.getTile() instanceof GreenTile) && !(currentTileNode.getTile() instanceof RedTile))
+		{
+			currentTileNode.getTile().onLand(this);
+		}
+		
+		currentTileNode.getTile().setPlayerOnTile(this);
+	}
+	
+	public void movePlayerOneTile()
+	{
+		currentTileNode.getTile().setPlayerOnTile(null);
+		currentTileNode = currentTileNode.getNextTileNode();
+		currentTileNode.getTile().setPlayerOnTile(this);;
+		for(int i = 1; i < playerFamily.size(); i++)
+		{
+			playerFamily.get(i).movePegToPlayer(this, i);
+		}
+	}
+	
+	public void getPaid()
+	{
+		playerKitty += playerSalary;
+		//TODO: Code needs to be added to update players displayed money
+	}
+	
+	public void getMarried()
+	{
+		if (!playerMarried)
+		{
+			playerFamily.add(new SpousePeg(0, 0, !gender));
+			this.playerFamily.get(this.playerFamily.size() - 1).movePegToPlayer(this, 1);
+			playerMarried = true;
+		}
+	}
+	
+	public void haveChild(boolean gender)
+	{
+		if (playerFamily.size() < 5 && playerMarried)
+		{
+			this.playerFamily.add(new ChildPeg(0, 0, gender));
+			this.playerFamily.get(this.playerFamily.size() - 1).movePegToPlayer(this, playerFamily.size());
+		}
+	}
+	
+	public void getPet(boolean type)
+	{
+		if (playerFamily.size() < 5 && playerMarried)
+		{
+			this.playerFamily.add(new PetPeg(0, 0, type));
+			this.playerFamily.get(this.playerFamily.size() - 1).movePegToPlayer(this, playerFamily.size());
+		}
+	}
+	
+	public void buyHouse(GameAssetHouse houseToBuy)
+	{
+		this.currentHouse = houseToBuy;
+		this.playerKitty -= houseToBuy.getHouseCurrentPrice();
+	}
+	
+	// GETTERS AND SETTERS
+	public String getPlayerName() {
+		return playerName;
+	}
+
+	public void setPlayerName(String playerName) {
+		this.playerName = playerName;
+	}
+
+	public double getPlayerAssets() {
+		return playerAssetsValue;
+	}
+
+	public void setPlayerAssets(double playerAssetsValue) {
+		this.playerAssetsValue = playerAssetsValue;
+	}
+
+	public double getPlayerKitty() {
+		return playerKitty;
+	}
+
+	public void setPlayerKitty(double playerKitty) {
+		this.playerKitty = playerKitty;
+	}
+
+	public int getPlayerAge() {
+		return playerAge;
+	}
+
+	public void setPlayerAge(int playerAge) {
+		this.playerAge = playerAge;
+	}
+
+	public int getMovesRemaining() {
+		return movesRemaining;
+	}
+
+	public void setMovesRemaining(int movesRemaining) {
+		this.movesRemaining = movesRemaining;
+	}
+
+	public double getPlayerSalary()
+	{
+		return playerSalary;
+	}
+
+	public void setPlayerSalary(double playerSalary)
+	{
+		this.playerSalary = playerSalary;
+	}
+
+	public double getPlayerAssetsValue() {
+		return playerAssetsValue;
+	}
+
+	public void setPlayerAssetsValue(double playerAssetsValue) {
+		this.playerAssetsValue = playerAssetsValue;
+	}
+
+	public TileNode getCurrentTileNode() {
+		return currentTileNode;
+	}
+
+	public void setCurrentTileNode(TileNode currentTileNode) {
+		this.currentTileNode = currentTileNode;
+	}
+
+	public void setPlayerAssets(ArrayList<GameAsset> playerAssets) {
+		this.playerAssets = playerAssets;
+	}
+
+	public boolean isFirstTurn() {
+		return isFirstTurn;
+	}
+
+	public void setFirstTurn(boolean isFirstTurn) {
+		this.isFirstTurn = isFirstTurn;
+	}
+
+	public boolean isWorkImmediately() {
+		return workImmediately;
+	}
+
+	public void setWorkImmediately(boolean workImmediately) {
+		this.workImmediately = workImmediately;
+	}
+
+	public boolean isUniversityImmediately() {
+		return universityImmediately;
+	}
+
+	public void setUniversityImmediately(boolean universityImmediately) {
+		this.universityImmediately = universityImmediately;
+	}
+	
+	public boolean isGender() {
+		return gender;
+	}
+
+	public void setGender(boolean gender) {
+		this.gender = gender;
+	}
+
+	public ArrayList<FamilyPegs> getPlayerFamily() {
+		return playerFamily;
+	}
+
+	public void setPlayerFamily(ArrayList<FamilyPegs> playerFamily) {
+		this.playerFamily = playerFamily;
+	}
+	
+	public boolean isPlayerMarried() {
+		return playerMarried;
+	}
+
+	public void setPlayerMarried(boolean playerMarried) {
+		this.playerMarried = playerMarried;
+	}
+
+	public boolean isInGame() {
+		return inGame;
+	}
+
+	public void setInGame(boolean inGame) {
+		this.inGame = inGame;
+	}
+
+	public GameAssetHouse getCurrentHouse() {
+		return currentHouse;
+	}
+
+	public void setCurrentHouse(GameAssetHouse currentHouse) {
+		this.currentHouse = currentHouse;
+	}
+	
+	
+}

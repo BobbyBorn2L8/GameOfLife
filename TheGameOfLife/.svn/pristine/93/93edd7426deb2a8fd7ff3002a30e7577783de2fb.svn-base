@@ -1,0 +1,446 @@
+package gameOfLife;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.swing.JOptionPane;
+
+public class GameLogic implements Serializable{
+	
+	private GamePlayer currentPlayer;
+	transient private GameBoard board;
+	private ArrayList<GamePlayer> players;
+	private ArrayList<GamePlayer> playersRanked;
+	private ArrayList<GameAssetHouse> housesInMarket; 
+	private ArrayList<GameAssetStock> stocksInMarket;
+	private int currentIndex;
+	private int retirementAge;
+	private double currentStockMarketMultiplier;
+	private double currentHousingMarketMultiplier;
+	private GameEventsLog gameLog;
+	private boolean gameOver, isSavedGame;
+	private GameBoardEndTurnButton gameBoardEndTurnButton;
+
+	public GameLogic(ArrayList<GamePlayer> players, GameBoard board, ArrayList<GameAssetHouse> housesInMarket)
+	{
+		this.board = board;
+		this.players = players;
+		this.playersRanked = players;
+		this.currentIndex = 0;
+		this.currentPlayer = players.get(0);
+		this.currentHousingMarketMultiplier = 1.0;
+		this.currentStockMarketMultiplier = 1.0;
+		this.housesInMarket = housesInMarket;
+		this.gameLog = new GameEventsLog();
+		this.gameOver = false;
+		this.isSavedGame = false;
+		gameBoardEndTurnButton = new GameBoardEndTurnButton(0, 0, "", this);
+		setRanks();
+	}
+	
+	public void startGameOnFirstPlayer()
+	{
+		if(currentPlayer.isFirstTurn())
+		{
+			currentPlayer.setPlayerBankBalance(10000);
+			playerChoiceWorkVSQueens(currentPlayer);
+		}
+	}
+	
+	public void mouseClickedLogic(int xCoord, int yCoord, GameBoard board)
+	{
+		GameSound.clickSound.play();
+		if(gameOver)
+		{
+			return;
+		}
+		
+		if(board.getSpinner().entityTouched(xCoord, yCoord) && currentPlayer.isCanSpin())
+		{
+			board.getSpinner().rotateSpinner(board.getGameCanvas().getG2());
+		}
+		else if(board.getSpinner().entityTouched(xCoord, yCoord) && !currentPlayer.isCanSpin())
+		{
+			JOptionPane.showMessageDialog(board.getMainFrame(), "ERROR: You cannot currently use the game spinner", "ERROR", JOptionPane.ERROR_MESSAGE, null);
+		}
+		else if(currentPlayer.entityTouched(xCoord, yCoord))
+		{
+			new GamePlayerWallet(currentPlayer);
+		}
+		else if(gameBoardEndTurnButton.entityTouched(xCoord, yCoord))
+		{
+			gameBoardEndTurnButton.buttonPressedEffect();
+		}
+		else
+		{
+			for (GamePlayer player : players) 
+			{
+				if(player.getRetireEarlyButton().entityTouched(xCoord, yCoord))
+				{
+					player.getRetireEarlyButton().buttonPressedEffect(this);
+					if(!gameOver)
+					{
+						moveTurnToNextPlayer();
+					}
+					break;
+				}
+			}
+		}
+	}
+	
+	public void playerChoiceWorkVSQueens(GamePlayer player)
+	{
+		Object[] options = { "Go To Work", "Go To Queens" };
+		int choice = JOptionPane.showOptionDialog(null, player.getPlayerName() + ": Please select your initial choice!", player.getPlayerName() + ": Please Make A Choice",
+		             JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+		             null, options, options[0]);
+		
+		Careers career;
+		if(choice == 0)
+		{
+			player.setUniversityImmediately(false);
+			/*
+			player.setCurrentTileNode(board.getMainGameBoardTiles().getGameBoardTileList().getHeadTileNode().getNextTileNode());
+			player.getCurrentTileNode().getTile().movePlayerCoordsToTile(player);
+			*/
+			board.updateGameBoard();
+			do
+			{
+				career = board.getCareers().drawThreeForDecision();
+			}while (career == null);
+			player.setPlayerCareer(career);
+			player.setFirstTurn(false);
+		}
+		else if(choice == 1)
+		{
+			player.setUniversityImmediately(true);
+			player.setCurrentTileNode(board.getMainGameBoardTiles().getUniHeadNode());
+			player.getCurrentTileNode().getTile().movePlayerCoordsToTile(player);
+			board.updateGameBoard();
+			player.setFirstTurn(false);
+		}
+		else
+		{
+			playerChoiceWorkVSQueens(player);
+		}
+	}
+	
+	public boolean playerMustRetire(GamePlayer player)
+	{
+		return player.getPlayerAge() >= retirementAge;
+	}
+	
+	public void checkPlayerAge(GamePlayer player)
+	{
+		if(playerMustRetire(player))
+		{
+			player.setInGame(false);
+			player.setCurrentTileNode(null);
+		}
+		
+		board.updateGameBoard();
+		
+		if(checkAllPlayersRetired())
+		{
+			endGame();
+		}
+	}
+	
+	public void endGame()
+	{
+		this.gameOver = true;
+		endGameTotalAllPlayers();
+		new GameOverScreen(getPlayersRanked(), board);
+	}
+	
+	public boolean checkAllPlayersRetired()
+	{
+		for (GamePlayer player : players) 
+		{
+			if(player.isInGame())
+			{
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	public void moveTurnToNextPlayer()
+	{
+		if(currentIndex == players.size() - 1)
+		{
+			currentIndex = 0;
+		}
+		currentIndex++;
+		currentPlayer = players.get(currentIndex);
+		
+		if(!currentPlayer.isInGame())
+		{
+			moveTurnToNextPlayer();
+		}
+		else
+		{
+			board.updateGameBoard();
+			Object[] options = {"OK"};
+		    JOptionPane.showOptionDialog(getBoard().getMainFrame(),  "It is now " + currentPlayer.getPlayerName() + "'s turn!", "Turn Change!", JOptionPane.PLAIN_MESSAGE, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+			
+			if(currentPlayer.isFirstTurn())
+			{
+				currentPlayer.setPlayerBankBalance(10000);
+				playerChoiceWorkVSQueens(currentPlayer);
+			}
+			
+		}
+		
+		
+		
+	}
+	
+	public void sortRankedPlayers() // sort descending
+	{
+		for(int limit = playersRanked.size() - 1; limit > 0; limit--)
+		{
+			for(int i = 0; i < limit; i++)
+			{				
+				if(playersRanked.get(i).compareTo(playersRanked.get(i+1)) < 0) // i.e the player is 'lesser' than the player after it
+				{
+					swapElements(i);
+				}
+			}
+		}
+		
+		setRanks();
+		
+	}
+	
+	private void setRanks()
+	{
+		for (int i  = 0; i < playersRanked.size(); i++)
+		{
+			playersRanked.get(i).setCurrentRanking(i + 1);
+		}
+	}
+	
+	public void printRankedPlayers()
+	{
+		for (GamePlayer gamePlayer : players) 
+		{
+			System.out.println(gamePlayer.getCurrentRanking() + " | " + gamePlayer.getPlayerName() );
+		}
+		
+		System.out.println();
+	}
+	
+	private void swapElements(int lowerIndex)
+	{
+		GamePlayer intermediateObject = playersRanked.get(lowerIndex);
+		playersRanked.set(lowerIndex, playersRanked.get(lowerIndex + 1));
+		playersRanked.set(lowerIndex + 1, intermediateObject);
+	}
+	
+	public void applyHousingMarketMultiplierToHouses()
+	{
+		for (GameAssetHouse gameAssetHouse : housesInMarket) 
+		{
+			gameAssetHouse.generateNewHousePriceUsingMarket(currentHousingMarketMultiplier);
+		}
+	}
+	
+	/**Loops through totalling all the players assets values
+	 * @author Robert Kordula 40131366
+	 */
+	public void endGameTotalAllPlayers()
+	{
+		//double[] playerScores = new double[players.size()];
+		//int highestPlayer = 0;
+		for (int iii = 0; iii < players.size(); iii++)
+		{
+			if(players.get(iii).isInGame())
+			{
+				endGameTotalForPlayer(players.get(iii));
+			}
+		}
+	}
+	
+	/**Totals the current players assets 
+	 * @author Robert Kordula 40131366
+	 * @param player
+	 * @return total value of player assets
+	 */
+	public double endGameTotalForPlayer(GamePlayer player)
+	{
+		double playerMoney = player.getPlayerBankBalance();
+		double assetsValue = 0;
+		double houseValue = 0;
+		
+		if(player.getCurrentHouse() != null)
+		{
+			houseValue = player.getCurrentHouse().getOriginalHousePrice() * getCurrentHousingMarketMultiplier();
+		}
+ 
+		double carValue = 1000;
+		double familyValue = 0;
+		
+		for (Iterator<Loan> iterator = player.getPlayerLoans().iterator(); iterator.hasNext();)
+		{
+			assetsValue -= iterator.next().getLoanAmount() * 1.5;
+		}
+		for (Iterator<GameAsset> iterator = player.getPlayerAssets().iterator(); iterator.hasNext();)
+		{
+			assetsValue += iterator.next().getCurrentAssetValue() * getCurrentStockMarketMultiplier();
+		}
+		for (Iterator<FamilyPegs> iterator = player.getPlayerFamily().iterator(); iterator.hasNext();)
+		{
+			if (iterator.next() instanceof SpousePeg)
+			{
+				familyValue += 2000;
+			}
+			else if (iterator.next() instanceof ChildPeg)
+			{
+				familyValue += 1000;
+			}
+			else
+			{
+				familyValue += 500;
+			}
+		}
+		switch (player.getPlayerCar().getPlayerCar())
+		{
+			case TIER2:
+				carValue = 4000;
+				break;
+			case TIER3:
+				carValue = 6000;
+				break;
+			case TIER4:
+				carValue = 8000;
+				break;
+			default:
+				carValue = 2000;
+				break;
+		}
+		
+		double finalValue = playerMoney + assetsValue + houseValue + carValue + familyValue;
+		player.setPlayerBankBalance((int)finalValue);
+		return finalValue;
+	}
+	
+	public GamePlayer getCurrentPlayer() {
+		return currentPlayer;
+	}
+
+	public void setCurrentPlayer(GamePlayer currentPlayer) {
+		this.currentPlayer = currentPlayer;
+	}
+
+	public ArrayList<GamePlayer> getPlayers() {
+		return players;
+	}
+
+	public void setPlayers(ArrayList<GamePlayer> players) {
+		this.players = players;
+	}
+
+	public int getCurrentIndex() {
+		return currentIndex;
+	}
+
+	public void setCurrentIndex(int currentIndex) {
+		this.currentIndex = currentIndex;
+	}
+
+	public int getRetirementAge() {
+		return retirementAge;
+	}
+
+	public void setRetirementAge(int retirementAge) {
+		this.retirementAge = retirementAge;
+	}
+
+	public GameBoard getBoard() {
+		return board;
+	}
+
+	public void setBoard(GameBoard board) {
+		this.board = board;
+	}
+
+	public double getCurrentStockMarketMultiplier() {
+		return currentStockMarketMultiplier;
+	}
+
+	public void setCurrentStockMarketMultiplier(double currentStockMarketMultiplier) {
+		this.currentStockMarketMultiplier = currentStockMarketMultiplier;
+	}
+
+	public double getCurrentHousingMarketMultiplier() {
+		return currentHousingMarketMultiplier;
+	}
+
+	public void setCurrentHousingMarketMultiplier(double currentHousingMarketMultiplier) {
+		this.currentHousingMarketMultiplier = currentHousingMarketMultiplier;
+	}
+
+	public ArrayList<GamePlayer> getPlayersRanked() {
+		sortRankedPlayers();
+		return playersRanked;
+	}
+
+	public void setPlayersRanked(ArrayList<GamePlayer> playersRanked) {
+		this.playersRanked = playersRanked;
+	}
+
+	public ArrayList<GameAssetHouse> getHousesInMarket() {
+		return housesInMarket;
+	}
+
+	public void setHousesInMarket(ArrayList<GameAssetHouse> housesInMarket) {
+		this.housesInMarket = housesInMarket;
+	}
+
+	public ArrayList<GameAssetStock> getStocksInMarket() {
+		return stocksInMarket;
+	}
+
+	public void setStocksInMarket(ArrayList<GameAssetStock> stocksInMarket) {
+		this.stocksInMarket = stocksInMarket;
+	}
+
+	public GameEventsLog getGameLog() {
+		return gameLog;
+	}
+
+	public void setGameLog(GameEventsLog gameLog) {
+		this.gameLog = gameLog;
+	}
+
+	public boolean isGameOver() {
+		return gameOver;
+	}
+
+	public void setGameOver(boolean gameOver) {
+		this.gameOver = gameOver;
+	}
+
+	public boolean isSavedGame() {
+		return isSavedGame;
+	}
+
+	public void setSavedGame(boolean isSavedGame) {
+		this.isSavedGame = isSavedGame;
+	}
+
+	public GameBoardEndTurnButton getGameBoardEndTurnButton() {
+		return gameBoardEndTurnButton;
+	}
+
+	public void setGameBoardEndTurnButton(GameBoardEndTurnButton gameBoardEndTurnButton) {
+		this.gameBoardEndTurnButton = gameBoardEndTurnButton;
+	}
+	
+	
+	
+	
+}

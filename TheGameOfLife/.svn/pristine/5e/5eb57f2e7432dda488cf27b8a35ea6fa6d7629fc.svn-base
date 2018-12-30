@@ -1,0 +1,105 @@
+package gameOfLife;
+
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.io.Serializable;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
+public class GameEventsLog implements Serializable{
+
+	private ArrayList<String> eventLog;
+	private Date currentTime;
+	private final int upperLimit = 10;
+	private GameLogic gameLogic;
+
+	public GameEventsLog(GameLogic gameLogic) {
+		eventLog = new ArrayList<String>();
+		this.gameLogic = gameLogic;
+	}
+	
+	public String constructStringFromLogs()
+	{
+		String eventsString = "";
+		
+		for (String logString : eventLog) 
+		{
+			eventsString += logString + "\n";
+		}
+		
+		return eventsString;
+	}
+	
+	public void displayGameEventsLogWindow()
+	{
+		new GameEventsLogWindow(constructStringFromLogs());
+	}
+
+	public void addLog(String logToAdd) {
+		eventLog.add(getCurrentTime() + ": " + gameLogic.getCurrentPlayer().getPlayerName() + " -> " + logToAdd);
+	}
+
+	public String getCurrentTime()
+	{
+		currentTime = new Date();
+		return DateFormat.getTimeInstance().format(currentTime);
+	}
+	
+	public void removeLogAtIndex(int index)
+	{
+		eventLog.remove(index);
+	}
+	
+	public void clearAllEventLogs()
+	{
+		eventLog.clear();
+	}
+	
+	/*
+	public boolean printAllLogsTesting()
+	{
+		int i = 1;
+		
+		for (String currentEvent : eventLog) 
+		{
+			System.out.println(currentEvent);
+			i++;
+		}
+		
+		if(i == eventLog.size())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	*/
+	
+	public void drawLogsToCanvas(Graphics2D graphicsPanel, int xCoord, int yCoord)
+	{
+		graphicsPanel.setFont(new Font("Arial", Font.BOLD, 16));
+		int yCoordLocal = yCoord;
+		int yCoordIncrement = graphicsPanel.getFontMetrics().getHeight();
+		
+		graphicsPanel.drawString("GAME LOG:", xCoord, yCoordLocal);
+		yCoordLocal += yCoordIncrement;
+		graphicsPanel.setFont(new Font("Arial", Font.BOLD, 12));
+		yCoordIncrement = graphicsPanel.getFontMetrics().getHeight();
+		
+		for(int i = 0; i < eventLog.size(); i++)
+		{
+			System.out.println(eventLog.get(i));
+			graphicsPanel.drawString(eventLog.get(i), xCoord, yCoordLocal);
+			yCoordLocal += yCoordIncrement;
+			
+			if(i == upperLimit)
+			{
+				break;
+			}
+		}
+	}
+
+}

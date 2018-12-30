@@ -1,0 +1,138 @@
+package gameOfLife;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Iterator;
+
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+
+/**
+ * @author Robert Kordula 40131366
+ * This class creates a screen to allow the player to view their assets and sell them as required
+ */
+public class GamePlayerAssetScreen extends CommonScreenAttributes {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JFrame mainFrame;
+	private JPanel pane = new JPanel();
+	private JScrollPane scroll;
+	private Font font = new Font("Serif", Font.PLAIN, 25);
+	
+	public GamePlayerAssetScreen(GamePlayer player)
+	{	
+		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
+		pane.setBackground(new Color(232, 181, 30));
+		for (Iterator<GameAsset> iterator = player.getPlayerAssets().iterator(); iterator.hasNext();)
+		{
+			Panel panel = new Panel(player, (GameAssetAttraction)iterator.next());
+			
+			pane.add(panel);
+		}
+		
+		//Creating the window//
+		scroll = new JScrollPane(pane);
+		scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scroll.setBackground(new Color(232,181,30));
+		mainFrame = new JFrame(player.getPlayerName() + "'s Assets");
+		mainFrame.setBackground(new Color(239, 253, 222));
+		mainFrame.setResizable(false);
+		mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		mainFrame.setLocationRelativeTo(null);
+		mainFrame.add(scroll);
+		mainFrame.setSize(1000, 500);
+		mainFrame.setVisible(true);
+	}
+
+	private class Panel extends JPanel
+	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		private BoxLayout layout = new BoxLayout(this, BoxLayout.X_AXIS);
+		private JLabel imageIcon, name, currentValue;
+		private JButton sellAsset;
+		
+		/**
+		 * @param player
+		 * @param asset
+		 * Asset has its own panel, that is removed if the user clicks the sell asset buttom, the panel displays 
+		 * the asset, as well as its name and current price
+		 */
+		public Panel(GamePlayer player, GameAssetAttraction asset)
+		{
+			setLayout(new GridBagLayout());
+			GridBagConstraints cons = new GridBagConstraints();
+			cons.fill = GridBagConstraints.HORIZONTAL;
+			cons.gridx = 0;
+			cons.gridwidth = 1;
+			cons.gridheight = 1;
+			
+			imageIcon = new JLabel(new ImageIcon(asset.getEntityImage()));
+			name = new JLabel(asset.getAssetName());
+			name.setFont(font);
+			currentValue = new JLabel("£" + String.valueOf(asset.getCurrentAssetValue()));
+			currentValue.setFont(font);
+			sellAsset = new JButton("Sell asset");
+			sellAsset.setFont(font);
+			sellAsset.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Object[] options = { "YES", "NO" };
+					int choice = JOptionPane.showOptionDialog(null, "Are you sure you want to sell" + asset.getAssetName() + " for £" + asset.getCurrentAssetValue(),
+					             "", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+					             null, options, options[0]);
+					if (choice == 0)
+					{
+						player.sellAsset(asset);
+						JOptionPane.showMessageDialog(null, asset.getAssetName() + " was sold for £" + asset.getCurrentAssetValue(), "", JOptionPane.INFORMATION_MESSAGE, null);
+						hidePanel();
+					}
+				}
+			});
+			cons.weightx = 1;
+			cons.gridx = 0;
+			cons.gridy = 0;
+			this.add(imageIcon, cons);
+			
+			cons.weightx = 2;
+			cons.gridx = 1;
+			cons.gridy = 0;
+			this.add(name, cons);
+			
+			cons.weightx = 2;
+			cons.gridx = 2;
+			cons.gridy = 0;
+			this.add(currentValue, cons);
+			
+			cons.weightx = 1;
+			cons.gridx = 3;
+			cons.gridy = 0;
+			this.add(sellAsset, cons);
+			
+			this.setBackground(new Color(239, 253, 222));
+			this.setVisible(true);
+		}
+		
+		public void hidePanel()
+		{
+			this.setVisible(false);
+		}
+	}
+}

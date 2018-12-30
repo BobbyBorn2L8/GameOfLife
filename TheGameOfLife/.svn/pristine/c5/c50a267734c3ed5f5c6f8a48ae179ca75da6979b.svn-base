@@ -1,0 +1,62 @@
+package gameOfLife;
+
+/**
+ * 
+ * @author Josh & Daniel
+ * 
+ * A game asset is any object that can be liquefied and
+ * valued at the end of the game
+ *
+ */
+
+public abstract class GameAsset {
+	
+	// INSTANCE VARIABLES
+	/**
+	 * The value of this asset when liquefied
+	 */
+	private int endGameValue;
+	
+	/**
+	 * Whether a unique asset is being used/not
+	 */
+	private boolean isUsed;
+	
+	
+	// CONSTRUCTORS
+	public GameAsset(){
+		isUsed = false;
+	}
+	
+	public GameAsset(boolean usUsed){
+		this.isUsed = isUsed;
+	}
+	
+
+	// METHODS
+
+
+	// GETTERS AND SETTERS
+
+	
+	public boolean isUsed() {
+		return isUsed;
+	}
+
+	public void setIsUsed(boolean active) {
+		this.isUsed = active;
+	}
+
+
+	public int getEndGameValue() {
+		return endGameValue;
+	}
+
+
+	public void setEndGameValue(int endGameValue) {
+		this.endGameValue = endGameValue;
+	}
+	
+	
+
+}

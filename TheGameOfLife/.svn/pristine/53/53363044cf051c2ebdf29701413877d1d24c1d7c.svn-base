@@ -1,0 +1,152 @@
+package gameOfLife;
+
+import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
+
+public class GameLogic {
+	
+	private GamePlayer currentPlayer;
+	private GameBoard board;
+	private ArrayList<GamePlayer> players;
+	private int currentIndex;
+	private int retirementAge;
+	private int currentStockMarketValue, currentHousingMarketValue;
+	private final int INITIAL_STOCK_MARKET_VALUE = 0, INITIAL_HOUSING_MARKET_VALUE = 0;
+
+	public GameLogic(ArrayList<GamePlayer> players, GameBoard board)
+	{
+		this.board = board;
+		this.players = players;
+		this.currentIndex = 0;
+		this.currentPlayer = players.get(0);
+	}
+	
+	public void playerChoiceWorkVSQueens(GamePlayer player)
+	{
+		Object[] options = { "Go To Work", "Go To Queens" };
+		int choice = JOptionPane.showOptionDialog(null, "Please select your initial choice!", "Please Make A Choice",
+		             JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+		             null, options, options[0]);
+		
+		if(choice == 0)
+		{
+			player.setWorkImmediately(true);
+			player.setUniversityImmediately(false);
+		}
+		else
+		{
+			player.setWorkImmediately(false);
+			player.setUniversityImmediately(true);
+		}
+		
+		player.setFirstTurn(false);
+	}
+	
+	public boolean playerMustRetire(GamePlayer player)
+	{
+		if(player.getPlayerAge() >= retirementAge)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	public void checkPlayerAge(GamePlayer player)
+	{
+		if(playerMustRetire(player))
+		{
+			player.setInGame(false);
+		}
+	}
+	public void moveTurnToNextPlayer()
+	{
+		if(currentIndex == players.size() - 1)
+		{
+			currentIndex = 0;
+		}
+		
+		currentPlayer = players.get(currentIndex);
+		currentIndex++;
+	}
+	
+	public void adjustStockMarketValue(double stockMarketMultiplier)
+	{
+		this.currentStockMarketValue = (int)(currentStockMarketValue * stockMarketMultiplier);
+	}
+	
+	public void adjustHousingMarketValue(double housingMarketMultiplier)
+	{
+		this.currentHousingMarketValue = (int)(currentHousingMarketValue * housingMarketMultiplier);
+	}
+
+	public GamePlayer getCurrentPlayer() {
+		return currentPlayer;
+	}
+
+	public void setCurrentPlayer(GamePlayer currentPlayer) {
+		this.currentPlayer = currentPlayer;
+	}
+
+	public ArrayList<GamePlayer> getPlayers() {
+		return players;
+	}
+
+	public void setPlayers(ArrayList<GamePlayer> players) {
+		this.players = players;
+	}
+
+	public int getCurrentIndex() {
+		return currentIndex;
+	}
+
+	public void setCurrentIndex(int currentIndex) {
+		this.currentIndex = currentIndex;
+	}
+
+	public int getRetirementAge() {
+		return retirementAge;
+	}
+
+	public void setRetirementAge(int retirementAge) {
+		this.retirementAge = retirementAge;
+	}
+
+	public int getCurrentStockMarketValue() {
+		return currentStockMarketValue;
+	}
+
+	public void setCurrentStockMarketValue(int currentStockMarketValue) {
+		this.currentStockMarketValue = currentStockMarketValue;
+	}
+
+	public GameBoard getBoard() {
+		return board;
+	}
+
+	public void setBoard(GameBoard board) {
+		this.board = board;
+	}
+
+	public int getCurrentHousingMarketValue() {
+		return currentHousingMarketValue;
+	}
+
+	public void setCurrentHousingMarketValue(int currentHousingMarketValue) {
+		this.currentHousingMarketValue = currentHousingMarketValue;
+	}
+
+	public int getINITIAL_STOCK_MARKET_VALUE() {
+		return INITIAL_STOCK_MARKET_VALUE;
+	}
+
+	public int getINITIAL_HOUSING_MARKET_VALUE() {
+		return INITIAL_HOUSING_MARKET_VALUE;
+	}
+	
+	
+	
+}

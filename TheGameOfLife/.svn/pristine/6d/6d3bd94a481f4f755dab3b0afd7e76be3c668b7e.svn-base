@@ -1,0 +1,13 @@
+package gameOfLife;
+
+public abstract class FamilyPegs extends GameEntity
+{
+	
+	public FamilyPegs(int xCoord, int yCoord, String imageName) 
+	{
+		super(xCoord, yCoord, imageName);
+		// TODO Auto-generated constructor stub
+	}
+	
+	public abstract void movePegToPlayer(GamePlayer player, int position);
+}

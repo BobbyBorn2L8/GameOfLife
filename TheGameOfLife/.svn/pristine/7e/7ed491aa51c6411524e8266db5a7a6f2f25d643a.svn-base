@@ -1,0 +1,118 @@
+package gameOfLife;
+
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import javax.swing.*;
+
+public class GamePlayerWallet extends CommonScreenAttributes{
+	
+	private Rectangle cashBounds, cardBounds, photoBounds;
+	private JFrame walletFrame;
+	private JPanel pane;
+	private Canvas canvas;
+	private ImageIcon walletImage;
+	private JLabel walletLabel;
+	private GridBagConstraints gbc = new GridBagConstraints();
+	
+	public GamePlayerWallet(GamePlayer player)
+	{
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		gbc.insets = new Insets(5, 10, 5, 10);
+		
+		pane = new JPanel(new GridBagLayout());
+		
+		walletImage = new ImageIcon(getClass().getResource("walletimage.png"));
+		walletLabel = new JLabel(walletImage);
+		
+		cashBounds = new Rectangle(0, 0, 630, 170);
+		cardBounds = new Rectangle(0, 170, walletImage.getIconWidth() / 2, walletImage.getIconHeight() - 170);
+		photoBounds = new Rectangle(walletImage.getIconWidth() / 2, 170, walletImage.getIconWidth() / 2, walletImage.getIconHeight() - 170);
+		
+		addComponent(pane, walletLabel, gbc, 0, 0, 1, 1);
+		
+		pane.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO Auto-generated method stub
+				checkBounds(e.getX(), e.getY());
+				
+			}
+		});
+		
+		walletFrame = new JFrame(player.getPlayerName() + "'s Wallet");
+		walletFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		walletFrame.add(pane);
+		walletFrame.setSize(walletImage.getIconWidth(), walletImage.getIconHeight() + 35);
+		walletFrame.setResizable(false);
+		walletFrame.setLocationRelativeTo(null);
+		walletFrame.setVisible(true);
+	}
+	
+	public void checkBounds(int xCoord, int yCoord)
+	{
+		if(cashBoundsTouched(xCoord, yCoord))
+		{
+			// Open bankbalance window
+			System.out.println("Cash Bounds Touched");
+		}
+		else if(cardBoundsTouched(xCoord, yCoord))
+		{
+			// Open assets window
+			System.out.println("Card Bounds Touched");
+		}
+		else if(photoBoundsTouched(xCoord, yCoord))
+		{
+			// Open family and souvenir window
+			System.out.println("Photo Bounds Touched");
+		}
+		else
+		{
+			// Error JDialog
+		}
+	}
+	
+	private boolean cashBoundsTouched(int xCoord, int yCoord)
+	{
+		return (xCoord >= cashBounds.x && xCoord <= (cashBounds.x + cashBounds.width)) && (yCoord >= cashBounds.y && yCoord <= (cashBounds.y + cashBounds.height));
+	}
+	
+	private boolean cardBoundsTouched(int xCoord, int yCoord)
+	{
+		return (xCoord >= cardBounds.x && xCoord <= (cardBounds.x + cardBounds.width)) && (yCoord >= cardBounds.y && yCoord <= (cardBounds.y + cardBounds.height));
+	}
+	
+	private boolean photoBoundsTouched(int xCoord, int yCoord)
+	{
+		return (xCoord >= photoBounds.x && xCoord <= (photoBounds.x + photoBounds.width)) && (yCoord >= photoBounds.y && yCoord <= (photoBounds.y + photoBounds.height));
+	}
+	
+
+}

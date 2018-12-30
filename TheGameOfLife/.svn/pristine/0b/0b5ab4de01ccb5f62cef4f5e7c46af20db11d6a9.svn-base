@@ -1,0 +1,6 @@
+package gameOfLife;
+
+public enum CarTypes 
+{
+	TIER1, TIER2, TIER3, TIER4
+}

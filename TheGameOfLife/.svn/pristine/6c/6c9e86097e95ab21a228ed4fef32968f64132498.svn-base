@@ -1,0 +1,23 @@
+package gameOfLife;
+
+public class Loan
+{
+	private int loanAmount;
+
+	public Loan(int amount) {
+		loanAmount = amount;
+	}
+	
+	public void repayLoan(GamePlayer player)
+	{
+		player.subtractFromPlayerBankBalance(loanAmount * 1.25);
+	}
+	
+	public int getLoanAmount() {
+		return loanAmount;
+	}
+
+	public void setLoanAmount(int loanAmount) {
+		this.loanAmount = loanAmount;
+	}
+}

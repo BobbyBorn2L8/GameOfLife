@@ -1,0 +1,21 @@
+package gameOfLife;
+
+public class GameAssetAttraction extends GameAsset
+{
+	private int currentEntryPrice;
+	
+	public GameAssetAttraction(int currentEntryPrice, int currentAssetValue, String assetName, String assetImageName) 
+	{
+		super(currentAssetValue, 0, 0, assetName, assetImageName);
+		this.currentEntryPrice = currentEntryPrice;
+	}
+
+	public int getCurrentEntryPrice() {
+		return currentEntryPrice;
+	}
+
+	public void setCurrentEntryPrice(int currentEntryPrice) {
+		this.currentEntryPrice = currentEntryPrice;
+	}
+
+}

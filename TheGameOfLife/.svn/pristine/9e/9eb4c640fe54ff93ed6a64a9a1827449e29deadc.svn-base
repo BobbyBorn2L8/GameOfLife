@@ -1,0 +1,138 @@
+package gameOfLife;
+
+import javax.swing.JOptionPane;
+
+public class BlueTile extends Tile
+{
+	private String option1, option2;
+	private BlueTileEffects blueEffect;
+	
+	public BlueTile(int xCoord, int yCoord, String imageName, int multiplier, String tileText, BlueTileEffects effect)
+	{
+		super(xCoord, yCoord, imageName, multiplier, tileText, TileEffects.NOTHING);
+		this.blueEffect = effect;
+	}
+	
+	@Override
+	public void onLand(GamePlayer player, GameBoard board)
+	{
+		Object[] options = {option1, option2};
+		int n = JOptionPane.showOptionDialog(null, "Please select an option",
+				"DECISION TIME!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+		if (n == 0)
+		{
+			effectActivated(blueEffect, player, board);
+		}
+		if (n == 1)
+		{
+			effectActivated(BlueTileEffects.NOTHING, player, board);
+		}
+	}
+	
+	public void effectActivated(BlueTileEffects effect, GamePlayer player, GameBoard board)
+	{
+		switch(effect)
+		{
+		case ATTRACTION:
+			player.subtractFromPlayerBankBalance(getMultiplier());
+			GameAssetAttraction attraction;
+			if (getMultiplier() == 0 && board.getFallsAttractions().getDeck().size() > 0)
+			{
+				player.getPlayerAssets().add(board.getFallsAttractions().getRandomCard());
+			}
+			else if (getMultiplier() == 1 && board.getUniAttractions().getDeck().size() > 0)
+			{
+				player.getPlayerAssets().add(board.getUniAttractions().getRandomCard());
+			}
+			else if (getMultiplier() == 2 && board.getCathedralAttractions().getDeck().size() > 0)
+			{
+				player.getPlayerAssets().add(board.getCathedralAttractions().getRandomCard());
+			}
+			else if (getMultiplier() == 3 && board.getTitanicAttractions().getDeck().size() > 0)
+			{
+				attraction = board.getTitanicAttractions().getRandomCard();
+				player.getPlayerAssets().add(attraction);
+			}
+			else
+			{
+				JOptionPane.showConfirmDialog(null, "There are no more attractions in this area");
+			}
+			break;
+		case CARUPGRADE:
+			if (player.getPlayerCar().getPlayerCar() != CarTypes.TIER4)
+			{
+				player.upgradeCar();
+			}
+			else
+			{
+				JOptionPane.showConfirmDialog(null, "Your car is already fully upgraded");
+			}
+			break;
+		case NEWCAREER:
+			player.changeCareer(board);
+			break;
+		case NEWHOUSE:
+			GameAssetHouse house;
+			if (getMultiplier() == 0 && board.getFallsHouses().getDeck().size() > 0)
+			{
+				house = board.getFallsHouses().drawThreeForDecision();
+				if (house != null)
+				{
+					player.buyNewHouse(house, board);
+				}
+			}
+			else if (getMultiplier() == 1 && board.getUniHouses().getDeck().size() > 0)
+			{
+				house = board.getUniHouses().drawThreeForDecision();
+				if (house != null)
+				{
+					player.buyNewHouse(house, board);
+				}
+			}
+			else if (getMultiplier() == 2 && board.getCathedralHouses().getDeck().size() > 0)
+			{
+				house = board.getCathedralHouses().drawThreeForDecision();
+				if (house != null)
+				{
+					player.buyNewHouse(house, board);
+				}
+			}
+			else if (getMultiplier() == 3 && board.getTitanicHouses().getDeck().size() > 0)
+			{
+				house = board.getTitanicHouses().drawThreeForDecision();
+				if (house != null)
+				{
+					player.buyNewHouse(house, board);
+				}
+			}
+			else
+			{
+				JOptionPane.showConfirmDialog(null, "There are no more houses in this area");
+			}
+			break;
+		default:
+			JOptionPane.showConfirmDialog(null, "You do nothing");
+			break;
+		}
+	}
+
+	public String getOption1()
+	{
+		return option1;
+	}
+
+	public void setOption1(String option1)
+	{
+		this.option1 = option1;
+	}
+
+	public String getOption2()
+	{
+		return option2;
+	}
+
+	public void setOption2(String option2)
+	{
+		this.option2 = option2;
+	}
+}

@@ -1,0 +1,112 @@
+package gameOfLife;
+
+import java.awt.*;
+
+import javax.swing.*;
+
+public class GameRulesScreen extends CommonScreenAttributes{
+	
+	private JFrame rulesScreenFrame;
+	private JPanel pane = new JPanel(new GridBagLayout());
+	private JScrollPane scroll = new JScrollPane(pane);
+	private JTextArea mainText;
+	private GridBagConstraints gbc = new GridBagConstraints();
+	private ImageIcon imageHeader;
+	private JLabel mainRulesTitle;
+	
+	/*
+	 * The GuideScreen changes colour scheme based on the character parameter, so no empty constructor is included, this screen is very basic and only serves to outline the basics of 
+	 * playing the game
+	 */
+	
+	public GameRulesScreen()
+	{
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		gbc.insets = new Insets(10, 5, 10, 20);
+		
+		scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		imageHeader = new ImageIcon(getClass().getResource("gameoflifequblogonew.png"));
+		
+		mainRulesTitle = new JLabel(imageHeader);
+		
+		String instructions ="WELCOME TO THE QUB LIFE GAME 2016\n"
+				+ "--------------------------Introduction--------------------------\n"
+				+ "You begin your life as an eager young 18 year\nold in the streets of Belfast."
+				+ "  Your aim in life is\nto make as much money as possible before youreach retirement age."
+				+ "  You can do this by\npassing exams in Queens University Belfast or\njump straight into work.  "
+				+ "Climb the property\nladder and grow a family, take them to new and exciting places in Belfast collecting souvenirs\nas you go.  "
+				+ "All will help towards your final scorewhen you hit that retirement party!\nGOOD LUCK!  "
+				+ "\n\n---------------------------Setup----------------------------------\n"
+				+ "To get started click the 'NEW GAME' button on\nthe main menu.\n"
+				+ "You will be prompted to enter how many\nplayers are playing.\n"
+				+ "You must have a minimum of 2 and a maximumof 8.\n\n"
+				+ "You will be prompted to enter when you would\nlike to retire.\n"
+				+ "This will determine how long the game will last as the game ends when retirement age is\nreached.\n\n"
+				+ "Recommended ages for number of players are as follows:\n"
+				+ "2 players - 40\n"
+				+ "3 players - 50\n"
+				+ "4 players - 60\n"
+				+ "5 players - 70\n"
+				+ "6 players - 80\n\n"
+				+ "You can also load a saved game by clicking\n'LOAD GAME' and selecting the save file.\nHit OK.\n\n"
+				+ "New game > create character x number of\nplayer > game opens \n"
+				+ "Load game > choose save file > game loads\n\n"
+				+ "------------------------Customise character----------------\n"
+				+ "The character customisation screen will allow\neach player to enter their name and gender\nbefore they start the game.\n"
+				+ "Once all players have been entered then hit\n'START GAME' to begin.\n\n"
+				+ "--------------------------------------First Turn---------------------------------------\n"
+				+ "Once all of the characters have been created\nyou are ready to have your first go.\n"
+				+ "Each player will take it in turns to decide\nwhether they will to start of their career by\ngoing to university or go straight into a part-\ntime job.  "
+				+ "Jumping straight into a part-time job will get you onto the board straight away so thatyou can begin travelling and buying items.  "
+				+ "If\nyou go to university you will pay a fee up front\nand will not be able to earn any money until you pass your exams.  "
+				+ "Once you pass your exams you have a chance to earn a higher paid job\nthan those who began work straight away.\n\n"
+				+ "All of the players are lined up on the start line.\nThe game has started!\n\n"
+				+ "--------------------------------------Players turn ------------------------------------\n"
+				+ "To begin your go you must first spin the wheel\nin the center of the board by clicking it.\n"
+				+ "This will decide how many tiles you can\nadvance forward.\n\n"
+				+ "When a player lands on a tile the player will be prompted about what the tile function is.\n"
+				+ "Each tile carries out a specific function. They\nare as follows:\n\n"
+				+ "BLUE: you are prompted to three cards to choose from. Buy new house. Players can only have one house at a time. When you purchase a new house you sell your previous house asset.\n"
+				+ "GREEN: Payday. Whenever you pass the green tile you collect your annual earnings. This is dependent on your promotion level.\n"
+				+ "ORANGE: nothing special\nRED: stops the player and you have to do what it says\n\n"
+				+ "Once your turn is over the computer will prompt the next player to go.\n\n"
+				+ "--------------------------------------Special spins -----------------------------------\n"
+				+ "When someone spins a 1 the stock markets crash and properties and stocks drop in price.\n"
+				+ "Selling houses and stocks before this happens will result in the best pay-out.\n\n"
+				+ "When you spin a 10 all players age by 10 years.\n\n"
+				+ "--------------------------------------Loans--------------------------------------------\n"
+				+ "If you have to pay more money than you have, you can click the wallet to ask the banker for a loan. But be careful! You will have to pay back loans at the end of the game.\n\n"
+				+ "--------------------------------------Buying a house-----------------------------------\n"
+				+ "When you land on a house space you are given the option to purchase a house.  You can ignore and continue on your full spin or you can stop at that tile and purchase the houses.\n\n"
+				+ "You cannot buy a house if someone else already owns it and each player can only own one property at any given time in the game.\n"
+				+ "Property prices change throughout the game so be careful of when you buy and sell properties.\n\n"
+				+ "--------------------------------------Ending outcomes----------------------------------\n"
+				+ "As soon as a player reaches the retirement age the game is over. All pay loans are deducted from each player.\n"
+				+ "It isn't just about the money.\n"
+				+ "The game assets such as the spouse and pet are liquefied and added to each players balance.\n"
+				+ "The player with the highest score is deemed the winner.";
+
+		mainText = new JTextArea(instructions);
+		mainText.setFont(new Font("Arial", Font.BOLD, 18));
+		mainText.setLineWrap(true);
+		mainText.setEditable(false);
+		mainText.setBackground(new Color(73,189,53));
+		
+		pane.setBackground(new Color(73,189,53));
+
+		addComponent(pane, mainRulesTitle, gbc, 0, 0, 1, 1);
+		addComponent(pane, mainText, gbc, 0, 1, 1, 4);
+		
+		rulesScreenFrame = new JFrame("Game Guide");
+
+		rulesScreenFrame.setDefaultCloseOperation(rulesScreenFrame.DISPOSE_ON_CLOSE);
+		rulesScreenFrame.add(scroll);
+		rulesScreenFrame.setSize(imageHeader.getIconWidth() + 70, 450);
+		rulesScreenFrame.setResizable(false);
+		rulesScreenFrame.setLocationRelativeTo(null);
+		rulesScreenFrame.setVisible(true);
+	}
+
+}

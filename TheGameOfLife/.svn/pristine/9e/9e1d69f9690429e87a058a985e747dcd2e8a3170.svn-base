@@ -1,0 +1,207 @@
+package gameOfLife;
+
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+public class GameBoard extends CommonScreenAttributes{
+	
+	private Frame mainFrame;
+	private Label headerLabel, statusLabel;
+	private Panel controlPanel;
+	private GameBoardTileList gameBoardTileList;
+	TileNode tailNode, middleNode, headNode;
+	GamePlayer player;
+	
+	public static void main(String[] args)
+	{
+		GameBoard awtControlDemo = new GameBoard();
+		awtControlDemo.showCanvasDemo();
+    }
+
+	public GameBoard()
+	{
+		prepareGUI();
+		
+		gameBoardTileList = new GameBoardTileList();
+		
+
+		tailNode = new TileNode(new OrangeTile(240, 100, "orange_03.png", 0, "title", null), null);
+		middleNode = new TileNode(new OrangeTile(120, 100, "orange_02.png", 0, "title", null), null);
+		headNode = new TileNode(new OrangeTile(0, 100, "orange_01.png", 0, "title", null), null);
+		
+		gameBoardTileList.addNode(headNode);
+		gameBoardTileList.addNode(middleNode);
+		gameBoardTileList.addNode(tailNode);
+		
+		player = new GamePlayer(500, 500, "token_01_small.png", "Bobby");
+		player.setCurrentTileNode(headNode);
+		headNode.getTile().setPlayerOnTile(player);
+		
+
+	}
+	
+	public void prepareGUI()
+	{
+		mainFrame = new Frame("Testing AWT + Canvas");
+		mainFrame.setSize(1280, 720);
+		mainFrame.addWindowListener(new WindowListener() {
+			
+			@Override
+			public void windowOpened(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowIconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+			}
+			
+			@Override
+			public void windowClosing(WindowEvent e) {
+				// TODO Auto-generated method stub
+				System.exit(0);
+			}
+			
+			@Override
+			public void windowClosed(WindowEvent e) {
+				// TODO Auto-generated method stub
+				System.exit(0);
+			}
+			
+			@Override
+			public void windowActivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		controlPanel = new Panel();
+	
+	    mainFrame.add(controlPanel);
+	    mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH); 
+	    mainFrame.setVisible(true);  
+	    mainFrame.setResizable(false);
+	}
+	
+	private void showCanvasDemo()
+	{
+	    controlPanel.add(new GameCanvas(this));  
+    } 
+	
+
+	public Frame getMainFrame() {
+		return mainFrame;
+	}
+
+	public void setMainFrame(Frame mainFrame) {
+		this.mainFrame = mainFrame;
+	}
+
+	public Label getHeaderLabel() {
+		return headerLabel;
+	}
+
+	public void setHeaderLabel(Label headerLabel) {
+		this.headerLabel = headerLabel;
+	}
+
+	public Label getStatusLabel() {
+		return statusLabel;
+	}
+
+	public void setStatusLabel(Label statusLabel) {
+		this.statusLabel = statusLabel;
+	}
+
+	public Panel getControlPanel() {
+		return controlPanel;
+	}
+
+	public void setControlPanel(Panel controlPanel) {
+		this.controlPanel = controlPanel;
+	}
+
+
+
+class GameCanvas extends Canvas {
+	
+	private GameBoard board;
+
+      public GameCanvas(GameBoard board) 
+      {
+    	 this.board = board;
+         setBackground (Color.WHITE);
+         setSize(board.getMainFrame().getWidth(), board.getMainFrame().getHeight());
+         
+         this.addMouseListener(new MouseListener() {
+ 			
+ 			@Override
+ 			public void mouseReleased(MouseEvent e) {
+ 				// TODO Auto-generated method stub
+ 				
+ 			}
+ 			
+ 			@Override
+ 			public void mousePressed(MouseEvent e) {
+ 				// TODO Auto-generated method stub
+ 				
+ 			}
+ 			
+ 			@Override
+ 			public void mouseExited(MouseEvent e) {
+ 				// TODO Auto-generated method stub
+ 				
+ 			}
+ 			
+ 			@Override
+ 			public void mouseEntered(MouseEvent e) {
+ 				// TODO Auto-generated method stub
+ 				
+ 			}
+ 			
+ 			@Override
+ 			public void mouseClicked(MouseEvent e) {
+ 				// TODO Auto-generated method stub
+ 				System.out.println(e.getX() + " " + e.getY());
+ 				player.movePlayerOneTile();
+ 				// headNode.getTile().setPlayerOnTile(player);
+ 				repaint();
+ 			}
+ 		});
+         
+         
+      }
+
+      public void paint(Graphics g) 
+      {
+         Graphics2D g2 = (Graphics2D) g;
+         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+         board.gameBoardTileList.drawList(g2);
+         board.player.drawEntity(g2);
+      }
+   }
+}

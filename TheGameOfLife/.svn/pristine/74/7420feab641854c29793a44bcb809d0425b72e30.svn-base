@@ -1,0 +1,70 @@
+package gameOfLife;
+
+import java.awt.*;
+import java.awt.event.*;
+
+import javax.swing.*;
+
+public class GameMainMenu extends CommonScreenAttributes{
+	
+	private JFrame initialMenuFrame;
+	private JButton newGame, gameGuide, loadGame;
+	private JPanel pane = new JPanel(new GridBagLayout());
+	private ImageIcon imageHeader;
+	private JLabel headerImageLabel;
+	private GridBagConstraints gbc = new GridBagConstraints();
+	
+	/*
+	 * The intial menu is incredibly simple, it has the image representing the game's titles and all necessary buttons to start a new game, load a game or open the game guide
+	 */
+	
+	public GameMainMenu()
+	{
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		gbc.insets = new Insets(5, 10, 5, 10);
+		
+		imageHeader = new ImageIcon(getClass().getResource("logo.png"));
+		headerImageLabel = new JLabel(imageHeader);
+		
+		newGame = new JButton("NEW GAME");
+		newGame.setFont(new Font("Arial", Font.BOLD, 20));
+		newGame.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				new GameBoard();
+
+			}
+		});
+		
+		loadGame = new JButton("LOAD GAME");
+		loadGame.setFont(new Font("Arial", Font.BOLD, 20));
+		loadGame.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+			
+			}
+		});
+			
+		gameGuide = new JButton("GAME GUIDE");
+		gameGuide.setFont(new Font("Arial", Font.BOLD, 20));
+		gameGuide.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				new GameRulesScreen();
+
+			}
+		});
+		
+		addComponent(pane, headerImageLabel, gbc, 0, 0, 1, 2);
+		addComponent(pane, newGame, gbc, 0, 2, 1, 1);
+		addComponent(pane, loadGame, gbc, 0, 3, 1, 1);
+		addComponent(pane, gameGuide, gbc, 0, 4, 1, 1);
+		
+		initialMenuFrame = new JFrame("QUB Life Game");
+		initialMenuFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		initialMenuFrame.add(pane);
+		initialMenuFrame.setSize(400, 480);
+		initialMenuFrame.setVisible(true);
+		
+	}
+
+}

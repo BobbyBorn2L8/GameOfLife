@@ -1,0 +1,18 @@
+package gameOfLife;
+
+public class GameBoardEndTurnButton extends GameEntity {
+	
+	private GameLogic gameLogic;
+
+	public GameBoardEndTurnButton(int xCoord, int yCoord, String imageName, GameLogic gameLogic) {
+		super(xCoord, yCoord, imageName);
+		// TODO Auto-generated constructor stub
+		this.gameLogic = gameLogic;
+	}
+	
+	public void buttonPressedEffect()
+	{
+		this.gameLogic.moveTurnToNextPlayer();
+	}
+
+}

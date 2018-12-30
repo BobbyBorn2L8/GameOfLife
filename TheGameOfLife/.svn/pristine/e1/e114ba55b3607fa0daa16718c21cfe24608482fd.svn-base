@@ -1,0 +1,16 @@
+package gameOfLife;
+
+public class OrangeTile extends Tile 
+{
+	public OrangeTile(int xCoord, int yCoord, String imageName, int multiplier, String tileText, TileEffects effect) {
+		super(xCoord, yCoord, imageName, multiplier, tileText, effect);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void onLand(GamePlayer player, GameBoard board)
+	{
+		getEffect1().effectActivated(player, getMultiplier(), getEffect1(), board);
+	}
+
+}

@@ -1,0 +1,111 @@
+package gameOfLife;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
+
+public class GamePlayerFamilyScreen extends CommonScreenAttributes{
+	
+	private JFrame mainFrame;
+	private JPanel pane = new JPanel(new GridBagLayout()), mainPanel;
+	private JScrollPane scroll = new JScrollPane(pane);
+	private GridBagConstraints gbc = new GridBagConstraints();
+	
+	public GamePlayerFamilyScreen(GamePlayer player)
+	{
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		gbc.insets = new Insets(10, 10, 10, 10);
+		
+		pane.setBackground(new Color(232,181,30));
+		scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+	
+		mainPanel = new JPanel();
+		mainPanel.setBackground(new Color(232,181,30));
+		
+		int gridx = 0, gridy = 0, gridwidth = 1;
+		
+		for(int x = 0; x < player.getPlayerFamily().size(); x++)
+		{
+			FamilyPegs familyMember = player.getPlayerFamily().get(x);
+			
+			String familyTitle = "";
+			
+			if(familyMember instanceof SpousePeg)
+			{
+				if(((SpousePeg)familyMember).isGender())
+				{
+					familyTitle = "Wife";
+				}
+				else
+				{
+					familyTitle = "Husband";
+				}
+			}
+			else if(familyMember instanceof ChildPeg)
+			{
+				if(((ChildPeg)familyMember).isGender())
+				{
+					familyTitle = "Son";
+				}
+				else
+				{
+					familyTitle = "Daughter";
+				}
+			}
+			else
+			{
+				if(((PetPeg)familyMember).isType())
+				{
+					familyTitle = "Pet Dog";
+				}
+				else
+				{
+					familyTitle = "Pet Cat";
+				}
+			}
+			
+			JLabel title = new JLabel(familyTitle);
+			title.setBackground(new Color(232,181,30));
+			//title.setFont(getTitleFont());
+			//title.setForeground(getButtonGrey());
+			title.setHorizontalAlignment(SwingConstants.CENTER);
+			
+			ImageIcon icon = new ImageIcon(familyMember.getEntityImage());
+			JLabel image = new JLabel(icon);
+			image.setBackground(new Color(232,181,30));
+			
+			// The block below adds the necessary components and adds the required values to gridy to ensure the screen appears correctly
+			
+			addComponent(pane, title, gbc, gridx, gridy, gridwidth, 1);
+			gridy ++;
+			addComponent(pane, image, gbc, gridx, gridy, gridwidth, 5);
+			gridy +=5;
+		}
+	
+		scroll.setBackground(new Color(232,181,30));
+		mainPanel.add(scroll);
+		
+		mainFrame = new JFrame(player.getPlayerName() + "'s Family");
+		mainFrame.setBackground(new Color(232,181,30));
+		mainFrame.setResizable(false);
+		mainFrame.setDefaultCloseOperation(mainFrame.DISPOSE_ON_CLOSE);
+		mainFrame.setLocationRelativeTo(null);
+		mainFrame.add(mainPanel);
+		mainFrame.setSize(250, 450);
+		mainFrame.setVisible(true);
+	}
+
+}

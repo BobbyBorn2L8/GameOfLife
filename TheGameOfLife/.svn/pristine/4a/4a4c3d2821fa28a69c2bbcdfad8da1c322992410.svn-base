@@ -1,0 +1,195 @@
+package gameOfLife;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Random;
+
+/**
+ * 
+ * @author Rachael Coulter
+ * @version 1.0
+ * @since 06/04/16
+ *
+ * The player can buy a house at any time during their turn. 
+ * The player presses the 'buy house' button and can then choose which area to live in
+ * Different areas are different prices
+ * Within that area you can choose between three randomly selected houses
+ * Their prices will be affected by a multiplier which is based on the housing market
+ * You may only have one house at any time
+ * 
+ * The player can sell a house at any time during their turn.
+ * The player presses 'sell assets'
+ * The player then can choose which asset they wish to sell.
+ * The selling price is determined by the selling price multiplied by the housing market multiplier
+ * 
+ * 
+ */
+
+public class GameAssetHouse extends GameAsset {
+	
+	private int originalHousePrice;
+	private District district;
+	
+	/** Constructor
+	 * 
+	 * @param houseName - This is the name of the house, used for descriptive purposes
+	 * @param houseBasePrice - This is the price of the house, before market multipliers are applied
+	 * @param houseDistrict - This is the district that the house is found in
+	 * @param houseNoOfBedrooms - The number of bedrooms the house has, which will impact how many people can live in the house
+	 * 
+	 */
+	
+	public GameAssetHouse(String houseName, District district, int currentHousePrice, String houseImageName) 
+	{
+		super(currentHousePrice, houseName, houseImageName);
+		this.district = district;
+		originalHousePrice = currentHousePrice;
+		
+	}
+	
+	public void generateNewHousePriceUsingMarket(double multiplier)
+	{
+		setCurrentAssetValue((int)(originalHousePrice * multiplier));
+	}
+	
+	@Override
+	public void sellAsset(GamePlayer assetOwner)
+	{
+		super.sellAsset(assetOwner);
+		assetOwner.setCurrentHouse(null);
+	}
+	
+	@Override
+	public void buyAsset(GamePlayer assetBuyer)
+	{
+		super.buyAsset(assetBuyer);
+		assetBuyer.setCurrentHouse(this);
+	}
+	
+	// Getters and Setters
+	public int getOriginalHousePrice() {
+		return originalHousePrice;
+	}
+
+	public void setOriginalHousePrice(int originalHousePrice) {
+		this.originalHousePrice = originalHousePrice;
+	}
+
+	public District getDistrict() {
+		return district;
+	}
+
+	public void setDistrict(District district) {
+		this.district = district;
+	}
+	
+	/*
+	public double getMarketMultiplier() {
+		return marketMultiplier;
+	}
+
+	public void setMarketMultiplier(double marketMultiplier) {
+		this.marketMultiplier = marketMultiplier;
+	}
+	*/
+	
+	
+	// Methods
+	
+	//// Code moved to Game Spinner
+	/**
+	 * Method to generate a new value to be used as the Market Multiplier
+	 * Market Multiplier is a value between 0.5 and 1.5 used to affect house sales prices.
+	 * @return a double value between 0.5 and 1.5, used to generate house prices
+	 */
+	/*
+	public double generateNewMarketMultiplier(){
+		
+		Random rand = new Random();
+		double min = 0.5;
+		double max = 1.5;
+		
+		marketMultiplier = min + Math.random() * ((max-min) + 1);
+		
+		return marketMultiplier;
+	}
+	*/
+	
+	// Code moved to Game Spinner
+	/**
+	 * 
+	 * @param housePrice = The price of the house before taking into account market. Gained by exampleHouse.getHouseBasePrice();
+	 * @param marketMultiplier = The multiplier used to generate current value of the house. Gained by using the getMarketMultiplier(); method
+	 * @return an integer representing the current house price
+	 */
+	
+	/*public Integer generateNewHousePriceUsingMarket(int housePrice, double marketMultiplier){
+		
+		housePrice = (int) (housePrice * marketMultiplier);
+		
+		return housePrice;
+		
+	
+	}
+	*/
+	
+	/*
+	public static void main(String[] args) {
+		
+		//Adding Falls Road Houses to Arraylist
+		
+		fallsRoadHouses.add(fallsCheap1);
+		fallsRoadHouses.add(fallsCheap2);
+		fallsRoadHouses.add(fallsCheap3);
+		fallsRoadHouses.add(fallsCheap4);
+		fallsRoadHouses.add(fallsMedium1);
+		fallsRoadHouses.add(fallsMedium2);
+		fallsRoadHouses.add(fallsMedium3);
+		fallsRoadHouses.add(fallsExpensive1);
+		fallsRoadHouses.add(fallsExpensive2);
+		fallsRoadHouses.add(fallsLuxury1);
+		
+		
+		//Adding University Houses to Arraylist
+		
+		universityHouses.add(uniCheap1);
+		universityHouses.add(uniCheap2);
+		universityHouses.add(uniCheap3);
+		universityHouses.add(uniMedium1);
+		universityHouses.add(uniMedium2);
+		universityHouses.add(uniMedium3);
+		universityHouses.add(uniExpensive1);
+		universityHouses.add(uniExpensive2);
+		universityHouses.add(uniExpensive3);
+		universityHouses.add(uniLuxury1);
+		
+		//Adding Cathedral Quarter Houses to ArrayList
+		
+		cathedralQtrHouses.add(cathCheap1);
+		cathedralQtrHouses.add(cathCheap2);
+		cathedralQtrHouses.add(cathMedium1);
+		cathedralQtrHouses.add(cathMedium2);
+		cathedralQtrHouses.add(cathMedium3);
+		cathedralQtrHouses.add(cathExpensive1);
+		cathedralQtrHouses.add(cathExpensive2);
+		cathedralQtrHouses.add(cathExpensive3);
+		cathedralQtrHouses.add(cathLuxury1);
+		cathedralQtrHouses.add(cathLuxury2);
+		
+		//Adding Titanic Quarter Houses to ArrayList
+		titanicHouses.add(titanicMedium1);
+		titanicHouses.add(titanicMedium2);
+		titanicHouses.add(titanicExpensive1);
+		titanicHouses.add(titanicExpensive2);
+		titanicHouses.add(titanicExpensive3);
+		titanicHouses.add(titanicExpensive4);
+		titanicHouses.add(titanicLuxury1);
+		titanicHouses.add(titanicLuxury2);
+		titanicHouses.add(titanicLuxury3);
+		titanicHouses.add(titanicLuxury4);
+		
+
+	}
+	*/
+
+}

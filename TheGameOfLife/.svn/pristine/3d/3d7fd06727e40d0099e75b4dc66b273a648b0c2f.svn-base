@@ -1,0 +1,24 @@
+package gameOfLife;
+
+import javax.swing.JOptionPane;
+
+public class OpenLoans extends GameEntity
+{
+
+	public OpenLoans() {
+		super(1600, 800, "resizedimages/letters01.png");
+		// TODO Auto-generated constructor stub
+	}
+	
+	public void buttonPressed(GameLogic logic)
+	{
+		if (logic.getCurrentPlayer().getPlayerLoans().size() > 0)
+		{
+			new LoanScreen(logic.getCurrentPlayer());
+		}
+		else
+		{
+			JOptionPane.showConfirmDialog(null, "Congratulations you have no loan");
+		}
+	}
+}

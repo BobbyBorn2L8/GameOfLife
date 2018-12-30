@@ -1,0 +1,52 @@
+package gameOfLife;
+
+import javax.swing.JOptionPane;
+
+public class GameBoardPlayerRetirementButton extends GameEntity {
+	
+	private GamePlayer player;
+
+	public GameBoardPlayerRetirementButton(int xCoord, int yCoord, String imageName, GamePlayer player) {
+		super(xCoord, yCoord, "btn_retireearly.png");
+		this.player = player;
+	}
+
+	public void buttonPressedEffect(GameLogic gameLogic) {
+		// TODO Auto-generated method stub
+		
+		if(player.isInGame())
+		{
+			stillInGame(gameLogic);
+		}
+		else
+		{
+			
+		}
+
+		
+	}
+	
+	private void stillInGame(GameLogic gameLogic)
+	{
+		Object[] options = { "Retire Early", "Remain In Game" };
+		int choice = JOptionPane.showOptionDialog(null, "Are you sure you wish to retire early?", "Retire Early?",
+		             JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+		             null, options, options[0]);
+		
+		if(choice == 0)
+		{
+			player.setInGame(false);
+			gameLogic.endGameTotalForPlayer(player);
+			player.setCurrentTileNode(null);
+			
+			gameLogic.getBoard().updateGameBoard();
+			
+			if(gameLogic.checkAllPlayersRetired())
+			{
+				gameLogic.endGame();
+				gameLogic.getBoard().updateGameBoard();
+			}
+		}
+	}
+
+}

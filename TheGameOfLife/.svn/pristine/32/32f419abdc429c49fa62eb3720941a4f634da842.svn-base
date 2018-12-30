@@ -1,0 +1,157 @@
+package gameOfLife;
+
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+
+/**
+ * @author Robert Kordula 40131366
+ * @param <E> Where E can be any object, but won't work properly if the object does not extend GameEntity
+ * Paramatized deck object, allows a "deck" of objects extending GameEntity to be stored and includes methods for 
+ * selecting a random card and drawing multiple for the player 
+ */
+public class Decks<E> extends GameEntity
+{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7217076994665698453L;
+	private ArrayList<E> deck = new ArrayList<E>();
+	int value = -1;
+	
+	public Decks(int xCoord, int yCoord, String imageName) 
+	{
+		super(xCoord, yCoord, imageName);
+	}
+	
+	/**
+	 * @param card
+	 * Adds the provided object to the end of the arrayList for storage
+	 */
+	public void addCard(E card)
+	{
+		deck.add(card);
+	}
+	
+	/**
+	 * @param card
+	 * Removes the provided object from the arrayList, mostly used when "drawing a card" from the deck
+	 */ 
+	public void removeCard(E card)
+	{
+		deck.remove(card);
+	}
+	
+	/**
+	 * @param index
+	 * @return
+	 * Returns a card at the given index, if the index is beyond the range of the deck returns null
+	 */
+	public E getCardByID(int index)
+	{
+		if (index >= 0 && index < deck.size())
+		{
+			return deck.get(index);
+		}
+		return null;
+	}
+	
+	/**
+	 * @return
+	 * Using the getCardByID() method, returns a random card from the deck
+	 */
+	public E getRandomCard()
+	{
+		int randomNumber = (int)(Math.random() * deck.size());
+		E card = getCardByID(randomNumber);
+		return card;
+	}
+	/**
+	 * @return
+	 * Using the getRandomCard() method, selects a random card from the deck to "draw from it", the card is returned and removed from the deck
+	 */
+	public E drawCard()
+	{
+		E card = getRandomCard();
+		removeCard(card);
+		return card;
+	}
+	
+	/**
+	 * @return
+	 * Using the drawCard() method, the method selects up tp three random cards to be presented to the user, the three cards are removed from the deck
+	 * Once the player has selected a card the others are re-added to the deck and the chosen card is returned
+	 */
+	public E drawThreeForDecision()
+	{
+		//Initialisation of the "hand" shown to the player//
+		ArrayList<E> c = new ArrayList<E>();
+		Component[] options;
+		
+		//Checks if there are at least 3 cards to draw, if there isn't 3 cards left, it adjusts the display for 1 or 2 cards//
+		int noToDraw = 3;
+		if (deck.size() < 3)
+		{
+			noToDraw = deck.size();
+			options = new Component[noToDraw];
+		}
+		options = new Component[noToDraw];
+		
+		//Loops through the "hand" and creates the buttons to return the clicked card//
+		for (int iii = 0; iii < noToDraw; iii++)
+		{
+			final int loopNo = iii;
+			c.add(drawCard());
+			JButton button = new JButton(new ImageIcon(((GameEntity) c.get(iii)).getEntityImage()));
+			button.addActionListener(new ActionListener()
+			{
+				@Override
+				//When the button is clicked in the dialog box, it sets the value to clicked cards index, and closes the dialog box
+				public void actionPerformed(ActionEvent arg0) 
+				{
+					value = loopNo;
+					JOptionPane.getRootFrame().dispose();
+				}
+			});
+			options[iii] = button;
+		}
+		
+		//Finally displays the hand to the player, where they can make a choice//
+		JOptionPane.showOptionDialog(null, "Please select a card", "",  JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+		
+		//When a button is clicked the value is set and this is used to return the card selected, all other cards are added back to the deck//
+		if (value >= 0 && value < noToDraw)
+		{
+			for (int iii = 0; iii < noToDraw - 1; iii++)		
+			{
+				addCard(c.get(iii));
+			}
+			E card = c.get(value);
+			c.remove(value);
+			return card;
+		}
+		//Should the player close the dialog box without choosing, null is returned and all cards added back to the deck//
+		else 
+		{
+			for (int iii = 0; iii < noToDraw; iii++)
+			{
+				addCard(c.get(iii));
+			}
+			value = -1;
+			return null;
+		}
+	}
+	
+	//Getters and setters//
+	public ArrayList<E> getDeck() {
+		return deck;
+	}
+	public void setDeck(ArrayList<E> deck) {
+		this.deck = deck;
+	}
+}

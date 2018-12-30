@@ -1,0 +1,619 @@
+package gameOfLife;
+
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.ArrayList;
+import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
+
+/**
+ * @author Alex Crowley (40121793) & Robert Kordula 40131366
+ *
+ */
+public class GameBoard extends CommonScreenAttributes{
+	
+	/**
+	 * Instance Variables
+	 */
+	private Frame mainFrame;
+	private Label headerLabel, statusLabel;
+	private Panel controlPanel;
+	private GameCanvas gameCanvas;
+	private GameLogic gameLogic;
+	private BufferedImage logo, fallsImage, uniImage, cathedralImage, titanicImage, backGround;
+	private MainGameBoardTiles mainGameBoardTiles;
+	private GameSpinner spinner;
+	private OpenWalletScreenButton openWallet;
+	private OpenLoans openLoan;
+	private boolean isSavedGame;
+	
+	
+	/**
+	 * Creating all the decks for the board
+	 */
+	private Decks<Careers> uniCareers = new Decks<Careers>(0, 0, "resizedimages/Card_Career/deck_Career.png");
+	private Decks<Careers> careers = new Decks<Careers>(0, 0, "resizedimages/Card_Uni/deck_Uni.png");
+	private Decks<GameAssetHouse> uniHouses = new Decks<GameAssetHouse>(0, 0, "resizedimages/Card_House/deck_House.png");
+	private Decks<GameAssetHouse> fallsHouses = new Decks<GameAssetHouse>(0, 0, "resizedimages/Card_House/deck_House.png");
+	private Decks<GameAssetHouse> cathedralHouses = new Decks<GameAssetHouse>(0, 0, "resizedimages/Card_House/deck_House.png");
+	private Decks<GameAssetHouse> titanicHouses = new Decks<GameAssetHouse>(0, 0, "resizedimages/Card_House/deck_House.png");
+	
+	/**
+	 * This constructor is used in the case of a new game being started without loading a previous game.
+	 * @author Alex Crowley 40121793
+	 * @param players the arraylist of players populated by the previous CustomiseCharacterScreens.
+	 */
+	public GameBoard(ArrayList<GamePlayer> players)
+	{		
+		prepareGUI();
+		prepareImages();
+		
+		mainGameBoardTiles = new MainGameBoardTiles();
+		gameLogic = new GameLogic(players, this);
+		
+		initialPopulateCareersDecks();
+		initialPopulateHouseDecks();
+		// gameTurnTimer = new GameTurnTimer(gameLogic);
+		spinner = new GameSpinner(100, 100, gameLogic);
+		super.setMainFrame(mainFrame);
+	}
+	
+	/**
+	 * This is the constructor used in the case of the game being loaded from a saved file
+	 * @author Alex Crowley 40121793
+	 * @param gameLogic the GameLogic object deserialised from the save file
+	 */
+	public GameBoard(GameLogic gameLogic)
+	{
+		prepareGUI();
+		prepareImages();
+		
+		mainGameBoardTiles = new MainGameBoardTiles();
+		this.gameLogic = gameLogic;
+		this.gameLogic.setBoard(this);
+		
+		// gameTurnTimer = new GameTurnTimer(gameLogic);
+		spinner = new GameSpinner(100, 100, gameLogic);
+		super.setMainFrame(mainFrame);
+	}
+	
+	/**
+	 * This method is simply used to load in images used to draw onto the board such as the logo and quarter images
+	 * @author Alex Crowley 40121793
+	 */
+	public void prepareImages()
+	{
+		try
+	    {
+	    	this.logo = ImageIO.read(getClass().getResource("gameoflifequblogosml.png"));
+	    	this.fallsImage = ImageIO.read(getClass().getResource("resizedimages/Quarter_Img05.png"));
+	    	this.uniImage = ImageIO.read(getClass().getResource("resizedimages/Quarter_Img03.png"));
+	    	this.cathedralImage = ImageIO.read(getClass().getResource("resizedimages/Quarter_Img04.png"));
+	    	this.titanicImage = ImageIO.read(getClass().getResource("resizedimages/Quarter_Img02.png"));
+	    }
+	    catch (IOException e) 
+	    {
+	        System.out.println(e.toString());
+	        e.printStackTrace();
+	    }
+	}
+	
+	/**
+	 * This method deals with setting up the controlPanel and mainFrame objects to behave as we desire for the game
+	 * @author Alex Crowley 40121793
+	 */
+	public void prepareGUI()
+	{
+		mainFrame = new Frame("QUB Life Game");
+		mainFrame.setIgnoreRepaint(true);
+		
+		controlPanel = new Panel();
+		controlPanel.setBackground(new Color(232,181,30));
+	
+	    mainFrame.add(controlPanel);
+	    mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH); 
+	    mainFrame.setVisible(true);  
+	    mainFrame.setResizable(false);
+	    mainFrame.setMenuBar(setupMenuBarExceptSave(mainFrame, this));
+	    mainFrame.getMenuBar().setFont(new Font("Arial", Font.BOLD, 14));
+	    
+	    openWallet = new OpenWalletScreenButton();
+	    openLoan = new OpenLoans();
+	}
+	
+	/**
+	 * This method displays the canvas, asks for the desired retirement age if the game is not a saved game, then it starts the game
+	 * @author Alex Crowley 40121793
+	 */
+	public void showCanvas()
+	{
+		gameCanvas = new GameCanvas(this);
+	    controlPanel.add(gameCanvas); 
+	    
+	    if(!gameLogic.isSavedGame())
+	    {
+	    	String retirementAge = "";
+		
+			do
+			{
+				retirementAge = JOptionPane.showInputDialog(null, "Set Retirement Age (50-80)");
+				
+			}while(!inputIsInt(retirementAge) || Integer.parseInt(retirementAge) < 50 || Integer.parseInt(retirementAge) > 80);
+		    
+		    
+		    gameLogic.setRetirementAge(Integer.parseInt(retirementAge));
+	    }
+	    
+		
+	    gameLogic.startGameOnFirstPlayer();
+    } 
+	
+	/**
+	 * This method determines if the given input string can be parsed to a valid integer
+	 * @param inputString the string to by analysed 
+	 * @return true if the string can be parsed to a valid integer
+	 */
+	public boolean inputIsInt(String inputString)
+	{
+		try
+		{
+			Integer.parseInt(inputString); 
+		}
+		catch(NumberFormatException | NullPointerException e) 
+		{ 
+			return false; 
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * This method asks the player if they want to exit the game and if they answer yes it fully exits the game and ceases running
+	 * @author Alex Crowley 40121793
+	 */
+	public void exitGameChoice()
+	{
+		Object[] options = { "Exit Game", "Remain In Game" };
+		int choice = JOptionPane.showOptionDialog(mainFrame, "Are you sure you wish to exit the game?", "Exit Game?",
+		             JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+		             null, options, options[0]);
+		
+		if(choice == 0)
+		{
+			mainFrame.dispose();
+			System.exit(0);
+		}
+	}
+	
+	/**
+	 * This method delegates to the game canvas to repaint itself and is called when the UI should be updated, we are using event driven updates as opposed to a game loop
+	 * as we require a lot less than 30-60 repaints per second.
+	 * @author Alex Crowley 40121793
+	 */
+	public void updateGameBoard()
+	{
+		gameCanvas.repaint();
+	}
+	
+	/**
+	 * @author Robert Kordula 40131366
+	 * Method populates both career decks for the players to draw from
+	 */
+	public void initialPopulateCareersDecks()
+	{
+		Careers career1 = new Careers("resizedimages/Card_Career/card_Career01.png", "Artist", 5000);
+		careers.addCard(career1);
+		Careers career2 = new Careers("resizedimages/Card_Career/card_Career02.png", "Chef", 10000);
+		careers.addCard(career2);
+		Careers career3 = new Careers("resizedimages/Card_Career/card_Career03.png", "Manager", 25000);
+		careers.addCard(career3);
+		Careers career4 = new Careers("resizedimages/Card_Career/card_Career04.png", "Fireman", 8000);
+		careers.addCard(career4);
+		Careers career5 = new Careers("resizedimages/Card_Career/card_Career05.png", "Police", 7000);
+		careers.addCard(career5);
+		
+		Careers uniCareer1 = new Careers("resizedimages/Card_Uni/card_Uni01.png", "Doctor", 40000);
+		uniCareers.addCard(uniCareer1);
+		Careers uniCareer2 = new Careers("resizedimages/Card_Uni/card_Uni02.png", "Accountant", 30000);
+		uniCareers.addCard(uniCareer2);
+		Careers uniCareer3 = new Careers("resizedimages/Card_Uni/card_Uni03.png", "Software Engineer", 90000);
+		uniCareers.addCard(uniCareer3);
+		Careers uniCareer4 = new Careers("resizedimages/Card_Uni/card_Uni04.png", "Chemical Engineer", 30000);
+		uniCareers.addCard(uniCareer4);
+		Careers uniCareer5 = new Careers("resizedimages/Card_Uni/card_Uni05.png", "Lawyer", 50000);
+		uniCareers.addCard(uniCareer5);
+	}
+	
+	/**
+	 * @author Robert Kordula 40131366
+	 * Method populates both house decks for the players to draw from
+	 */
+	public void initialPopulateHouseDecks()
+	{
+		for (GameAssetHouse gameAssetHouse: gameLogic.getAllHouses())
+		{
+			switch(gameAssetHouse.getDistrict())
+			{
+			case Cathedral:
+				cathedralHouses.addCard(gameAssetHouse);
+				break;
+			case Falls:
+				fallsHouses.addCard(gameAssetHouse);
+				break;
+			case Titanic:
+				titanicHouses.addCard(gameAssetHouse);
+				break;
+			case University:
+				uniHouses.addCard(gameAssetHouse);
+				break;
+			}
+		}
+	}
+	
+	/**
+	 * GETTERS AND SETTERS
+	 */
+	public Frame getMainFrame() {
+		return mainFrame;
+	}
+
+	public void setMainFrame(Frame mainFrame) {
+		this.mainFrame = mainFrame;
+	}
+
+	public Label getHeaderLabel() {
+		return headerLabel;
+	}
+
+	public void setHeaderLabel(Label headerLabel) {
+		this.headerLabel = headerLabel;
+	}
+
+	public Label getStatusLabel() {
+		return statusLabel;
+	}
+
+	public void setStatusLabel(Label statusLabel) {
+		this.statusLabel = statusLabel;
+	}
+
+	public Panel getControlPanel() {
+		return controlPanel;
+	}
+
+	public void setControlPanel(Panel controlPanel) {
+		this.controlPanel = controlPanel;
+	}
+
+	public GameCanvas getGameCanvas() {
+		return gameCanvas;
+	}
+
+	public void setGameCanvas(GameCanvas gameCanvas) {
+		this.gameCanvas = gameCanvas;
+	}
+	
+	public GameLogic getGameLogic() {
+		return gameLogic;
+	}
+
+	public void setGameLogic(GameLogic gameLogic) {
+		this.gameLogic = gameLogic;
+	}
+
+	public BufferedImage getLogo() {
+		return logo;
+	}
+
+	public OpenWalletScreenButton getOpenWallet() {
+		return openWallet;
+	}
+
+	public void setOpenWallet(OpenWalletScreenButton openWallet) {
+		this.openWallet = openWallet;
+	}
+
+	public void setLogo(BufferedImage logo) {
+		this.logo = logo;
+	}
+
+	public boolean isSavedGame() {
+		return isSavedGame;
+	}
+
+	public void setSavedGame(boolean isSavedGame) {
+		this.isSavedGame = isSavedGame;
+	}
+
+	public Decks<Careers> getUniCareers() {
+		return uniCareers;
+	}
+
+	public void setUniCareers(Decks<Careers> uniCareers) {
+		this.uniCareers = uniCareers;
+	}
+
+	public Decks<Careers> getCareers() {
+		return careers;
+	}
+
+	public void setCareers(Decks<Careers> careers) {
+		this.careers = careers;
+	}
+
+	public ArrayList<GameAssetAttraction> getAttractions() {
+		return gameLogic.getAllAttractions();
+	}
+	
+	public Decks<GameAssetHouse> getUniHouses() {
+		return uniHouses;
+	}
+
+	public void setUniHouses(Decks<GameAssetHouse> uniHouses) {
+		this.uniHouses = uniHouses;
+	}
+
+	public Decks<GameAssetHouse> getFallsHouses() {
+		return fallsHouses;
+	}
+
+	public void setFallsHouses(Decks<GameAssetHouse> fallsHouses) {
+		this.fallsHouses = fallsHouses;
+	}
+
+	public Decks<GameAssetHouse> getCathedralHouses() {
+		return cathedralHouses;
+	}
+
+	public void setCathedralHouses(Decks<GameAssetHouse> cathedralHouses) {
+		this.cathedralHouses = cathedralHouses;
+	}
+
+	public Decks<GameAssetHouse> getTitanicHouses() {
+		return titanicHouses;
+	}
+
+	public void setTitanicHouses(Decks<GameAssetHouse> titanicHouses) {
+		this.titanicHouses = titanicHouses;
+	}
+
+	public MainGameBoardTiles getMainGameBoardTiles() {
+		return mainGameBoardTiles;
+	}
+
+	public void setMainGameBoardTiles(MainGameBoardTiles mainGameBoardTiles) {
+		this.mainGameBoardTiles = mainGameBoardTiles;
+	}
+
+	public GameSpinner getSpinner() {
+		return spinner;
+	}
+
+	public void setSpinner(GameSpinner spinner) {
+		this.spinner = spinner;
+	}
+
+public OpenLoans getOpenLoan() {
+		return openLoan;
+	}
+
+	public void setOpenLoan(OpenLoans openLoan) {
+		this.openLoan = openLoan;
+	}
+
+class GameCanvas extends Canvas {
+	
+	/**
+	 * Instance Variables
+	 */
+	private Graphics2D g2;
+	private boolean initialPaint;
+	private Rectangle gameCanvasBounds;
+	
+	/**
+	 * This is the constructor of the GameCanvas used to set up the canvas onto which the game elements are drawn
+	 * @param board the GameBoard containing the canvas
+	 */
+     public GameCanvas(GameBoard board) 
+     {
+    	  this.initialPaint = true;
+    	  // 232,181,30
+          setBackground(new Color(232,181,30));
+          setSize(board.getMainFrame().getWidth(), board.getMainFrame().getHeight());
+          setUpMouseClickListeners();
+     }
+
+     /**
+      * Unfortunately Graphics2D objects flicker on being repainted and to reduce this we delegate through this method as the system deals with it mroe smoothly than direct calling paint.
+      * @author Robert Kordula 
+      */
+      @Override
+      public void update(Graphics g)
+      {
+    	  paint(g);
+      }
+      
+      /**
+       * The paint method deals with drawing all the game elements to the screen
+       * @author Alex Crowley 40121793
+       */
+      public void paint(Graphics g) 
+      {
+         g2 = (Graphics2D) g;
+         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+         
+         try 
+         {
+			backGround = ImageIO.read(getClass().getResource("resizedimages/bg.png"));
+         } 
+         catch (IOException e) 
+         {
+			e.printStackTrace();
+		 }
+         
+         g.drawImage(backGround, 10, 0, null);
+         
+         /**
+          * If this is the first paint of the canvas we need to set up the boundaries and set where the spinner and other elements are based and draw the players on their respective tiles
+          * @author Alex Crowley 40121793
+          */
+         if(initialPaint)
+         {
+        	gameCanvasBounds = g2.getDeviceConfiguration().getBounds();
+       	  	spinner.setxCoord((gameCanvasBounds.width / 2) - (spinner.getEntityImage().getWidth() / 2) + 100);
+       	  	spinner.setyCoord((gameCanvasBounds.height / 2) - (spinner.getEntityImage().getHeight() / 2) - 40);
+       	  	
+       	  	mainGameBoardTiles.getGameBoardTileList().getHeadTileNode().getTile().setxCoord(spinner.getxCoord() - mainGameBoardTiles.getGameBoardTileList().getHeadTileNode().getTile().getEntityImage().getWidth() - 159);
+       	  	mainGameBoardTiles.getGameBoardTileList().getHeadTileNode().getTile().setyCoord(spinner.getyCoord() - mainGameBoardTiles.getGameBoardTileList().getHeadTileNode().getTile().getEntityImage().getHeight() - 30);
+             	  	
+       	  	/**
+       	  	 * If the game has been loaded from a save file we must draw the players on their tiles at the time of the save, otherwise we set all the players on the first node
+       	  	 */
+       	  	if(isSavedGame)
+       	  	{
+	       	  	for (GamePlayer player : gameLogic.getPlayers()) 
+	       	  	{
+					player.getCurrentTileNode().getTile().movePlayerCoordsToTile(player);
+				}
+       	  	}
+       	  	else
+       	  	{
+	       	  	for (GamePlayer player : gameLogic.getPlayers()) 
+	       	  	{
+					player.setCurrentTileNode(mainGameBoardTiles.getGameBoardTileList().getHeadTileNode());
+					mainGameBoardTiles.getGameBoardTileList().getHeadTileNode().getTile().setPlayerOnTile(player);
+				}
+       	  	}
+       	  	
+       	  	
+       	  	mainGameBoardTiles.buildListsAfterSetup();
+       	  	initialPaint = false;
+         }
+         
+         drawLists(g2);
+         drawLogo(g2);
+         drawPlayerStats(g2);
+         drawQuarterImages(g2);
+         
+         if(spinner.isSpinning())
+         {
+        	 drawPlayers(g2);
+        	 spinner.drawEntity(g2);
+         }
+         else
+         {
+        	 spinner.drawEntity(g2);
+        	 drawPlayers(g2);
+         }
+      }
+      
+      /**
+       * This method draws the game logo and also some other elements underneath it such as the current player text and end turn button
+       * @param graphicsPanel the panel to draw the logo and other elements to
+       * @author Alex Crowley 40121793
+       */
+      public void drawLogo(Graphics2D graphicsPanel)
+      {
+    	  int yCoordLocal = 5;
+    	  graphicsPanel.drawImage(logo,  (int) ((gameCanvasBounds.width * 0.85 ) - (logo.getWidth() / 2)), yCoordLocal, null);
+    	  yCoordLocal += logo.getHeight() + 30;
+    	  
+    	  graphicsPanel.setFont(new Font("Arial", Font.BOLD, 28));
+    	  
+    	  String currentPlayerText = "Current Player: " + gameLogic.getCurrentPlayer().getPlayerName();
+    	  int midPointForText = (int) ((gameCanvasBounds.width * 0.85) - (graphicsPanel.getFontMetrics().stringWidth(currentPlayerText) / 2));
+    	  
+    	  graphicsPanel.drawString(currentPlayerText, midPointForText, yCoordLocal);
+    	  
+    	  yCoordLocal += graphicsPanel.getFontMetrics().getHeight() - 20;
+    	  
+    	  gameLogic.getGameBoardEndTurnButton().setxCoord((int)((gameCanvasBounds.width * 0.85) - (gameLogic.getGameBoardEndTurnButton().getEntityImage().getWidth() / 2)));
+    	  gameLogic.getGameBoardEndTurnButton().setyCoord(yCoordLocal);
+    	  gameLogic.getGameBoardEndTurnButton().drawEntity(g2);
+    	  getOpenLoan().drawEntity(g2);
+    	  getOpenWallet().drawEntity(g2);
+      }
+      
+      /**
+       * This method draws the images representing the quarters of the board in their respective areas
+       * @param graphicsPanel the canvas the draw the images to
+       * @author Alex Crowley 40121793
+       */
+      public void drawQuarterImages(Graphics2D graphicsPanel)
+      {
+    	  graphicsPanel.drawImage(fallsImage, mainGameBoardTiles.getFalls3Node().getTile().getxCoord() + 85, mainGameBoardTiles.getFalls3Node().getTile().getyCoord() + 85, null);
+    	  graphicsPanel.drawImage(uniImage, mainGameBoardTiles.getUniversityNode7().getTile().getxCoord() + 85, mainGameBoardTiles.getUniversityNode7().getTile().getyCoord() + 85, null);
+    	  graphicsPanel.drawImage(cathedralImage, mainGameBoardTiles.getMainNode8().getTile().getxCoord() + 85, mainGameBoardTiles.getMainNode8().getTile().getyCoord() + 85, null);
+    	  graphicsPanel.drawImage(titanicImage, mainGameBoardTiles.getMainNode17().getTile().getxCoord() + 85, mainGameBoardTiles.getMainNode17().getTile().getyCoord() + 85, null);
+      }
+      
+      /**
+       * This method draws all the players on the board if they are still in the game i.e not retired or left
+       * @param graphicsPanel the canvas to draw the players to
+       */
+      public void drawPlayers(Graphics2D graphicsPanel)
+      {
+    	  for (GamePlayer player : gameLogic.getPlayers()) 
+    	  {
+    		  if(player.isInGame())
+    		  {
+    			  player.drawEntity(graphicsPanel);
+    		  }
+    	  }
+      }
+      
+      /**
+       * @author Robert Kordula 40131366
+       * @param graphicsPanel
+       * Using the lists made in MainGameBoardTiles the lists are drawn according to the individual coords of each tile
+       */
+      public void drawLists(Graphics2D graphicsPanel)
+      {
+    	  mainGameBoardTiles.getGameBoardTileList().drawList(graphicsPanel);
+    	  mainGameBoardTiles.getFallsRoadList().drawList(graphicsPanel);
+    	  mainGameBoardTiles.getTitanicRoadList().drawList(graphicsPanel);
+    	  mainGameBoardTiles.getCathedralRoadList().drawList(graphicsPanel);
+    	  mainGameBoardTiles.getUniRoadList().drawList(graphicsPanel);
+    	  mainGameBoardTiles.getQubList().drawList(graphicsPanel);
+      }
+      
+      /**
+       * This method draws the players key stats along the left hand side of the canvas so players can easily see their key stats
+       * @param graphicsPanel the canvas to draw the stats to
+       * @author Alex Crowley 40121793
+       */
+      public void drawPlayerStats(Graphics2D graphicsPanel)
+      {
+    	  int yCoord = 50; 
+    	  
+    	  for (GamePlayer player : gameLogic.getPlayersRanked()) 
+    	  {
+    		  player.drawPlayerStats(graphicsPanel, 25, yCoord);
+    		  yCoord += graphicsPanel.getFontMetrics().getHeight() * 5;
+    		  yCoord += player.getRetireEarlyButton().getEntityImage().getHeight() + 40;
+    	  }
+      }
+      
+      /**
+       * This method simply requests that GameLogic deal with the coordinates of any mouse clicks on the canvas
+       * @author Alex Crowley 40121793
+       */
+      public void setUpMouseClickListeners()
+      {
+    	  this.addMouseListener(new MouseAdapter() {
+   			@Override
+   			public void mouseClicked(MouseEvent e) {
+   				gameLogic.mouseClickedLogic(e.getX(), e.getY(), GameBoard.this);
+   			}
+   		 });  
+      }
+      
+      public Graphics2D getG2()
+      {
+    	  return g2;
+      }
+   }
+}

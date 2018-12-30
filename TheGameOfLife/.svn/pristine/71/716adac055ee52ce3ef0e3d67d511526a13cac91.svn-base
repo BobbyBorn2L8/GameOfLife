@@ -1,0 +1,172 @@
+package gameOfLife;
+
+public class MainGameBoardTiles {
+
+	private GameBoardTileList gameBoardTileList, fallsRoadList, uniRoadList, cathedralRoadList, titanicRoadList,
+			qubList;
+	private TileNode headNode, middleNode, tailNode;
+	private TileNode mainNode1, mainNode2, mainNode3, mainNode4, mainNode5, mainNode6, mainnode7, mainNode8, mainNode9,
+			mainNode10, mainNode11, mainNode12, mainNode13, mainNode14, mainNode15, mainNode16, mainNode17, mainNode18,
+			mainNode19, mainNode20, mainNode21;
+	private TileNode fallsNode1, fallsNode2, fallsNode3, fallsNode4, fallsNode5, fallsNode6, fallsNode7, fallsNode8,
+			fallsNode9, fallsNode10;
+	private TileNode universityNode1, universityNode2, universityNode3, universityNode4, universityNode5,
+			universityNode6, universityNode7, universityNode8, universityNode9, universityNode10;
+	private TileNode cathedralNode1, cathedralNode2, cathedralNode3, cathedralNode4, cathedralNode5, cathedralNode6,
+			cathedralNode7, cathedralNode8, cathedralNode9, cathedralNode10;
+	private TileNode titanicNode1, titanicNode2, titanicNode3, titanicNode4, titanicNode5, titanicNode6, titanicNode7,
+			titanicNode8, titanicNode9, titanicNode10;
+	private TileNode uniNode1, uniNode2, uniNode3, uniNode4, uniNode5, uniNode6, uniNode7, uniNode8, uniNode9,
+			uniNode10;
+	static TileNode startNode;
+
+	public MainGameBoardTiles() {
+		gameBoardTileList = new GameBoardTileList();
+		fallsRoadList = new GameBoardTileList();
+		uniRoadList = new GameBoardTileList();
+		cathedralRoadList = new GameBoardTileList();
+		titanicRoadList = new GameBoardTileList();
+		qubList = new GameBoardTileList();
+
+		headNode = new TileNode(new GreenTile(0, 0, null), null);
+		middleNode = new TileNode(new OrangeTile(0, 0, "resizedimages/orange_career.png", 10, "", TileEffects.GET_CAT),null); // head of falls
+		tailNode = new TileNode(new OrangeTile(0, 0, "resizedimages/orange_05.png", 10, "", TileEffects.GET_DOG), null);
+
+		//MainLoop Node initialisations//
+		mainNode6 = new TileNode(new GreenTile(0, 0, null), null);
+		mainNode11 = new TileNode(new GreenTile(0, 0, null), null);
+		mainNode16 = new TileNode(new GreenTile(0, 0, null), null);
+		
+		//Falls Quarter Node initialisations//
+		fallsNode1 = new TileNode(new OrangeTile(0, 0, "resizedimages/orange_01.png", 50, "Buy a new O'Neills half zip at the Kennedy Centre - Pay £50 ", TileEffects.FINE), null);
+		fallsNode2 = new TileNode(new OrangeTile(0, 0, "resizedimages/orange_02.png", ))
+		fallsNode3 = new TileNode(new BlueTile(0, 0 ,"resizedimages/blue_02.png", 0, "", BlueTileEffects.ATTRACTION), null);
+		fallsNode5 = new TileNode(new GreenTile(0, 0, ""), null);
+		fallsNode7 = new TileNode(new BlueTile(0, 0, "resizedimages/blue_02.png", 0, "", BlueTileEffects.NEWHOUSE), null);
+		
+		//University Quarter Node initialisations//
+		universityNode3 = new TileNode(new BlueTile(0, 0 ,"resizedimages/blue_02.png", 1, "", BlueTileEffects.ATTRACTION), null);
+		universityNode5 = new TileNode(new GreenTile(0, 0, ""), null);
+		universityNode7 = new TileNode(new BlueTile(0, 0 ,"resizedimages/blue_02.png", 1, "", BlueTileEffects.NEWHOUSE), null);
+		
+		//Cathedral Quarter Node initialisations//
+		cathedralNode3 = new TileNode(new BlueTile(0, 0 ,"resizedimages/blue_02.png", 2, "", BlueTileEffects.ATTRACTION), null);
+		cathedralNode5 = new TileNode(new GreenTile(0, 0, ""), null);
+		cathedralNode7 = new TileNode(new BlueTile(0, 0 ,"resizedimages/blue_02.png", 2, "", BlueTileEffects.NEWHOUSE), null);
+		
+		//Titanic Quarter Node initialisations//
+		titanicNode3 = new TileNode(new BlueTile(0, 0 ,"resizedimages/blue_02.png", 3, "", BlueTileEffects.ATTRACTION), null);
+		titanicNode4 = new TileNode(new RedTile(0, 0, "resizedimages/red_02.png", "", RedTileAction.SPIN), null);
+		titanicNode5 = new TileNode(new GreenTile(0, 0, ""), null);
+		titanicNode7 = new TileNode(new BlueTile(0, 0 ,"resizedimages/blue_02.png", 3, "", BlueTileEffects.NEWHOUSE), null);
+		
+		uniNode1 = new TileNode(new OrangeTile(0, 0, "resizedimages/orange_24.png", 0, "title", null), null);
+		uniNode2 = new TileNode(new OrangeTile(0, 0, "resizedimages/green_01.png", 0, "title", null), null);
+		uniNode3 = new TileNode(new OrangeTile(0, 0, "resizedimages/green_01.png", 0, "title", null), null);
+		uniNode4 = new TileNode(new OrangeTile(0, 0, "resizedimages/orange_30.png", 0, "title", null), null);
+		uniNode5 = new TileNode(new OrangeTile(0, 0, "resizedimages/green_01.png", 0, "title", null), null);
+		uniNode6 = new TileNode(new OrangeTile(0, 0, "resizedimages/orange_30.png", 0, "title", null), null);
+		uniNode7 = new TileNode(new OrangeTile(0, 0, "resizedimages/blue_02.png", 0, "title", null), null);
+
+		gameBoardTileList.addNode(headNode, 'r');
+
+		startNode = headNode;
+	}
+
+	public void buildListsAfterSetup() {
+		gameBoardTileList.addNode(middleNode, 'r');
+		gameBoardTileList.addNode(tailNode, 'r');
+		//testNode13.setNextTileNode(headNode);
+
+		fallsRoadList.addNode(testNode16, 'U');
+		middleNode.setSideListHeadNode(fallsRoadList.getHeadTileNode(), 'U');
+		fallsRoadList.addNode(testNode17, 'U');
+		fallsRoadList.addNode(testNode18, 'R');
+		fallsRoadList.addNode(testNode19, 'R');
+		fallsRoadList.addNode(testNode20, 'D');
+		testNode20.setNextTileNode(testNode1);
+
+		uniRoadList.addNode(testNode21, 'U');
+		testNode3.setSideListHeadNode(uniRoadList.getHeadTileNode(), 'R');
+		uniRoadList.addNode(testNode22, 'R');
+		uniRoadList.addNode(testNode23, 'D');
+		uniRoadList.addNode(testNode24, 'D');
+		uniRoadList.addNode(testNode25, 'L');
+		testNode25.setNextTileNode(testNode5);
+
+		cathedralRoadList.addNode(testNode26, 'U');
+		testNode7.setSideListHeadNode(cathedralRoadList.getHeadTileNode(), 'D');
+		cathedralRoadList.addNode(testNode27, 'D');
+		cathedralRoadList.addNode(testNode28, 'L');
+		cathedralRoadList.addNode(testNode29, 'L');
+		cathedralRoadList.addNode(testNode30, 'U');
+		testNode30.setNextTileNode(testNode9);
+
+		titanicRoadList.addNode(testNode31, 'U');
+		testNode11.setSideListHeadNode(titanicRoadList.getHeadTileNode(), 'L');
+		titanicRoadList.addNode(testNode32, 'L');
+		titanicRoadList.addNode(testNode33, 'U');
+		titanicRoadList.addNode(testNode34, 'U');
+		titanicRoadList.addNode(testNode35, 'R');
+		testNode35.setNextTileNode(testNode13);
+
+		qubList.addNode(uniNode1, 'U');
+		headNode.setSideListHeadNode(qubList.getHeadTileNode(), 'L');
+		qubList.addNode(uniNode2, 'L');
+		qubList.addNode(uniNode3, 'U');
+		qubList.addNode(uniNode4, 'U');
+		qubList.addNode(uniNode5, 'R');
+		qubList.addNode(uniNode6, 'R');
+		qubList.addNode(uniNode7, 'D');
+		uniNode7.setNextTileNode(middleNode);
+	}
+
+	public GameBoardTileList getGameBoardTileList() {
+		return gameBoardTileList;
+	}
+
+	public void setGameBoardTileList(GameBoardTileList gameBoardTileList) {
+		this.gameBoardTileList = gameBoardTileList;
+	}
+
+	public GameBoardTileList getFallsRoadList() {
+		return fallsRoadList;
+	}
+
+	public void setFallsRoadList(GameBoardTileList fallsRoadList) {
+		this.fallsRoadList = fallsRoadList;
+	}
+
+	public GameBoardTileList getUniRoadList() {
+		return uniRoadList;
+	}
+
+	public void setUniRoadList(GameBoardTileList uniRoadList) {
+		this.uniRoadList = uniRoadList;
+	}
+
+	public GameBoardTileList getCathedralRoadList() {
+		return cathedralRoadList;
+	}
+
+	public void setCathedralRoadList(GameBoardTileList cathedralRoadList) {
+		this.cathedralRoadList = cathedralRoadList;
+	}
+
+	public GameBoardTileList getTitanicRoadList() {
+		return titanicRoadList;
+	}
+
+	public void setTitanicRoadList(GameBoardTileList titanicRoadList) {
+		this.titanicRoadList = titanicRoadList;
+	}
+
+	public GameBoardTileList getQubList() {
+		return qubList;
+	}
+
+	public void setQubList(GameBoardTileList qubList) {
+		this.qubList = qubList;
+	}
+
+}
